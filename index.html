@@ -24,13 +24,26 @@ a{text-decoration:none;color:inherit}
 .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
 
 /* top bar */
-.topbar{display:flex;align-items:center;gap:12px;padding:22px 0 6px}
+.topbar{display:flex;align-items:center;gap:12px;padding:22px 0 6px;flex-wrap:wrap}
 .logo{width:34px;height:34px;border-radius:9px;background:var(--pri);display:flex;align-items:center;justify-content:center;
   color:#fff;font-weight:800;font-size:14px;letter-spacing:-.5px;flex:0 0 auto}
 .brand{display:flex;flex-direction:column;line-height:1.2}
 .brand b{font-size:15px;font-weight:800;letter-spacing:-.2px}
 .brand span{font-size:12px;color:var(--sub);font-weight:500}
 .topbar .date{margin-left:auto;font-size:12.5px;color:var(--sub);font-weight:600}
+
+/* 커퐁이 한마디 */
+.kf{display:flex;align-items:center;gap:8px}
+.kf-face{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#7b4fc0,#6B3FA8);
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto;
+  box-shadow:0 2px 7px -2px rgba(74,38,133,.5);animation:kfbob 2.6s ease-in-out infinite}
+.kf-bubble{position:relative;background:var(--pri-soft);color:var(--pri-d);font-size:12.5px;font-weight:700;
+  padding:7px 13px;border-radius:14px;max-width:280px;line-height:1.4;animation:kfpop .45s ease both}
+.kf-bubble::before{content:"";position:absolute;left:-6px;top:50%;transform:translateY(-50%);
+  border:6px solid transparent;border-right-color:var(--pri-soft);border-left:0}
+@keyframes kfpop{0%{opacity:0;transform:translateY(4px) scale(.92)}100%{opacity:1;transform:none}}
+@keyframes kfbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media(max-width:640px){.kf{order:3;flex-basis:100%;margin-top:2px}.topbar .date{order:2}}
 
 /* hero */
 .hero{margin:22px 0 10px}
@@ -100,6 +113,10 @@ a{text-decoration:none;color:inherit}
       <b>대구지사 · 업무 통합</b>
       <span>옆커폰 백지현</span>
     </div>
+    <div class="kf">
+      <div class="kf-face">🐧</div>
+      <div class="kf-bubble" id="kfMsg">오늘도 매출 파이팅이에요! 💜</div>
+    </div>
     <div class="date" id="today"></div>
   </div>
 
@@ -166,6 +183,21 @@ a{text-decoration:none;color:inherit}
     var d=new Date(), days=['일','월','화','수','목','금','토'];
     var el=document.getElementById('today');
     if(el) el.textContent=(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+days[d.getDay()]+')';
+    // 커퐁이 한마디 — 매일 살짝 바뀌어요
+    var kf=[
+      '오늘도 매출 파이팅이에요! 💜',
+      '커퐁이가 옆에서 응원할게요! 🔥',
+      '지현님, 좋은 하루 보내세요! ✨',
+      '오늘 한 건 더! 커퐁커퐁 📱',
+      '무리하지 말고 천천히 가요~ 🍀',
+      '이번 달도 우리가 1등! 🏆',
+      '매장들 잘 챙기고 계시죠? 👀',
+      '커피 한 잔 하고 시작해요! ☕',
+      '작은 숫자도 쌓이면 큰 매출! 📈',
+      '오늘의 지현님도 최고예요! 👍'
+    ];
+    var km=document.getElementById('kfMsg');
+    if(km){ var i=(d.getFullYear()*400 + d.getMonth()*31 + d.getDate()) % kf.length; km.textContent=kf[i]; }
   })();
 </script>
 </body>
