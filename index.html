@@ -4,114 +4,218 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>대구지사_백지현 업무 통합 관리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --purple:#6034A7; --purple-dark:#4A2685; --purple-light:#EFE9F7;
-    --green:#16A34A; --green-light:#E7F7EC; --orange:#EA9E3D;
-    --ink:#1E1B29; --sub:#6B7280; --line:#E7E3F1; --bg:#F7F5FB; --card:#FFFFFF;
-    --radius:16px;
+    --purple:#6B3FA8; --purple-d:#4A2685; --purple-l:#EDE6FA;
+    --body:#9A83DA; --body-d:#6B47B0; --cheek:#5E3A9E;
+    --cream:#F5EEC9; --cream-d:#E9DFB0;
+    --ink:#241a3a; --sub:#7A6E93; --line:#E7E0F3; --card:#FFFFFF;
+    --green:#16A34A; --green-l:#E7F7EC;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:var(--bg); color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo","Segoe UI",sans-serif;
-    -webkit-font-smoothing:antialiased; min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #EAE1FB 0%, rgba(234,225,251,0) 60%),
+      linear-gradient(180deg,#F4EFFC 0%, #F7F5FB 100%);
+    color:var(--ink); min-height:100vh;
+    font-family:'Noto Sans KR',sans-serif; -webkit-font-smoothing:antialiased;
   }
-  .hub-top{
-    display:flex;align-items:center;gap:14px;padding:18px 22px;
-    background:linear-gradient(135deg,var(--purple) 0%,var(--purple-dark) 100%);
-    color:#fff;box-shadow:0 6px 20px -8px rgba(96,52,167,0.5);
-  }
-  .hub-badge{
-    width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,0.18);
-    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:21px;flex-shrink:0;
-  }
-  .hub-top h1{margin:0;font-size:20px;font-weight:800;}
-  .hub-top p{margin:3px 0 0;font-size:13px;opacity:0.88;}
+  .brand-font{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;}
+  .wrap{max-width:940px;margin:0 auto;padding:26px 20px 60px;}
 
-  .wrap{max-width:960px;margin:0 auto;padding:32px 20px 60px;}
-  .hero h2{margin:0 0 8px;font-size:24px;font-weight:800;}
-  .hero p{margin:0 0 26px;font-size:14.5px;color:var(--sub);line-height:1.7;}
+  /* ===== 헤더 (로고 말풍선) ===== */
+  .topbar{display:flex;align-items:center;gap:13px;justify-content:center;margin-bottom:6px;flex-wrap:wrap;}
+  .logo-bubble{width:62px;height:54px;flex-shrink:0;}
+  .logo-bubble svg{width:100%;height:100%;display:block;}
+  .brand-title{ text-align:center; }
+  .brand-title h1{margin:0;font-size:23px;letter-spacing:-.3px;color:var(--ink);}
+  .brand-title p{margin:4px 0 0;font-size:13px;color:var(--sub);font-weight:500;}
 
+  /* ===== 히어로 ===== */
+  .hero{display:flex;flex-direction:column;align-items:center;text-align:center;margin:6px 0 24px;}
+  .hero-cat{width:196px;height:216px;filter:drop-shadow(0 18px 22px rgba(107,63,168,.22));animation:bob 3.2s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-1.2deg);}50%{transform:translateY(-9px) rotate(1.2deg);}}
+  .hero h2{margin:8px 0 4px;font-size:23px;color:var(--ink);}
+  .hero .speech{
+    display:inline-block;background:#fff;border:2px solid var(--line);
+    border-radius:16px;padding:9px 16px;font-size:14px;color:var(--sub);font-weight:600;position:relative;
+    box-shadow:0 4px 12px -6px rgba(107,63,168,.25);
+  }
+  .hero .speech:before{content:"";position:absolute;left:50%;top:-12px;transform:translateX(-50%);
+    border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:11px solid var(--line);}
+  .hero .speech:after{content:"";position:absolute;left:50%;top:-9px;transform:translateX(-50%);
+    border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:9px solid #fff;}
+
+  /* ===== 카드 ===== */
   .cards{display:grid;gap:18px;grid-template-columns:1fr;}
   @media(min-width:720px){.cards{grid-template-columns:1fr 1fr;}}
   .card{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:26px 24px;box-shadow:0 1px 3px rgba(30,27,41,0.05);
-    display:flex;flex-direction:column;gap:14px;transition:transform .12s ease, box-shadow .15s ease;
+    position:relative;background:var(--card);border:2px solid var(--line);border-radius:26px;
+    padding:22px 22px;box-shadow:0 10px 28px -18px rgba(107,63,168,.4);
+    display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;
+    transition:transform .15s ease, box-shadow .18s ease, border-color .18s ease;
   }
-  .card:hover{transform:translateY(-3px);box-shadow:0 14px 30px -16px rgba(96,52,167,0.42);}
-  .ic{width:54px;height:54px;border-radius:14px;background:var(--purple-light);
-      display:flex;align-items:center;justify-content:center;font-size:27px;}
-  .card h3{margin:0;font-size:18px;font-weight:800;}
-  .card .desc{margin:0;font-size:13.5px;color:var(--sub);line-height:1.7;}
-  .card ul{margin:2px 0 4px;padding-left:18px;font-size:12.5px;color:var(--sub);line-height:1.8;}
-  .status{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;align-self:flex-start;
-          background:var(--green-light);color:var(--green);}
-  .link{font-size:11.5px;color:var(--sub);word-break:break-all;}
+  .card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -20px rgba(107,63,168,.5);border-color:#D8CCF2;}
+  .card-cat{width:126px;height:146px;filter:drop-shadow(0 10px 14px rgba(107,63,168,.2));}
+  .status{font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:999px;background:var(--green-l);color:var(--green);}
+  .card h3{margin:1px 0 0;font-size:19px;color:var(--ink);}
+  .card .desc{margin:0;font-size:13px;color:var(--sub);line-height:1.65;font-weight:500;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:3px 0 2px;}
+  .chip{font-size:11.5px;font-weight:700;color:var(--purple);background:var(--purple-l);padding:4px 10px;border-radius:999px;}
   .open-btn{
-    margin-top:auto;border:none;border-radius:11px;padding:13px 20px;
-    background:var(--purple);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
-    text-align:center;text-decoration:none;display:inline-block;transition:background .15s ease;
+    margin-top:9px;width:100%;border:none;border-radius:16px;padding:14px 20px;
+    background:linear-gradient(180deg,#7B4FC0,#6B3FA8);color:#fff;font-size:15.5px;
+    cursor:pointer;text-decoration:none;display:block;
+    box-shadow:0 8px 16px -8px rgba(107,63,168,.7);transition:filter .15s ease, transform .1s ease;
   }
-  .open-btn:hover{background:var(--purple-dark);}
+  .open-btn:hover{filter:brightness(1.08);}
+  .open-btn:active{transform:scale(.98);}
+
   .note{
-    margin-top:26px;background:#FDF3E4;border:1px solid #F7E3C2;color:#8A5A0A;
-    border-radius:12px;padding:14px 16px;font-size:12.5px;line-height:1.7;font-weight:600;
+    margin-top:24px;background:#fff;border:2px solid var(--line);border-radius:18px;
+    padding:14px 18px;font-size:12.5px;line-height:1.7;color:var(--sub);font-weight:600;
+    display:flex;gap:10px;align-items:flex-start;
   }
+  .note .paw{flex-shrink:0;font-size:16px;line-height:1.4;}
+  .foot{text-align:center;margin-top:18px;font-size:12.5px;color:#B3A9C7;}
 </style>
 </head>
 <body>
-  <header class="hub-top">
-    <div class="hub-badge">옆</div>
-    <div>
-      <h1>대구지사_백지현 업무 통합 관리</h1>
-      <p>매출증대 분석자료와 점장 인수인계를 한 곳에서 관리하세요</p>
+<!-- ===== 커퐁이 SVG 심볼 ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="kkupong" viewBox="0 0 240 280">
+      <g stroke="#241a3a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M188 232 q46 6 44 -34 q-2 -22 -20 -20" fill="#9A83DA"/>
+        <path d="M223 178 q14 0 12 20 q-1 10 -9 12 q-14 3 -14 -14 q0 -16 11 -18Z" fill="#F5EEC9"/>
+        <path d="M120 150 q78 0 78 74 q0 46 -78 46 q-78 0 -78 -46 q0 -74 78 -74Z" fill="#9A83DA"/>
+        <path d="M52 188 q-26 6 -26 34 q0 20 22 20 q20 0 22 -20Z" fill="#9A83DA"/>
+        <ellipse cx="40" cy="232" rx="17" ry="16" fill="#F5EEC9"/>
+        <path d="M188 188 q26 6 26 34 q0 20 -22 20 q-20 0 -22 -20Z" fill="#9A83DA"/>
+        <ellipse cx="200" cy="232" rx="17" ry="16" fill="#F5EEC9"/>
+        <ellipse cx="97" cy="268" rx="19" ry="15" fill="#F5EEC9"/>
+        <ellipse cx="143" cy="268" rx="19" ry="15" fill="#F5EEC9"/>
+        <path d="M92 176 L120 214 L148 176" fill="none" stroke="#4A2685"/>
+        <rect x="103" y="206" width="34" height="44" rx="9" fill="#5E3A9E"/>
+        <rect x="111" y="215" width="18" height="26" rx="4" fill="#F5EEC9" stroke-width="0"/>
+        <path d="M64 100 Q50 26 80 16 Q102 26 108 94 Z" fill="#9A83DA"/>
+        <path d="M74 84 Q64 34 82 26 Q96 34 100 82 Z" fill="#F5EEC9" stroke-width="0"/>
+        <path d="M176 100 Q190 26 160 16 Q138 26 132 94 Z" fill="#9A83DA"/>
+        <path d="M166 84 Q176 34 158 26 Q144 34 140 82 Z" fill="#F5EEC9" stroke-width="0"/>
+        <ellipse cx="120" cy="118" rx="94" ry="82" fill="#9A83DA"/>
+        <circle cx="60" cy="132" r="30" fill="#5E3A9E" stroke-width="0"/>
+        <circle cx="180" cy="132" r="30" fill="#5E3A9E" stroke-width="0"/>
+        <circle cx="101" cy="78" r="6.5" fill="#F5EEC9" stroke-width="0"/>
+        <circle cx="139" cy="78" r="6.5" fill="#F5EEC9" stroke-width="0"/>
+        <line x1="82" y1="46" x2="85" y2="82"/>
+        <line x1="158" y1="46" x2="155" y2="82"/>
+        <line x1="16" y1="120" x2="52" y2="126"/>
+        <line x1="12" y1="138" x2="50" y2="140"/>
+        <line x1="16" y1="156" x2="52" y2="152"/>
+        <line x1="224" y1="120" x2="188" y2="126"/>
+        <line x1="228" y1="138" x2="190" y2="140"/>
+        <line x1="224" y1="156" x2="188" y2="152"/>
+        <circle cx="107" cy="150" r="16" fill="#F5EEC9"/>
+        <circle cx="133" cy="150" r="16" fill="#F5EEC9"/>
+        <path d="M117 162 q3 7 6 0" fill="none" stroke-width="5"/>
+        <circle cx="100" cy="128" r="11" fill="#241a3a" stroke-width="0"/>
+        <circle cx="140" cy="128" r="11" fill="#241a3a" stroke-width="0"/>
+        <circle cx="96" cy="124" r="3.6" fill="#fff" stroke-width="0"/>
+        <circle cx="136" cy="124" r="3.6" fill="#fff" stroke-width="0"/>
+      </g>
+    </symbol>
+
+    <symbol id="kkupong-happy" viewBox="0 0 240 280">
+      <g stroke="#241a3a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M188 232 q46 6 44 -34 q-2 -22 -20 -20" fill="#9A83DA"/>
+        <path d="M223 178 q14 0 12 20 q-1 10 -9 12 q-14 3 -14 -14 q0 -16 11 -18Z" fill="#F5EEC9"/>
+        <path d="M120 150 q78 0 78 74 q0 46 -78 46 q-78 0 -78 -46 q0 -74 78 -74Z" fill="#9A83DA"/>
+        <path d="M46 182 q-26 -2 -30 24 q-3 20 19 22 q20 2 24 -18Z" fill="#9A83DA"/>
+        <ellipse cx="34" cy="228" rx="17" ry="16" fill="#F5EEC9"/>
+        <path d="M194 182 q26 -2 30 24 q3 20 -19 22 q-20 2 -24 -18Z" fill="#9A83DA"/>
+        <ellipse cx="206" cy="228" rx="17" ry="16" fill="#F5EEC9"/>
+        <ellipse cx="97" cy="268" rx="19" ry="15" fill="#F5EEC9"/>
+        <ellipse cx="143" cy="268" rx="19" ry="15" fill="#F5EEC9"/>
+        <path d="M92 176 L120 214 L148 176" fill="none" stroke="#4A2685"/>
+        <rect x="103" y="206" width="34" height="44" rx="9" fill="#5E3A9E"/>
+        <rect x="111" y="215" width="18" height="26" rx="4" fill="#F5EEC9" stroke-width="0"/>
+        <path d="M64 100 Q50 26 80 16 Q102 26 108 94 Z" fill="#9A83DA"/>
+        <path d="M74 84 Q64 34 82 26 Q96 34 100 82 Z" fill="#F5EEC9" stroke-width="0"/>
+        <path d="M176 100 Q190 26 160 16 Q138 26 132 94 Z" fill="#9A83DA"/>
+        <path d="M166 84 Q176 34 158 26 Q144 34 140 82 Z" fill="#F5EEC9" stroke-width="0"/>
+        <ellipse cx="120" cy="118" rx="94" ry="82" fill="#9A83DA"/>
+        <circle cx="60" cy="132" r="30" fill="#5E3A9E" stroke-width="0"/>
+        <circle cx="180" cy="132" r="30" fill="#5E3A9E" stroke-width="0"/>
+        <circle cx="101" cy="78" r="6.5" fill="#F5EEC9" stroke-width="0"/>
+        <circle cx="139" cy="78" r="6.5" fill="#F5EEC9" stroke-width="0"/>
+        <line x1="82" y1="46" x2="85" y2="82"/>
+        <line x1="158" y1="46" x2="155" y2="82"/>
+        <line x1="16" y1="120" x2="52" y2="126"/>
+        <line x1="12" y1="138" x2="50" y2="140"/>
+        <line x1="16" y1="156" x2="52" y2="152"/>
+        <line x1="224" y1="120" x2="188" y2="126"/>
+        <line x1="228" y1="138" x2="190" y2="140"/>
+        <line x1="224" y1="156" x2="188" y2="152"/>
+        <circle cx="107" cy="150" r="16" fill="#F5EEC9"/>
+        <circle cx="133" cy="150" r="16" fill="#F5EEC9"/>
+        <path d="M86 128 q13 -15 25 0" fill="none" stroke-width="6"/>
+        <path d="M129 128 q13 -15 25 0" fill="none" stroke-width="6"/>
+        <path d="M112 159 q8 17 16 0 q-8 7 -16 0Z" fill="#3a2352" stroke-width="4"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo-bubble" aria-label="옆커폰 로고">
+      <svg viewBox="0 0 120 104">
+        <path d="M20 8 h64 a16 16 0 0 1 16 16 v30 a16 16 0 0 1 -16 16 h-30 l-16 14 v-14 h-2 a16 16 0 0 1 -16 -16 v-30 a16 16 0 0 1 16 -16Z"
+              fill="#fff" stroke="#6B3FA8" stroke-width="7" stroke-linejoin="round"/>
+        <text x="52" y="47" text-anchor="middle" font-family="Jua, sans-serif" font-size="25" fill="#6B3FA8">여ㅋㅍ</text>
+      </svg>
     </div>
-  </header>
-
-  <div class="wrap">
-    <div class="hero">
-      <h2>무엇을 관리할까요?</h2>
-      <p>아래 버튼을 누르면 각 시스템이 새 탭으로 열립니다.</p>
-    </div>
-
-    <div class="cards">
-      <!-- 매출증대 분석자료 -->
-      <div class="card">
-        <div class="ic">💰</div>
-        <span class="status">● 연결됨</span>
-        <h3>매출증대 분석자료</h3>
-        <p class="desc">매장별 일일보고를 입력하고, 관리자 모드에서 추이·순위·채널 분석을 확인합니다.</p>
-        <ul>
-          <li>점장용 <b>매장 입력</b> 모드</li>
-          <li>비밀번호 잠금 <b>관리자 분석</b> 모드</li>
-          <li>매장 비교 · 기간 통계 · CSV 내보내기</li>
-        </ul>
-        <div class="link">yeopcheorpon-store.pages.dev</div>
-        <a class="open-btn" href="https://yeopcheorpon-store.pages.dev/" target="_blank" rel="noopener">열기 →</a>
-      </div>
-
-      <!-- 인수인계 체크리스트 -->
-      <div class="card">
-        <div class="ic">📋</div>
-        <span class="status">● 연결됨</span>
-        <h3>인수인계 체크리스트</h3>
-        <p class="desc">점장 교체 시 인계자·인수자가 함께 항목별로 교차 확인하고, 서약서와 히스토리를 기록합니다.</p>
-        <ul>
-          <li>기본정보·재고·거래처·계정 <b>교차 체크</b></li>
-          <li>근무 <b>서약서</b> 서명</li>
-          <li>매장별 <b>히스토리</b> · 교체 횟수 분석</li>
-        </ul>
-        <div class="link">ahzzzzzz96.github.io/yeopcheorpon-handover</div>
-        <a class="open-btn" href="https://ahzzzzzz96.github.io/yeopcheorpon-handover/" target="_blank" rel="noopener">열기 →</a>
-      </div>
-    </div>
-
-    <div class="note">
-      ⚠️ 각 시스템의 입력 데이터는 <b>해당 사이트를 여는 기기·브라우저</b>에 저장됩니다. 중요한 자료는 각 화면의 인쇄/CSV 기능으로 백업해 두세요.
+    <div class="brand-title">
+      <h1 class="brand-font">대구지사_백지현 업무 통합 관리</h1>
+      <p>커퐁이와 함께하는 옆커폰 업무 통합 홈</p>
     </div>
   </div>
+
+  <div class="hero">
+    <svg class="hero-cat"><use href="#kkupong-happy"/></svg>
+    <h2 class="brand-font">무엇을 관리할까요?</h2>
+    <div class="speech">아래 버튼을 누르면 각 시스템이 새 탭으로 열려요!</div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <svg class="card-cat" viewBox="0 0 240 280"><use href="#kkupong"/></svg>
+      <span class="status">● 연결됨</span>
+      <h3 class="brand-font">매출증대 분석자료</h3>
+      <p class="desc">매장별 일일보고를 입력하고, 관리자 모드에서 추이·순위·채널 분석을 확인해요.</p>
+      <div class="chips"><span class="chip">매장 입력</span><span class="chip">관리자 분석</span><span class="chip">기간 통계·CSV</span></div>
+      <a class="open-btn" href="https://yeopcheorpon-store.pages.dev/" target="_blank" rel="noopener">💰 매출 자료 열기</a>
+    </div>
+
+    <div class="card">
+      <svg class="card-cat" viewBox="0 0 240 280"><use href="#kkupong"/></svg>
+      <span class="status">● 연결됨</span>
+      <h3 class="brand-font">인수인계 체크리스트</h3>
+      <p class="desc">점장 교체 시 인계자·인수자가 함께 교차 확인하고, 서약서와 히스토리를 기록해요.</p>
+      <div class="chips"><span class="chip">교차 체크</span><span class="chip">서약서</span><span class="chip">히스토리</span></div>
+      <a class="open-btn" href="https://ahzzzzzz96.github.io/yeopcheorpon-handover/" target="_blank" rel="noopener">📋 인수인계 열기</a>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="paw">☁️</span>
+    <span>두 시스템의 자료는 <b style="color:var(--purple)">클라우드에 저장</b>돼서 <b style="color:var(--purple)">어느 PC·기기에서든 함께</b> 볼 수 있어요. 중요한 자료는 각 화면의 인쇄/CSV 기능으로 한 번씩 백업해 두면 더 안심이에요.</span>
+  </div>
+
+  <div class="foot brand-font">🐾 옆커폰 · 커퐁이</div>
+</div>
 </body>
 </html>
