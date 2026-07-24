@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>옆커폰 통합 관리</title>
+<style>
+  :root{
+    --purple:#6034A7; --purple-dark:#4A2685; --purple-light:#EFE9F7;
+    --green:#16A34A; --green-light:#E7F7EC; --orange:#EA9E3D;
+    --ink:#1E1B29; --sub:#6B7280; --line:#E7E3F1; --bg:#F7F5FB; --card:#FFFFFF;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo","Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased; min-height:100vh;
+  }
+  .hub-top{
+    display:flex;align-items:center;gap:14px;padding:18px 22px;
+    background:linear-gradient(135deg,var(--purple) 0%,var(--purple-dark) 100%);
+    color:#fff;box-shadow:0 6px 20px -8px rgba(96,52,167,0.5);
+  }
+  .hub-badge{
+    width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,0.18);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:21px;flex-shrink:0;
+  }
+  .hub-top h1{margin:0;font-size:20px;font-weight:800;}
+  .hub-top p{margin:3px 0 0;font-size:13px;opacity:0.88;}
+
+  .wrap{max-width:960px;margin:0 auto;padding:32px 20px 60px;}
+  .hero h2{margin:0 0 8px;font-size:24px;font-weight:800;}
+  .hero p{margin:0 0 26px;font-size:14.5px;color:var(--sub);line-height:1.7;}
+
+  .cards{display:grid;gap:18px;grid-template-columns:1fr;}
+  @media(min-width:720px){.cards{grid-template-columns:1fr 1fr;}}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 24px;box-shadow:0 1px 3px rgba(30,27,41,0.05);
+    display:flex;flex-direction:column;gap:14px;transition:transform .12s ease, box-shadow .15s ease;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 14px 30px -16px rgba(96,52,167,0.42);}
+  .ic{width:54px;height:54px;border-radius:14px;background:var(--purple-light);
+      display:flex;align-items:center;justify-content:center;font-size:27px;}
+  .card h3{margin:0;font-size:18px;font-weight:800;}
+  .card .desc{margin:0;font-size:13.5px;color:var(--sub);line-height:1.7;}
+  .card ul{margin:2px 0 4px;padding-left:18px;font-size:12.5px;color:var(--sub);line-height:1.8;}
+  .status{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;align-self:flex-start;
+          background:var(--green-light);color:var(--green);}
+  .link{font-size:11.5px;color:var(--sub);word-break:break-all;}
+  .open-btn{
+    margin-top:auto;border:none;border-radius:11px;padding:13px 20px;
+    background:var(--purple);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+    text-align:center;text-decoration:none;display:inline-block;transition:background .15s ease;
+  }
+  .open-btn:hover{background:var(--purple-dark);}
+  .note{
+    margin-top:26px;background:#FDF3E4;border:1px solid #F7E3C2;color:#8A5A0A;
+    border-radius:12px;padding:14px 16px;font-size:12.5px;line-height:1.7;font-weight:600;
+  }
+</style>
+</head>
+<body>
+  <header class="hub-top">
+    <div class="hub-badge">옆</div>
+    <div>
+      <h1>옆커폰 통합 관리</h1>
+      <p>매출증대 분석자료와 점장 인수인계를 한 곳에서 관리하세요</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="hero">
+      <h2>무엇을 관리할까요?</h2>
+      <p>아래 버튼을 누르면 각 시스템이 새 탭으로 열립니다.</p>
+    </div>
+
+    <div class="cards">
+      <!-- 매출증대 분석자료 -->
+      <div class="card">
+        <div class="ic">💰</div>
+        <span class="status">● 연결됨</span>
+        <h3>매출증대 분석자료</h3>
+        <p class="desc">매장별 일일보고를 입력하고, 관리자 모드에서 추이·순위·채널 분석을 확인합니다.</p>
+        <ul>
+          <li>점장용 <b>매장 입력</b> 모드</li>
+          <li>비밀번호 잠금 <b>관리자 분석</b> 모드</li>
+          <li>매장 비교 · 기간 통계 · CSV 내보내기</li>
+        </ul>
+        <div class="link">yeopcheorpon-store.pages.dev</div>
+        <a class="open-btn" href="https://yeopcheorpon-store.pages.dev/" target="_blank" rel="noopener">열기 →</a>
+      </div>
+
+      <!-- 인수인계 체크리스트 -->
+      <div class="card">
+        <div class="ic">📋</div>
+        <span class="status">● 연결됨</span>
+        <h3>인수인계 체크리스트</h3>
+        <p class="desc">점장 교체 시 인계자·인수자가 함께 항목별로 교차 확인하고, 서약서와 히스토리를 기록합니다.</p>
+        <ul>
+          <li>기본정보·재고·거래처·계정 <b>교차 체크</b></li>
+          <li>근무 <b>서약서</b> 서명</li>
+          <li>매장별 <b>히스토리</b> · 교체 횟수 분석</li>
+        </ul>
+        <div class="link">ahzzzzzz96.github.io/yeopcheorpon-handover</div>
+        <a class="open-btn" href="https://ahzzzzzz96.github.io/yeopcheorpon-handover/" target="_blank" rel="noopener">열기 →</a>
+      </div>
+    </div>
+
+    <div class="note">
+      ⚠️ 각 시스템의 입력 데이터는 <b>해당 사이트를 여는 기기·브라우저</b>에 저장됩니다. 중요한 자료는 각 화면의 인쇄/CSV 기능으로 백업해 두세요.
+    </div>
+  </div>
+</body>
+</html>
