@@ -227,6 +227,15 @@
   .mxseg{height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;min-width:0;transition:filter .1s}
   .mxseg:hover{filter:brightness(1.12)}
   @media(max-width:560px){.mxnm{width:104px}}
+  /* 채널별 잘 파는 매장 */
+  .chanstrong{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:9px;margin-top:4px}
+  .cscard{background:#faf8fe;border:1px solid var(--lav2);border-radius:11px;padding:9px 10px 8px}
+  .cshd{font-size:12px;font-weight:800;margin-bottom:5px}
+  .csrow{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:2px 0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .csrow[data-id]:hover{color:var(--purple)}
+  .csrow b{font-size:11px;color:var(--muted);flex:0 0 auto}
+  .csrow small{color:var(--muted);font-weight:500;font-size:10px;margin-left:auto;flex:0 0 auto}
+  .csrow.muted{cursor:default;color:var(--muted)}
   /* star (칭찬/채찍) */
   .stargrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media(max-width:640px){.stargrid{grid-template-columns:1fr}}
@@ -323,7 +332,7 @@
     <div class="rsec"><h3>📈 월별 매출 추이 <span class="muted" style="font-weight:500;font-size:12px">— 전체·직영·가맹</span></h3><div id="sales-trend"></div></div>
     <div class="rsec"><h3>🏆 칭찬할 매장 / 🔧 챙겨야 할 매장 <span class="muted" style="font-weight:500;font-size:12px">(전월 대비 급등·급락 · 채널 강점)</span></h3><div id="star-list"></div></div>
     <div class="rsec"><h3>📊 판매 유형(채널) 분석 <span class="muted" style="font-weight:500;font-size:12px">— 무선·유선·유심·알뜰·렌탈을 얼마나 파는지</span></h3><div id="chan-analysis"></div></div>
-    <div class="rsec"><h3>📊 매장별 판매유형 <span class="muted" style="font-weight:500;font-size:12px">— 어떤 상품을 잘 파는지 한눈에 (기준월 · 진할수록 강함)</span></h3><div id="chan-trend"></div></div>
+    <div class="rsec"><h3>📊 판매유형 분석 <span class="muted" style="font-weight:500;font-size:12px">— 채널별 추이 + 어느 매장이 무엇을 잘 파는지 한눈에</span></h3><div id="chan-trend"></div></div>
     <div class="rsec"><h3>🔎 채널별 약점 매장 <span class="muted" style="font-weight:500;font-size:12px">(개통은 있는데 특정 상품 판매 비중이 현저히 낮은 곳)</span></h3><div id="weak-list"></div></div>
     <div class="rsec"><h3>🗺 지역별 매장 현황</h3><div id="region-dist"></div></div>
     <div class="rsec"><h3>🎖 등급 분포</h3><div id="grade-dist"></div></div>
@@ -852,25 +861,40 @@ function legendHTML(series){ return '<div class="legend">'+series.map(s=>`<span>
 function renderChanTrend(){
   const el=document.getElementById('chan-trend'); if(!el)return;
   const ym=curMonth();
+  const months=allMonths();
   const chans=[{k:'ms',l:'무선',c:'#6d3ecb'},{k:'ws',l:'유선',c:'#2e9e6b'},{k:'us',l:'유심',c:'#e08a2b'},{k:'al',l:'알뜰',c:'#3b82c4'},{k:'rt',l:'렌탈',c:'#d64f6a'}];
-  const legend='<div class="legend" style="margin:2px 0 12px">'+chans.map(c=>`<span><i class="dot" style="background:${c.c}"></i>${c.l}</span>`).join('')+'</div>';
-  function bars(gubun){
+  const legend='<div class="legend" style="margin:2px 0 10px">'+chans.map(c=>`<span><i class="dot" style="background:${c.c}"></i>${c.l}</span>`).join('')+'</div>';
+  // 월별 채널 판매량 추이 (직영/가맹 각각 · 활성매장 합계) — 월별 매출 추이와 같은 라인 스타일
+  function trend(gubun){
+    const arr=stores.filter(s=>s.gubun===gubun);
+    const series=chans.map(c=>({name:c.l,color:c.c,dot:true,
+      data:months.map(m=>{ let sum=0,any=false; arr.forEach(s=>{ if(!isActiveAt(s,m))return; const p=pAt(s,m); if(p){any=true; sum+=Number(p[c.k])||0;} }); return any?sum:null; })}));
+    if(!series.some(s=>s.data.some(v=>v!=null&&v>0))) return '<div class="muted" style="font-size:12px;padding:6px 2px">실적 데이터가 없어요</div>';
+    return lineChartSVG(months, series, {h:200, fmt:v=>Math.round(v)});
+  }
+  // 채널별 잘 파는 매장 TOP3 (기준월) — "어느 매장이 무엇을 잘 파는지" 한눈에
+  function strong(gubun){
     const rows=stores.filter(s=>s.gubun===gubun && isActiveAt(s,ym))
-      .map(s=>{const p=pAt(s,ym); if(!p||!p.act)return null; return {s,sales:Number(p.sales)||0,act:p.act,p};})
-      .filter(Boolean).sort((a,b)=>b.sales-a.sales);
-    if(!rows.length) return '<div class="muted" style="font-size:12px;padding:6px 2px">이 달 실적 데이터가 없어요</div>';
-    return '<div class="mxwrap">'+rows.map(x=>{
-      const segs=chans.map(c=>({c,v:(Number(x.p[c.k])||0)/x.act*100,n:Number(x.p[c.k])||0})).filter(z=>z.v>0.4);
-      const bar=segs.map(z=>`<div class="mxseg" style="width:${z.v}%;background:${z.c.c}" title="${z.c.l} ${z.v.toFixed(0)}% · ${z.n}건">${z.v>=14?z.v.toFixed(0):''}</div>`).join('');
-      return `<div class="mxrow" data-id="${x.s.id}"><div class="mxnm">${esc(x.s.name)} <small>${x.sales.toLocaleString()}만·${x.act}건</small></div><div class="mxbar">${bar}</div></div>`;
+      .map(s=>{const p=pAt(s,ym); return (p&&p.act)?{s,p,act:p.act}:null;}).filter(Boolean);
+    if(!rows.length) return '<div class="muted" style="font-size:12px;padding:4px 2px">기준월 실적 데이터가 없어요</div>';
+    return '<div class="chanstrong">'+chans.map(c=>{
+      const ranked=rows.map(x=>({name:x.s.name,id:x.s.id,n:Number(x.p[c.k])||0,pct:(Number(x.p[c.k])||0)/x.act*100}))
+        .filter(z=>z.n>0).sort((a,b)=>b.n-a.n||b.pct-a.pct).slice(0,3);
+      const items=ranked.length? ranked.map((z,i)=>`<div class="csrow" data-id="${z.id}"><b>${['①','②','③'][i]}</b> ${esc(z.name)} <small>${z.n}건·${z.pct.toFixed(0)}%</small></div>`).join('')
+        : '<div class="csrow muted">판매 없음</div>';
+      return `<div class="cscard" style="border-top:3px solid ${c.c}"><div class="cshd" style="color:${c.c}">${c.l}</div>${items}</div>`;
     }).join('')+'</div>';
   }
   const showGu=gubunView!=='가맹', showGa=gubunView!=='직영';
+  function block(gubun,icon){
+    return `<div class="subhead">${icon} ${gubun}</div>`
+      +`<div class="muted" style="font-size:11px;margin:-2px 0 4px">① 월별 채널 판매량 추이</div>`+trend(gubun)
+      +`<div class="muted" style="font-size:11px;margin:12px 0 5px">② 채널별 잘 파는 매장 TOP3 <span style="opacity:.8">(기준월 ${ym||'-'} · 매장명 클릭 시 상세)</span></div>`+strong(gubun);
+  }
   el.innerHTML=legend
-    +(showGu?'<div class="subhead">🏢 직영</div>'+bars('직영'):'')
-    +(showGa?'<div class="subhead" style="margin-top:14px">🤝 가맹</div>'+bars('가맹'):'')
-    +'<div class="muted" style="font-size:11px;margin-top:8px">막대 = 그 매장의 개통 100%를 채널 비율로 나눈 것 · 매출순 · 막대에 마우스 올리면 정확한 %·건수 · 매장명 클릭 시 상세</div>';
-  el.querySelectorAll('.mxrow').forEach(r=>r.onclick=()=>openModal(r.dataset.id));
+    +(showGu?block('직영','🏢'):'')
+    +(showGa?'<div style="height:20px"></div>'+block('가맹','🤝'):'');
+  el.querySelectorAll('.csrow[data-id]').forEach(r=>r.onclick=()=>openModal(r.dataset.id));
 }
 function renderReport(){
   const ym=curMonth();
