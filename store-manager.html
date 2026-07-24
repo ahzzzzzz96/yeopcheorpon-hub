@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>옆커폰 · 매장 관리 (커퐁이)</title>
+<title>대구지사_매장분석</title>
 <style>
   :root{
     --purple:#6d3ecb; --purple-d:#4c2a8f; --purple-l:#8a5be0;
@@ -99,6 +99,8 @@
   .lrow .lline{font-size:11px;color:var(--purple);background:var(--chip);padding:2px 7px;border-radius:20px;flex:0 0 auto}
   .stbadge{font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:800;flex:0 0 auto}
   .stbadge.hu{background:#fff3d6;color:#9a6a00} .stbadge.pe{background:#f0e2e5;color:#a04a58}
+  .rankbadge{font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:800;flex:0 0 auto;white-space:nowrap}
+  .rankbadge.rk1{background:#fdf1c4;color:#8a6b00} .rankbadge.rk2{background:#e9edf1;color:#4a5763} .rankbadge.rk3{background:#f6e3d1;color:#7a481a}
   .lrow.closed,.scard.closed{opacity:.6}
   .lrow.closed .lsales,.scard.closed .scard-foot{text-decoration:line-through;text-decoration-color:#c9bcd0}
   /* modal */
@@ -251,8 +253,8 @@
   <div class="top-inner">
     <div class="logo">🐾</div>
     <div>
-      <h1>매장 관리 · 커퐁이</h1>
-      <p>매장·점장 특성과 문제→조치를 쌓아 매출을 올리는 관리 카드</p>
+      <h1>대구지사_매장분석</h1>
+      <p>매출·판매유형을 추적·분석해 매장 매출을 올리는 관리 시스템</p>
     </div>
     <span class="cloud" id="cloud-status">☁ 연결 중…</span>
     <a class="home" href="https://ahzzzzzz96.github.io/yeopcheorpon-hub/">← 통합 홈</a>
@@ -450,6 +452,17 @@ function prevMonth(ym){ const m=allMonths(); const i=m.indexOf(ym); return i>0?m
 function curMonth(){ return selMonth || (allMonths().slice(-1)[0]) || null; }
 function isClosed(s){ return s.status==='잠정휴업'||s.status==='폐업'; }
 function isActiveAt(s,ym){ if(!s.status||s.status==='영업중')return true; if(!s.statusDate)return false; const sm=String(s.statusDate).slice(0,7); return !!ym && ym<sm; }
+let curTopRanks={};
+const MEDAL=['','🥇','🥈','🥉'];
+function computeTopRanks(){
+  const ym=curMonth(); const map={};
+  ['직영','가맹'].forEach(g=>{
+    const arr=stores.filter(s=>s.gubun===g && isActiveAt(s,ym)).map(s=>{const p=pAt(s,ym);return {id:s.id,v:p?Number(p.sales)||0:0};}).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+    arr.slice(0,3).forEach((x,i)=>{ map[x.id]={rank:i+1,g:g}; });
+  });
+  return map;
+}
+function rankBadge(s){ const r=curTopRanks[s.id]; return r?`<span class="rankbadge rk${r.rank}">${MEDAL[r.rank]} ${r.g} ${r.rank}위</span>`:''; }
 function lastSales(s){
   const ym=curMonth();
   if(ym){ const p=pAt(s,ym); return p&&p.sales!=null? Number(p.sales):null; }
@@ -522,6 +535,7 @@ function fillRegionFilter(){
 
 /* ============ RENDER STORES ============ */
 function renderStores(){
+  curTopRanks=computeTopRanks();
   const gu=document.getElementById('f-gubun').value;
   const rg=document.getElementById('f-region').value;
   const gr=document.getElementById('f-grade').value;
@@ -555,6 +569,7 @@ function renderStores(){
         <div class="grade g-${s.grade||'none'}">${s.grade||'?'}</div>
       </div>
       <div class="badges">
+        ${rankBadge(s)}
         <span class="bdg ${s.gubun==='직영'?'gu':'ga'}">${esc(s.gubun||'구분?')}</span>
         ${s.region?`<span class="bdg">${esc(s.region)}</span>`:''}
         ${s.location?`<span class="bdg">${esc(s.location)}</span>`:''}
@@ -589,6 +604,7 @@ function renderList(list){
       return `<div class="lrow ${w&&!isClosed(s)?'warned':''} ${isClosed(s)?'closed':''}" data-id="${s.id}">
         <span class="lg-grade ${gcls}">${s.grade||'?'}</span>
         <span class="lnm">${esc(s.name)}</span>
+        ${rankBadge(s)}
         ${isClosed(s)?`<span class="stbadge ${s.status==='폐업'?'pe':'hu'}">${s.status}${s.statusDate?' '+esc(s.statusDate):''}</span>`:''}
         ${s.line?`<span class="lline">${esc(s.line)}</span>`:''}
         <span class="lgu ${s.gubun==='직영'?'bdg gu':'bdg ga'}" style="background:${s.gubun==='직영'?'#e7f0ff':'#fff0e6'};color:${s.gubun==='직영'?'#2657b8':'#b5541a'}">${esc(s.gubun||'')}</span>

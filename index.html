@@ -3,239 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>대구지사_백지현 업무 통합 관리</title>
+<title>대구지사 · 업무 통합</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
---purple:#6B3FA8; --purple-d:#4A2685; --purple-l:#EDE6FA;
---body:#9A83DA; --body-d:#6B47B0; --cheek:#5E3A9E;
---cream:#F5EEC9; --cream-d:#E9DFB0;
---ink:#241a3a; --sub:#7A6E93; --line:#E7E0F3; --card:#FFFFFF;
---green:#16A34A; --green-l:#E7F7EC;
+  --pri:#6B3FA8; --pri-d:#4A2685; --pri-l:#8a5fd0; --pri-soft:#f2ecfb;
+  --ink:#1f2430; --sub:#6b7280; --line:#e9ebef; --bg:#f6f7f9; --card:#ffffff;
+  --shadow:0 1px 2px rgba(20,20,40,.04), 0 6px 20px -12px rgba(74,38,133,.22);
+  --shadow-h:0 8px 30px -12px rgba(74,38,133,.35);
 }
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
 body{
-background:
-radial-gradient(1200px 600px at 50% -10%, #EAE1FB 0%, rgba(234,225,251,0) 60%),
-linear-gradient(180deg,#F4EFFC 0%, #F7F5FB 100%);
-color:var(--ink); min-height:100vh;
-font-family:'Noto Sans KR',sans-serif; -webkit-font-smoothing:antialiased;
+  background:var(--bg); color:var(--ink); min-height:100vh;
+  font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
 }
-.brand-font{font-family:'Jua','Noto Sans KR',sans-serif;font-weight:400;}
-.wrap{max-width:940px;margin:0 auto;padding:26px 20px 60px;}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px}
 
-/* ===== 헤더 (로고 말풍선) ===== */
-.topbar{display:flex;align-items:center;gap:13px;justify-content:center;margin-bottom:6px;flex-wrap:wrap;}
-.logo-bubble{width:62px;height:54px;flex-shrink:0;}
-.logo-bubble svg{width:100%;height:100%;display:block;}
-.brand-title{ text-align:center; }
-.brand-title h1{margin:0;font-size:23px;letter-spacing:-.3px;color:var(--ink);}
-.brand-title p{margin:4px 0 0;font-size:13px;color:var(--sub);font-weight:500;}
+/* top bar */
+.topbar{display:flex;align-items:center;gap:12px;padding:22px 0 6px}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--pri);display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:14px;letter-spacing:-.5px;flex:0 0 auto}
+.brand{display:flex;flex-direction:column;line-height:1.2}
+.brand b{font-size:15px;font-weight:800;letter-spacing:-.2px}
+.brand span{font-size:12px;color:var(--sub);font-weight:500}
+.topbar .date{margin-left:auto;font-size:12.5px;color:var(--sub);font-weight:600}
 
-/* ===== 히어로 ===== */
-.hero{display:flex;flex-direction:column;align-items:center;text-align:center;margin:6px 0 24px;}
-.hero-cat{width:196px;height:216px;filter:drop-shadow(0 18px 22px rgba(107,63,168,.22));animation:bob 3.2s ease-in-out infinite;}
-@keyframes bob{0%,100%{transform:translateY(0) rotate(-1.2deg);}50%{transform:translateY(-9px) rotate(1.2deg);}}
-.hero h2{margin:8px 0 4px;font-size:23px;color:var(--ink);}
-.hero .speech{
-display:inline-block;background:#fff;border:2px solid var(--line);
-border-radius:16px;padding:9px 16px;font-size:14px;color:var(--sub);font-weight:600;position:relative;
-box-shadow:0 4px 12px -6px rgba(107,63,168,.25);
+/* hero */
+.hero{margin:22px 0 10px}
+.hero-card{
+  display:flex;align-items:center;gap:26px;
+  background:linear-gradient(120deg,#5a2f9e 0%, #6B3FA8 55%, #7b4fc0 100%);
+  border-radius:22px;padding:34px 34px;color:#fff;position:relative;overflow:hidden;
+  box-shadow:0 18px 40px -18px rgba(74,38,133,.55);transition:transform .16s ease, box-shadow .16s ease;
 }
-.hero .speech:before{content:"";position:absolute;left:50%;top:-12px;transform:translateX(-50%);
-border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:11px solid var(--line);}
-.hero .speech:after{content:"";position:absolute;left:50%;top:-9px;transform:translateX(-50%);
-border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:9px solid #fff;}
+.hero-card:hover{transform:translateY(-3px);box-shadow:0 26px 54px -20px rgba(74,38,133,.6)}
+.hero-card::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.16), rgba(255,255,255,0) 70%)}
+.hero-ico{width:74px;height:74px;border-radius:20px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;font-size:38px;flex:0 0 auto;z-index:1}
+.hero-txt{z-index:1;flex:1;min-width:0}
+.hero-tag{display:inline-block;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.18);
+  padding:4px 11px;border-radius:20px;margin-bottom:9px;letter-spacing:.3px}
+.hero-txt h1{margin:0;font-size:27px;font-weight:800;letter-spacing:-.6px}
+.hero-txt p{margin:7px 0 0;font-size:14px;color:rgba(255,255,255,.86);font-weight:500;line-height:1.55}
+.hero-cta{z-index:1;flex:0 0 auto;background:#fff;color:var(--pri-d);font-weight:800;font-size:14.5px;
+  padding:13px 22px;border-radius:13px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;
+  box-shadow:0 6px 16px -6px rgba(0,0,0,.28)}
+.hero-card:hover .hero-cta{gap:11px}
 
-/* ===== 카드 ===== */
-.cards{display:grid;gap:18px;grid-template-columns:1fr;}
-@media(min-width:720px){.cards{grid-template-columns:1fr 1fr;}}
-.card{
-position:relative;background:var(--card);border:2px solid var(--line);border-radius:26px;
-padding:22px 22px;box-shadow:0 10px 28px -18px rgba(107,63,168,.4);
-display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;
-transition:transform .15s ease, box-shadow .18s ease, border-color .18s ease;
-}
-.card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -20px rgba(107,63,168,.5);border-color:#D8CCF2;}
-.card-cat{width:126px;height:146px;filter:drop-shadow(0 10px 14px rgba(107,63,168,.2));}
-.status{font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:999px;background:var(--green-l);color:var(--green);}
-.status.live{background:#FDECEA;color:#C0392B;}
-.card h3{margin:1px 0 0;font-size:19px;color:var(--ink);}
-.card .desc{margin:0;font-size:13px;color:var(--sub);line-height:1.65;font-weight:500;}
-.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:3px 0 2px;}
-.chip{font-size:11.5px;font-weight:700;color:var(--purple);background:var(--purple-l);padding:4px 10px;border-radius:999px;}
-.open-btn{
-margin-top:9px;width:100%;border:none;border-radius:16px;padding:14px 20px;
-background:linear-gradient(180deg,#7B4FC0,#6B3FA8);color:#fff;font-size:15.5px;
-cursor:pointer;text-decoration:none;display:block;
-box-shadow:0 8px 16px -8px rgba(107,63,168,.7);transition:filter .15s ease, transform .1s ease;
-}
-.open-btn:hover{filter:brightness(1.08);}
-.open-btn:active{transform:scale(.98);}
-.open-btn.brief{background:linear-gradient(180deg,#E86A5A,#C0392B);box-shadow:0 8px 16px -8px rgba(192,57,43,.7);}
+/* section */
+.sec-label{display:flex;align-items:center;gap:9px;margin:28px 2px 13px;font-size:13.5px;font-weight:800;color:var(--sub);letter-spacing:.2px}
+.sec-label::after{content:"";flex:1;height:1px;background:var(--line)}
 
-.note{
-margin-top:24px;background:#fff;border:2px solid var(--line);border-radius:18px;
-padding:14px 18px;font-size:12.5px;line-height:1.7;color:var(--sub);font-weight:600;
-display:flex;gap:10px;align-items:flex-start;
+/* shortcut grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:14px}
+.tile{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;
+  display:flex;flex-direction:column;gap:11px;box-shadow:var(--shadow);
+  transition:transform .14s ease, box-shadow .16s ease, border-color .16s ease;position:relative;
 }
-.note .paw{flex-shrink:0;font-size:16px;line-height:1.4;}
-.foot{text-align:center;margin-top:18px;font-size:12.5px;color:#B3A9C7;}
+.tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-h);border-color:#dcd2f0}
+.tile-top{display:flex;align-items:center;gap:11px}
+.tile-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 auto}
+.i-sales{background:#eaf3ff} .i-hand{background:#eefbf2} .i-brief{background:#fff0ed} .i-more{background:#f2ecfb}
+.tile-top .tt{font-size:15px;font-weight:800;letter-spacing:-.2px;line-height:1.25}
+.tile .desc{font-size:12.5px;color:var(--sub);font-weight:500;line-height:1.55;min-height:36px}
+.tile .go{font-size:12.5px;font-weight:700;color:var(--pri);display:inline-flex;align-items:center;gap:5px;margin-top:2px}
+.tile:hover .go{gap:8px}
+.status-dot{position:absolute;top:15px;right:15px;font-size:10.5px;font-weight:700;color:#16a34a;display:flex;align-items:center;gap:4px}
+.status-dot i{width:6px;height:6px;border-radius:50%;background:#16a34a;display:inline-block}
+.status-dot.live{color:#e0562f} .status-dot.live i{background:#e0562f}
+
+/* note + foot */
+.note{margin:26px 0 0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 17px;
+  font-size:12.5px;color:var(--sub);font-weight:500;line-height:1.6;display:flex;gap:10px;align-items:flex-start}
+.note b{color:var(--pri-d);font-weight:700}
+.foot{text-align:center;padding:26px 0 34px;font-size:12px;color:#aab0ba;font-weight:600}
+
+@media(max-width:620px){
+  .hero-card{flex-direction:column;align-items:flex-start;gap:18px;padding:26px 22px}
+  .hero-cta{align-self:stretch;justify-content:center}
+  .hero-txt h1{font-size:23px}
+}
 </style>
 </head>
 <body>
-<!-- ===== 커퐁이 SVG 심볼 ===== -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-<defs>
-<symbol id="kkupong" viewBox="0 0 240 280">
-<g stroke="#241a3a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
-<path d="M188 232 q46 6 44 -34 q-2 -22 -20 -20" fill="#9A83DA"/>
-<path d="M223 178 q14 0 12 20 q-1 10 -9 12 q-14 3 -14 -14 q0 -16 11 -18Z" fill="#F5EEC9"/>
-<path d="M120 150 q78 0 78 74 q0 46 -78 46 q-78 0 -78 -46 q0 -74 78 -74Z" fill="#9A83DA"/>
-<path d="M52 188 q-26 6 -26 34 q0 20 22 20 q20 0 22 -20Z" fill="#9A83DA"/>
-<ellipse cx="40" cy="232" rx="17" ry="16" fill="#F5EEC9"/>
-<path d="M188 188 q26 6 26 34 q0 20 -22 20 q-20 0 -22 -20Z" fill="#9A83DA"/>
-<ellipse cx="200" cy="232" rx="17" ry="16" fill="#F5EEC9"/>
-<ellipse cx="97" cy="268" rx="19" ry="15" fill="#F5EEC9"/>
-<ellipse cx="143" cy="268" rx="19" ry="15" fill="#F5EEC9"/>
-<path d="M92 176 L120 214 L148 176" fill="none" stroke="#4A2685"/>
-<rect x="103" y="206" width="34" height="44" rx="9" fill="#5E3A9E"/>
-<rect x="111" y="215" width="18" height="26" rx="4" fill="#F5EEC9" stroke-width="0"/>
-<path d="M64 100 Q50 26 80 16 Q102 26 108 94 Z" fill="#9A83DA"/>
-<path d="M74 84 Q64 34 82 26 Q96 34 100 82 Z" fill="#F5EEC9" stroke-width="0"/>
-<path d="M176 100 Q190 26 160 16 Q138 26 132 94 Z" fill="#9A83DA"/>
-<path d="M166 84 Q176 34 158 26 Q144 34 140 82 Z" fill="#F5EEC9" stroke-width="0"/>
-<ellipse cx="120" cy="118" rx="94" ry="82" fill="#9A83DA"/>
-<circle cx="60" cy="132" r="30" fill="#5E3A9E" stroke-width="0"/>
-<circle cx="180" cy="132" r="30" fill="#5E3A9E" stroke-width="0"/>
-<circle cx="101" cy="78" r="6.5" fill="#F5EEC9" stroke-width="0"/>
-<circle cx="139" cy="78" r="6.5" fill="#F5EEC9" stroke-width="0"/>
-<line x1="82" y1="46" x2="85" y2="82"/>
-<line x1="158" y1="46" x2="155" y2="82"/>
-<line x1="16" y1="120" x2="52" y2="126"/>
-<line x1="12" y1="138" x2="50" y2="140"/>
-<line x1="16" y1="156" x2="52" y2="152"/>
-<line x1="224" y1="120" x2="188" y2="126"/>
-<line x1="228" y1="138" x2="190" y2="140"/>
-<line x1="224" y1="156" x2="188" y2="152"/>
-<circle cx="107" cy="150" r="16" fill="#F5EEC9"/>
-<circle cx="133" cy="150" r="16" fill="#F5EEC9"/>
-<path d="M117 162 q3 7 6 0" fill="none" stroke-width="5"/>
-<circle cx="100" cy="128" r="11" fill="#241a3a" stroke-width="0"/>
-<circle cx="140" cy="128" r="11" fill="#241a3a" stroke-width="0"/>
-<circle cx="96" cy="124" r="3.6" fill="#fff" stroke-width="0"/>
-<circle cx="136" cy="124" r="3.6" fill="#fff" stroke-width="0"/>
-</g>
-</symbol>
-
-<symbol id="kkupong-happy" viewBox="0 0 240 280">
-<g stroke="#241a3a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
-<path d="M188 232 q46 6 44 -34 q-2 -22 -20 -20" fill="#9A83DA"/>
-<path d="M223 178 q14 0 12 20 q-1 10 -9 12 q-14 3 -14 -14 q0 -16 11 -18Z" fill="#F5EEC9"/>
-<path d="M120 150 q78 0 78 74 q0 46 -78 46 q-78 0 -78 -46 q0 -74 78 -74Z" fill="#9A83DA"/>
-<path d="M46 182 q-26 -2 -30 24 q-3 20 19 22 q20 2 24 -18Z" fill="#9A83DA"/>
-<ellipse cx="34" cy="228" rx="17" ry="16" fill="#F5EEC9"/>
-<path d="M194 182 q26 -2 30 24 q3 20 -19 22 q-20 2 -24 -18Z" fill="#9A83DA"/>
-<ellipse cx="206" cy="228" rx="17" ry="16" fill="#F5EEC9"/>
-<ellipse cx="97" cy="268" rx="19" ry="15" fill="#F5EEC9"/>
-<ellipse cx="143" cy="268" rx="19" ry="15" fill="#F5EEC9"/>
-<path d="M92 176 L120 214 L148 176" fill="none" stroke="#4A2685"/>
-<rect x="103" y="206" width="34" height="44" rx="9" fill="#5E3A9E"/>
-<rect x="111" y="215" width="18" height="26" rx="4" fill="#F5EEC9" stroke-width="0"/>
-<path d="M64 100 Q50 26 80 16 Q102 26 108 94 Z" fill="#9A83DA"/>
-<path d="M74 84 Q64 34 82 26 Q96 34 100 82 Z" fill="#F5EEC9" stroke-width="0"/>
-<path d="M176 100 Q190 26 160 16 Q138 26 132 94 Z" fill="#9A83DA"/>
-<path d="M166 84 Q176 34 158 26 Q144 34 140 82 Z" fill="#F5EEC9" stroke-width="0"/>
-<ellipse cx="120" cy="118" rx="94" ry="82" fill="#9A83DA"/>
-<circle cx="60" cy="132" r="30" fill="#5E3A9E" stroke-width="0"/>
-<circle cx="180" cy="132" r="30" fill="#5E3A9E" stroke-width="0"/>
-<circle cx="101" cy="78" r="6.5" fill="#F5EEC9" stroke-width="0"/>
-<circle cx="139" cy="78" r="6.5" fill="#F5EEC9" stroke-width="0"/>
-<line x1="82" y1="46" x2="85" y2="82"/>
-<line x1="158" y1="46" x2="155" y2="82"/>
-<line x1="16" y1="120" x2="52" y2="126"/>
-<line x1="12" y1="138" x2="50" y2="140"/>
-<line x1="16" y1="156" x2="52" y2="152"/>
-<line x1="224" y1="120" x2="188" y2="126"/>
-<line x1="228" y1="138" x2="190" y2="140"/>
-<line x1="224" y1="156" x2="188" y2="152"/>
-<circle cx="107" cy="150" r="16" fill="#F5EEC9"/>
-<circle cx="133" cy="150" r="16" fill="#F5EEC9"/>
-<path d="M86 128 q13 -15 25 0" fill="none" stroke-width="6"/>
-<path d="M129 128 q13 -15 25 0" fill="none" stroke-width="6"/>
-<path d="M112 159 q8 17 16 0 q-8 7 -16 0Z" fill="#3a2352" stroke-width="4"/>
-</g>
-</symbol>
-</defs>
-</svg>
-
 <div class="wrap">
-<div class="topbar">
-<div class="logo-bubble" aria-label="옆커폰 로고">
-<svg viewBox="0 0 120 104">
-<path d="M20 8 h64 a16 16 0 0 1 16 16 v30 a16 16 0 0 1 -16 16 h-30 l-16 14 v-14 h-2 a16 16 0 0 1 -16 -16 v-30 a16 16 0 0 1 16 -16Z"
-fill="#fff" stroke="#6B3FA8" stroke-width="7" stroke-linejoin="round"/>
-<text x="52" y="47" text-anchor="middle" font-family="Jua, sans-serif" font-size="25" fill="#6B3FA8">여ㅋㅍ</text>
-</svg>
-</div>
-<div class="brand-title">
-<h1 class="brand-font">대구지사_백지현 업무 통합 관리</h1>
-<p>커퐁이와 함께하는 옆커폰 업무 통합 홈</p>
-</div>
+
+  <div class="topbar">
+    <div class="logo">여ㅋㅍ</div>
+    <div class="brand">
+      <b>대구지사 · 업무 통합</b>
+      <span>옆커폰 백지현</span>
+    </div>
+    <div class="date" id="today"></div>
+  </div>
+
+  <!-- HERO: 매장분석 (메인) -->
+  <div class="hero">
+    <a class="hero-card" href="store-manager.html">
+      <div class="hero-ico">📊</div>
+      <div class="hero-txt">
+        <span class="hero-tag">MAIN · 핵심 시스템</span>
+        <h1>대구지사_매장분석</h1>
+        <p>매출·판매유형(무선·유선·유심·알뜰·렌탈)을 월별로 추적·분석해서<br>어느 매장이 무엇을 잘·못 파는지 파악하고 매출을 올리는 관리 시스템</p>
+      </div>
+      <span class="hero-cta">열기 →</span>
+    </a>
+  </div>
+
+  <!-- 바로가기 -->
+  <div class="sec-label">📌 업무 바로가기</div>
+  <div class="grid">
+
+    <a class="tile" href="https://yeopcheorpon-store.pages.dev/" target="_blank" rel="noopener">
+      <span class="status-dot"><i></i>연결됨</span>
+      <div class="tile-top">
+        <div class="tile-ico i-sales">💰</div>
+        <div class="tt">매출증대<br>분석자료</div>
+      </div>
+      <div class="desc">매장별 일일보고 입력 · 추이·순위·채널 분석</div>
+      <span class="go">바로가기 →</span>
+    </a>
+
+    <a class="tile" href="https://ahzzzzzz96.github.io/yeopcheorpon-handover/" target="_blank" rel="noopener">
+      <span class="status-dot"><i></i>연결됨</span>
+      <div class="tile-top">
+        <div class="tile-ico i-hand">📋</div>
+        <div class="tt">인수인계<br>체크리스트</div>
+      </div>
+      <div class="desc">점장 교체 시 교차 확인 · 서약서 · 히스토리</div>
+      <span class="go">바로가기 →</span>
+    </a>
+
+    <a class="tile" href="brief.html">
+      <span class="status-dot live"><i></i>매일 아침</span>
+      <div class="tile-top">
+        <div class="tile-ico i-brief">🔔</div>
+        <div class="tt">오늘<br>브리핑</div>
+      </div>
+      <div class="desc">미보고·시세표·프로모션·인수인계를 한눈에</div>
+      <span class="go">바로가기 →</span>
+    </a>
+
+  </div>
+
+  <div class="note">
+    <span>☁️</span>
+    <span>모든 시스템의 자료는 <b>클라우드에 저장</b>되어 어느 PC·기기에서든 함께 볼 수 있어요. 중요한 자료는 각 화면의 인쇄·CSV로 백업해 두면 더 안심돼요.</span>
+  </div>
+
+  <div class="foot">옆커폰 · 대구지사</div>
+
 </div>
 
-<div class="hero">
-<svg class="hero-cat"><use href="#kkupong-happy"/></svg>
-<h2 class="brand-font">무엇을 관리할까요?</h2>
-<div class="speech">아래 버튼을 누르면 각 시스템이 열려요!</div>
-</div>
-
-<div class="cards">
-<div class="card">
-<svg class="card-cat" viewBox="0 0 240 280"><use href="#kkupong"/></svg>
-<span class="status">● 연결됨</span>
-<h3 class="brand-font">매출증대 분석자료</h3>
-<p class="desc">매장별 일일보고를 입력하고, 관리자 모드에서 추이·순위·채널 분석을 확인해요.</p>
-<div class="chips"><span class="chip">매장 입력</span><span class="chip">관리자 분석</span><span class="chip">기간 통계·CSV</span></div>
-<a class="open-btn" href="https://yeopcheorpon-store.pages.dev/" target="_blank" rel="noopener">💰 매출 자료 열기</a>
-</div>
-
-<div class="card">
-<svg class="card-cat" viewBox="0 0 240 280"><use href="#kkupong"/></svg>
-<span class="status">● 연결됨</span>
-<h3 class="brand-font">매장 관리</h3>
-<p class="desc">매장·점장 특성과 문제→조치를 카드로 관리하고, 지사장 보고 요약을 한 장으로 봐요.</p>
-<div class="chips"><span class="chip">매장 카드</span><span class="chip">등급 관리</span><span class="chip">지사장 요약</span></div>
-<a class="open-btn" href="store-manager.html">🏪 매장 관리 열기</a>
-</div>
-
-<div class="card">
-<svg class="card-cat" viewBox="0 0 240 280"><use href="#kkupong"/></svg>
-<span class="status">● 연결됨</span>
-<h3 class="brand-font">인수인계 체크리스트</h3>
-<p class="desc">점장 교체 시 인계자·인수자가 함께 교차 확인하고, 서약서와 히스토리를 기록해요.</p>
-<div class="chips"><span class="chip">교차 체크</span><span class="chip">서약서</span><span class="chip">히스토리</span></div>
-<a class="open-btn" href="https://ahzzzzzz96.github.io/yeopcheorpon-handover/" target="_blank" rel="noopener">📋 인수인계 열기</a>
-</div>
-
-<div class="card">
-<svg class="card-cat" viewBox="0 0 240 280"><use href="#kkupong-happy"/></svg>
-<span class="status live">● 매일 아침</span>
-<h3 class="brand-font">오늘 브리핑</h3>
-<p class="desc">오늘 놓치면 안 되는 것(미보고·시세표·프로모션·고객 후속·인수인계)을 한눈에 정리해서 보여줘요.</p>
-<div class="chips"><span class="chip">놓친 항목</span><span class="chip">매장별 현황</span><span class="chip">매일 오전 10시</span></div>
-<a class="open-btn brief" href="brief.html">🔔 오늘 브리핑 열기</a>
-</div>
-</div>
-
-<div class="note">
-<span class="paw">☁️</span>
-<span>모든 시스템의 자료는 <b style="color:var(--purple)">클라우드에 저장</b>돼서 <b style="color:var(--purple)">어느 PC·기기에서든 함께</b> 볼 수 있어요. '오늘 브리핑'은 <b style="color:var(--purple)">매일 오전 10시</b>에 자동으로 정리돼요.</span>
-</div>
-
-<div class="foot brand-font">🐾 옆커폰 · 커퐁이</div>
-</div>
+<script>
+  (function(){
+    var d=new Date(), days=['일','월','화','수','목','금','토'];
+    var el=document.getElementById('today');
+    if(el) el.textContent=(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+days[d.getDay()]+')';
+  })();
+</script>
 </body>
 </html>
