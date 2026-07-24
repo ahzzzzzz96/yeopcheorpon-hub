@@ -217,6 +217,16 @@
   .scope{display:flex;gap:6px;margin-bottom:10px}
   .scope button{padding:5px 11px;border:1.5px solid var(--line);background:#fff;border-radius:20px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
   .scope button.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+  /* 매장별 판매유형 막대 */
+  .mxwrap{max-height:470px;overflow:auto;padding-right:4px}
+  .mxrow{display:flex;align-items:center;gap:10px;padding:3px 0;cursor:pointer}
+  .mxrow:hover .mxnm{color:var(--purple)}
+  .mxnm{width:154px;flex:0 0 auto;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mxnm small{color:var(--muted);font-weight:500;font-size:10px}
+  .mxbar{flex:1;display:flex;height:21px;border-radius:6px;overflow:hidden;background:#f2eef9}
+  .mxseg{height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;min-width:0;transition:filter .1s}
+  .mxseg:hover{filter:brightness(1.12)}
+  @media(max-width:560px){.mxnm{width:104px}}
   /* star (칭찬/채찍) */
   .stargrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media(max-width:640px){.stargrid{grid-template-columns:1fr}}
@@ -313,7 +323,7 @@
     <div class="rsec"><h3>📈 월별 매출 추이 <span class="muted" style="font-weight:500;font-size:12px">— 전체·직영·가맹</span></h3><div id="sales-trend"></div></div>
     <div class="rsec"><h3>🏆 칭찬할 매장 / 🔧 챙겨야 할 매장 <span class="muted" style="font-weight:500;font-size:12px">(전월 대비 급등·급락 · 채널 강점)</span></h3><div id="star-list"></div></div>
     <div class="rsec"><h3>📊 판매 유형(채널) 분석 <span class="muted" style="font-weight:500;font-size:12px">— 무선·유선·유심·알뜰·렌탈을 얼마나 파는지</span></h3><div id="chan-analysis"></div></div>
-    <div class="rsec"><h3>📊 판매유형 추이 <span class="muted" style="font-weight:500;font-size:12px">— 유선·유심·알뜰·렌탈 판매비율의 월별 변화</span></h3><div id="chan-trend"></div></div>
+    <div class="rsec"><h3>📊 매장별 판매유형 <span class="muted" style="font-weight:500;font-size:12px">— 어떤 상품을 잘 파는지 한눈에 (기준월 · 진할수록 강함)</span></h3><div id="chan-trend"></div></div>
     <div class="rsec"><h3>🔎 채널별 약점 매장 <span class="muted" style="font-weight:500;font-size:12px">(개통은 있는데 특정 상품 판매 비중이 현저히 낮은 곳)</span></h3><div id="weak-list"></div></div>
     <div class="rsec"><h3>🗺 지역별 매장 현황</h3><div id="region-dist"></div></div>
     <div class="rsec"><h3>🎖 등급 분포</h3><div id="grade-dist"></div></div>
@@ -840,14 +850,27 @@ function lineChartSVG(months, series, opts){
 }
 function legendHTML(series){ return '<div class="legend">'+series.map(s=>`<span><i class="${s.dot?'dot':''}" style="background:${s.color}"></i>${esc(s.name)}</span>`).join('')+'</div>'; }
 function renderChanTrend(){
-  const M=allMonths();
-  const pick= chanScope==='gu'? stores.filter(s=>s.gubun==='직영') : chanScope==='ga'? stores.filter(s=>s.gubun==='가맹') : stores;
-  const chans=[{k:'ws',l:'유선',c:'#2e9e6b'},{k:'us',l:'유심',c:'#e08a2b'},{k:'al',l:'알뜰',c:'#3b82c4'},{k:'rt',l:'렌탈',c:'#d64f6a'}];
-  const series=chans.map(c=>({name:c.l,color:c.c,dot:true,data:M.map(ym=>{let ch=0,act=0;pick.forEach(s=>{const p=pAt(s,ym);if(p&&isActiveAt(s,ym)){ch+=Number(p[c.k])||0;act+=Number(p.act)||0;}});return act?ch/act*100:null;})}));
   const el=document.getElementById('chan-trend'); if(!el)return;
-  el.innerHTML=`<div class="scope"><button data-sc="all" class="${chanScope==='all'?'active':''}">전체</button><button data-sc="gu" class="${chanScope==='gu'?'active':''}">직영</button><button data-sc="ga" class="${chanScope==='ga'?'active':''}">가맹</button></div>`
-    + lineChartSVG(M, series, {fmt:v=>v.toFixed(0)+'%'}) + legendHTML(series);
-  el.querySelectorAll('.scope button').forEach(b=>b.onclick=()=>{ chanScope=b.dataset.sc; renderChanTrend(); });
+  const ym=curMonth();
+  const chans=[{k:'ms',l:'무선',c:'#6d3ecb'},{k:'ws',l:'유선',c:'#2e9e6b'},{k:'us',l:'유심',c:'#e08a2b'},{k:'al',l:'알뜰',c:'#3b82c4'},{k:'rt',l:'렌탈',c:'#d64f6a'}];
+  const legend='<div class="legend" style="margin:2px 0 12px">'+chans.map(c=>`<span><i class="dot" style="background:${c.c}"></i>${c.l}</span>`).join('')+'</div>';
+  function bars(gubun){
+    const rows=stores.filter(s=>s.gubun===gubun && isActiveAt(s,ym))
+      .map(s=>{const p=pAt(s,ym); if(!p||!p.act)return null; return {s,sales:Number(p.sales)||0,act:p.act,p};})
+      .filter(Boolean).sort((a,b)=>b.sales-a.sales);
+    if(!rows.length) return '<div class="muted" style="font-size:12px;padding:6px 2px">이 달 실적 데이터가 없어요</div>';
+    return '<div class="mxwrap">'+rows.map(x=>{
+      const segs=chans.map(c=>({c,v:(Number(x.p[c.k])||0)/x.act*100,n:Number(x.p[c.k])||0})).filter(z=>z.v>0.4);
+      const bar=segs.map(z=>`<div class="mxseg" style="width:${z.v}%;background:${z.c.c}" title="${z.c.l} ${z.v.toFixed(0)}% · ${z.n}건">${z.v>=14?z.v.toFixed(0):''}</div>`).join('');
+      return `<div class="mxrow" data-id="${x.s.id}"><div class="mxnm">${esc(x.s.name)} <small>${x.sales.toLocaleString()}만·${x.act}건</small></div><div class="mxbar">${bar}</div></div>`;
+    }).join('')+'</div>';
+  }
+  const showGu=gubunView!=='가맹', showGa=gubunView!=='직영';
+  el.innerHTML=legend
+    +(showGu?'<div class="subhead">🏢 직영</div>'+bars('직영'):'')
+    +(showGa?'<div class="subhead" style="margin-top:14px">🤝 가맹</div>'+bars('가맹'):'')
+    +'<div class="muted" style="font-size:11px;margin-top:8px">막대 = 그 매장의 개통 100%를 채널 비율로 나눈 것 · 매출순 · 막대에 마우스 올리면 정확한 %·건수 · 매장명 클릭 시 상세</div>';
+  el.querySelectorAll('.mxrow').forEach(r=>r.onclick=()=>openModal(r.dataset.id));
 }
 function renderReport(){
   const ym=curMonth();
