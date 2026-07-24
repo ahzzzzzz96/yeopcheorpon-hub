@@ -191,5 +191,41 @@ function handoverHtml(handover){
 
 loadBrief();
 </script>
+<script>(function(){try{
+var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJjaXp6cWdtbG53aXdsYXh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NjI5NTIsImV4cCI6MjEwMDQzODk1Mn0.Ov_4bLIkkxgRb-UG_qSYl_XNM0BbNESOXJl1dFVLfAo', SB='https://skhbcizzqgmlnwiwlaxt.supabase.co/rest/v1/kv';
+var H={apikey:KEY, Authorization:'Bearer '+KEY};
+var card=document.createElement('section');
+card.id='store-brief';
+card.style.cssText='background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 18px;margin:14px 0;box-shadow:0 1px 2px rgba(20,20,40,.05)';
+card.innerHTML='<div style="font-weight:800;font-size:15px;margin-bottom:9px">🏬 매장분석 특이사항 <span id="sb-ym" style="font-weight:500;color:var(--muted);font-size:12px"></span></div><div id="sb-body" style="font-size:13px;line-height:1.75;color:var(--ink)">불러오는 중…</div><div style="margin-top:10px"><a href="store-manager.html" style="font-size:12px;font-weight:700;color:#6B3FA8;text-decoration:none">매장분석 자세히 보기 →</a></div>';
+function place(){var c=document.getElementById('content'); if(c&&c.parentNode){c.parentNode.insertBefore(card,c.nextSibling);} else {document.body.appendChild(card);}}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',place);} else {place();}
+function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
+function isActiveAt(s,m){if(!s.status||s.status==='영업중')return true; if(!s.statusDate)return false; return m<String(s.statusDate).slice(0,7);}
+function pAt(s,m){var pf=s.perf||[]; for(var i=0;i<pf.length;i++){if(pf[i].ym===m)return pf[i];} return null;}
+function gtag(s){return s.gubun==='직영'?'<span style="color:#6B3FA8">[직영]</span>':'<span style="color:#2e9e6b">[가맹]</span>';}
+function done(stores){
+var body=document.getElementById('sb-body'); if(!body)return;
+var mset={}; stores.forEach(function(s){(s.perf||[]).forEach(function(p){if(p.ym)mset[p.ym]=1;});});
+var months=Object.keys(mset).sort();
+if(!months.length){body.textContent='아직 매출 데이터가 없어요'; return;}
+var ym=months[months.length-1], prev=months.length>1?months[months.length-2]:null;
+var yl=document.getElementById('sb-ym'); if(yl)yl.textContent='· 기준월 '+ym;
+var active=stores.filter(function(s){return isActiveAt(s,ym);});
+var moves=[]; active.forEach(function(s){var c=pAt(s,ym), p=prev?pAt(s,prev):null; if(c&&p&&p.sales){moves.push({s:s,d:(c.sales-p.sales)/p.sales*100});}});
+var up=moves.filter(function(m){return m.d>=30;}).sort(function(a,b){return b.d-a.d;}).slice(0,4);
+var down=moves.filter(function(m){return m.d<=-25;}).sort(function(a,b){return a.d-b.d;}).slice(0,4);
+var issues=0; active.forEach(function(s){(s.issues||[]).forEach(function(i){if(i.status!=='완료')issues++;});});
+var closed=stores.filter(function(s){return s.status&&s.status!=='영업중';});
+var L=[];
+if(up.length){L.push('<div>📈 <b>급등</b> '+up.map(function(m){return gtag(m.s)+' '+esc(m.s.name)+' <span style="color:#2e9e6b;font-weight:700">+'+Math.round(m.d)+'%</span>';}).join(' · ')+'</div>');}
+if(down.length){L.push('<div>📉 <b>급락 주의</b> '+down.map(function(m){return gtag(m.s)+' '+esc(m.s.name)+' <span style="color:var(--red);font-weight:700">'+Math.round(m.d)+'%</span>';}).join(' · ')+'</div>');}
+if(issues){L.push('<div>⚠️ 미해결 이슈 <b>'+issues+'건</b></div>');}
+if(closed.length){L.push('<div>🚧 휴업·폐업 '+closed.map(function(s){return esc(s.name)+'('+esc(s.status)+')';}).join(', ')+'</div>');}
+if(!L.length){L.push('<div style="color:var(--muted)">특이사항 없음 — 큰 변동 없이 안정적으로 운영 중이에요 👍</div>');}
+body.innerHTML=L.join('');
+}
+fetch(SB+'?select=value&namespace=eq.storemgr&key=eq.data',{headers:H}).then(function(r){return r.json();}).then(function(rows){if(rows&&rows[0]&&rows[0].value){done(JSON.parse(rows[0].value));}else{var b=document.getElementById('sb-body'); if(b)b.textContent='매장 데이터가 비어 있어요';}}).catch(function(e){var b=document.getElementById('sb-body'); if(b)b.textContent='매장분석 자료를 불러오지 못했어요';});
+}catch(e){}})();</script>
 </body>
 </html>
