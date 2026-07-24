@@ -97,6 +97,10 @@
   .lrow .lsales small{color:var(--muted);font-weight:600}
   .lrow .lwarn{color:var(--warn);font-size:11px;font-weight:800;flex:0 0 auto}
   .lrow .lline{font-size:11px;color:var(--purple);background:var(--chip);padding:2px 7px;border-radius:20px;flex:0 0 auto}
+  .stbadge{font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:800;flex:0 0 auto}
+  .stbadge.hu{background:#fff3d6;color:#9a6a00} .stbadge.pe{background:#f0e2e5;color:#a04a58}
+  .lrow.closed,.scard.closed{opacity:.6}
+  .lrow.closed .lsales,.scard.closed .scard-foot{text-decoration:line-through;text-decoration-color:#c9bcd0}
   /* modal */
   .modal-bg{position:fixed;inset:0;background:#2b234099;display:none;z-index:50;padding:20px;overflow:auto}
   .modal-bg.open{display:block}
@@ -444,6 +448,8 @@ function allMonths(){ return [...new Set(stores.flatMap(s=>(s.perf||[]).map(p=>p
 function pAt(s,ym){ return (s.perf||[]).find(p=>p.ym===ym); }
 function prevMonth(ym){ const m=allMonths(); const i=m.indexOf(ym); return i>0?m[i-1]:null; }
 function curMonth(){ return selMonth || (allMonths().slice(-1)[0]) || null; }
+function isClosed(s){ return s.status==='잠정휴업'||s.status==='폐업'; }
+function isActiveAt(s,ym){ if(!s.status||s.status==='영업중')return true; if(!s.statusDate)return false; const sm=String(s.statusDate).slice(0,7); return !!ym && ym<sm; }
 function lastSales(s){
   const ym=curMonth();
   if(ym){ const p=pAt(s,ym); return p&&p.sales!=null? Number(p.sales):null; }
@@ -540,8 +546,9 @@ function renderStores(){
     const w=isWarned(s), ls=lastSales(s);
     const open=(s.issues||[]).filter(i=>i.status!=='완료').length;
     const mkt=(s.marketing||[]).filter(m=>m.status!=='완료').length;
-    return `<div class="scard ${w?'warned':''}" data-id="${s.id}">
-      ${w?'<div class="warnflag">⚠ 주의</div>':''}
+    return `<div class="scard ${w?'warned':''} ${isClosed(s)?'closed':''}" data-id="${s.id}">
+      ${w&&!isClosed(s)?'<div class="warnflag">⚠ 주의</div>':''}
+      ${isClosed(s)?`<div class="warnflag" style="background:${s.status==='폐업'?'#a04a58':'#9a6a00'}">${s.status}${s.statusDate?' '+esc(s.statusDate):''}</div>`:''}
       <div class="scard-h">
         <div><div class="nm">${esc(s.name||'(이름없음)')}</div>
         <div class="mgr">👤 ${esc(s.manager||'-')}</div></div>
@@ -579,13 +586,14 @@ function renderList(list){
     const rows=arr.map(s=>{
       const w=isWarned(s), ls=lastSales(s);
       const gcls=s.grade?('g-'+s.grade):'g-none';
-      return `<div class="lrow ${w?'warned':''}" data-id="${s.id}">
+      return `<div class="lrow ${w&&!isClosed(s)?'warned':''} ${isClosed(s)?'closed':''}" data-id="${s.id}">
         <span class="lg-grade ${gcls}">${s.grade||'?'}</span>
         <span class="lnm">${esc(s.name)}</span>
+        ${isClosed(s)?`<span class="stbadge ${s.status==='폐업'?'pe':'hu'}">${s.status}${s.statusDate?' '+esc(s.statusDate):''}</span>`:''}
         ${s.line?`<span class="lline">${esc(s.line)}</span>`:''}
         <span class="lgu ${s.gubun==='직영'?'bdg gu':'bdg ga'}" style="background:${s.gubun==='직영'?'#e7f0ff':'#fff0e6'};color:${s.gubun==='직영'?'#2657b8':'#b5541a'}">${esc(s.gubun||'')}</span>
         <span class="lmgr">${esc(s.manager||'-')}</span>
-        ${w?'<span class="lwarn">⚠</span>':''}
+        ${w&&!isClosed(s)?'<span class="lwarn">⚠</span>':''}
         <span class="lsales">${ls!=null?ls+'<small>만</small>':'<small>-</small>'}</span>
       </div>`;
     }).join('');
@@ -606,7 +614,8 @@ const OPT={
   mgrStyle:['','적극적','보통','수동적'],
   coop:['','상','중','하'],
   grade:['','A','B','C'],
-  priority:['','높음','보통','낮음']
+  priority:['','높음','보통','낮음'],
+  status:['영업중','잠정휴업','폐업']
 };
 function opts(arr,val){return arr.map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('')}
 
@@ -623,6 +632,8 @@ function openModal(id){
       <div class="field"><label>라인 / 상권</label><input data-f="line" value="${esc(s.line)}" placeholder="예: 수성라인"></div>
       <div class="field"><label>점장 이름</label><input data-f="manager" value="${esc(s.manager)}"></div>
       <div class="field"><label>오픈일</label><input data-f="openDate" value="${esc(s.openDate)}" placeholder="2024-05"></div>
+      <div class="field"><label>영업 상태</label><select data-f="status">${opts(OPT.status,s.status||'영업중')}</select></div>
+      <div class="field"><label>휴업/폐업일 <span style="color:var(--muted);font-weight:400">(이 달부터 분석 제외)</span></label><input data-f="statusDate" value="${esc(s.statusDate)}" placeholder="2026-05"></div>
     </div></div>
 
     <div class="sec"><div class="sec-t">매장 특성</div><div class="fgrid">
@@ -816,7 +827,7 @@ function renderChanTrend(){
   const M=allMonths();
   const pick= chanScope==='gu'? stores.filter(s=>s.gubun==='직영') : chanScope==='ga'? stores.filter(s=>s.gubun==='가맹') : stores;
   const chans=[{k:'ws',l:'유선',c:'#2e9e6b'},{k:'us',l:'유심',c:'#e08a2b'},{k:'al',l:'알뜰',c:'#3b82c4'},{k:'rt',l:'렌탈',c:'#d64f6a'}];
-  const series=chans.map(c=>({name:c.l,color:c.c,dot:true,data:M.map(ym=>{let ch=0,act=0;pick.forEach(s=>{const p=pAt(s,ym);if(p){ch+=Number(p[c.k])||0;act+=Number(p.act)||0;}});return act?ch/act*100:null;})}));
+  const series=chans.map(c=>({name:c.l,color:c.c,dot:true,data:M.map(ym=>{let ch=0,act=0;pick.forEach(s=>{const p=pAt(s,ym);if(p&&isActiveAt(s,ym)){ch+=Number(p[c.k])||0;act+=Number(p.act)||0;}});return act?ch/act*100:null;})}));
   const el=document.getElementById('chan-trend'); if(!el)return;
   el.innerHTML=`<div class="scope"><button data-sc="all" class="${chanScope==='all'?'active':''}">전체</button><button data-sc="gu" class="${chanScope==='gu'?'active':''}">직영</button><button data-sc="ga" class="${chanScope==='ga'?'active':''}">가맹</button></div>`
     + lineChartSVG(M, series, {fmt:v=>v.toFixed(0)+'%'}) + legendHTML(series);
@@ -825,19 +836,21 @@ function renderChanTrend(){
 function renderReport(){
   const ym=curMonth();
   const pm=ym?prevMonth(ym):null;
-  document.getElementById('report-date').textContent = ym? ('기준월 '+ym) : '실적 데이터 없음';
-  const n=stores.length;
-  const guArr=stores.filter(s=>s.gubun==='직영'), gaArr=stores.filter(s=>s.gubun==='가맹');
-  const VS=viewStores(); const showGu=gubunView!=='가맹', showGa=gubunView!=='직영';
+  const AS=stores.filter(s=>isActiveAt(s,ym));
+  const excluded=stores.length-AS.length;
+  document.getElementById('report-date').textContent = (ym? ('기준월 '+ym) : '실적 데이터 없음') + (excluded>0?(' · 휴업/폐업 '+excluded+'곳 분석 제외'):'');
+  const n=AS.length;
+  const guArr=AS.filter(s=>s.gubun==='직영'), gaArr=AS.filter(s=>s.gubun==='가맹');
+  const VS=viewStores().filter(s=>isActiveAt(s,ym)); const showGu=gubunView!=='가맹', showGa=gubunView!=='직영';
   if(gubunView!=='all') chanScope = gubunView==='직영'?'gu':'ga';
-  const warned=stores.filter(isWarned);
-  const openIss=stores.reduce((a,s)=>a+(s.issues||[]).filter(i=>i.status!=='완료').length,0);
+  const warned=AS.filter(isWarned);
+  const openIss=AS.reduce((a,s)=>a+(s.issues||[]).filter(i=>i.status!=='완료').length,0);
   function agg(arr){ let sales=0,act=0,rep=0; const ch={ms:0,ws:0,us:0,al:0,rt:0};
     arr.forEach(s=>{ const p=ym?pAt(s,ym):null; if(p){ rep++; sales+=Number(p.sales)||0; act+=Number(p.act)||0; CHAN.forEach(c=>ch[c.k]+=Number(p[c.k])||0);} });
     return {sales,act,rep,ch}; }
-  const A=agg(stores), G=agg(guArr), Ga=agg(gaArr);
+  const A=agg(AS), G=agg(guArr), Ga=agg(gaArr);
   document.getElementById('stat-row').innerHTML=`
-    <div class="stat"><div class="n">${n}</div><div class="l">총 매장</div></div>
+    <div class="stat"><div class="n">${n}</div><div class="l">${excluded>0?'영업 매장':'총 매장'}</div></div>
     <div class="stat"><div class="n">${guArr.length}·${gaArr.length}</div><div class="l">직영 · 가맹</div></div>
     <div class="stat"><div class="n">${A.sales.toLocaleString()}<span style="font-size:14px">만</span></div><div class="l">${ym||''} 매출 합</div></div>
     <div class="stat"><div class="n">${A.act.toLocaleString()}</div><div class="l">총 개통</div></div>
@@ -857,11 +870,12 @@ function renderReport(){
 
   // 월별 매출 추이
   const M=allMonths();
-  const sser=arr=>M.map(ymm=>arr.reduce((t,s)=>{const p=pAt(s,ymm);return t+(p?Number(p.sales)||0:0)},0));
+  const sser=arr=>M.map(ymm=>arr.filter(s=>isActiveAt(s,ymm)).reduce((t,s)=>{const p=pAt(s,ymm);return t+(p?Number(p.sales)||0:0)},0));
+  const allGuT=stores.filter(s=>s.gubun==='직영'), allGaT=stores.filter(s=>s.gubun==='가맹');
   const salesSeries=[];
   if(gubunView==='all') salesSeries.push({name:'전체',color:'#4c2a8f',dot:true,data:sser(stores)});
-  if(showGu) salesSeries.push({name:'직영',color:'#3b82c4',dot:true,data:sser(guArr)});
-  if(showGa) salesSeries.push({name:'가맹',color:'#e08a2b',dot:true,data:sser(gaArr)});
+  if(showGu) salesSeries.push({name:'직영',color:'#3b82c4',dot:true,data:sser(allGuT)});
+  if(showGa) salesSeries.push({name:'가맹',color:'#e08a2b',dot:true,data:sser(allGaT)});
   document.getElementById('sales-trend').innerHTML = lineChartSVG(M, salesSeries, {fmt:v=>v>=10000?(v/10000).toFixed(1)+'억':Math.round(v)+'만'}) + legendHTML(salesSeries) + '<div class="muted" style="font-size:11px;margin-top:4px">단위: 세로축 매출(만원/억원)</div>';
 
   // 칭찬/채찍 매장
@@ -960,7 +974,7 @@ function renderRank(){
   document.getElementById('rank-metrics').innerHTML=RANK_METRICS.map(m=>`<button data-k="${m.k}" class="${m.k===rankMetric?'active':''}">${m.l}${m.ch?' 순위':''}</button>`).join('');
   document.querySelectorAll('#rank-metrics button').forEach(b=>b.onclick=()=>{ rankMetric=b.dataset.k; renderRank(); });
   const met=RANK_METRICS.find(m=>m.k===rankMetric)||RANK_METRICS[0];
-  const arr=viewStores().map(s=>{ const p=ym?pAt(s,ym):null; return {s,v:p?(Number(p[rankMetric])||0):0}; }).filter(x=>x.v>0);
+  const arr=viewStores().filter(s=>isActiveAt(s,ym)).map(s=>{ const p=ym?pAt(s,ym):null; return {s,v:p?(Number(p[rankMetric])||0):0}; }).filter(x=>x.v>0);
   arr.sort((a,b)=>b.v-a.v);
   const max=arr.length?arr[0].v:1;
   const unit=rankMetric==='sales'?'만':'건';
