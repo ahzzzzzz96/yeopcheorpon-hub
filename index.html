@@ -61,6 +61,7 @@ transition:transform .15s ease, box-shadow .18s ease, border-color .18s ease;
 .card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -20px rgba(107,63,168,.5);border-color:#D8CCF2;}
 .card-cat{width:126px;height:146px;filter:drop-shadow(0 10px 14px rgba(107,63,168,.2));}
 .status{font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:999px;background:var(--green-l);color:var(--green);}
+.status.live{background:#FDECEA;color:#C0392B;}
 .card h3{margin:1px 0 0;font-size:19px;color:var(--ink);}
 .card .desc{margin:0;font-size:13px;color:var(--sub);line-height:1.65;font-weight:500;}
 .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:3px 0 2px;}
@@ -73,6 +74,7 @@ box-shadow:0 8px 16px -8px rgba(107,63,168,.7);transition:filter .15s ease, tran
 }
 .open-btn:hover{filter:brightness(1.08);}
 .open-btn:active{transform:scale(.98);}
+.open-btn.brief{background:linear-gradient(180deg,#E86A5A,#C0392B);box-shadow:0 8px 16px -8px rgba(192,57,43,.7);}
 
 .note{
 margin-top:24px;background:#fff;border:2px solid var(--line);border-radius:18px;
@@ -187,7 +189,7 @@ fill="#fff" stroke="#6B3FA8" stroke-width="7" stroke-linejoin="round"/>
 <div class="hero">
 <svg class="hero-cat"><use href="#kkupong-happy"/></svg>
 <h2 class="brand-font">무엇을 관리할까요?</h2>
-<div class="speech">아래 버튼을 누르면 각 시스템이 새 탭으로 열려요!</div>
+<div class="speech">아래 버튼을 누르면 각 시스템이 열려요!</div>
 </div>
 
 <div class="cards">
@@ -208,11 +210,20 @@ fill="#fff" stroke="#6B3FA8" stroke-width="7" stroke-linejoin="round"/>
 <div class="chips"><span class="chip">교차 체크</span><span class="chip">서약서</span><span class="chip">히스토리</span></div>
 <a class="open-btn" href="https://ahzzzzzz96.github.io/yeopcheorpon-handover/" target="_blank" rel="noopener">📋 인수인계 열기</a>
 </div>
+
+<div class="card">
+<svg class="card-cat" viewBox="0 0 240 280"><use href="#kkupong-happy"/></svg>
+<span class="status live">● 매일 아침</span>
+<h3 class="brand-font">오늘 브리핑</h3>
+<p class="desc">오늘 놓치면 안 되는 것(미보고·시세표·프로모션·고객 후속·인수인계)을 한눈에 정리해서 보여줘요.</p>
+<div class="chips"><span class="chip">놓친 항목</span><span class="chip">매장별 현황</span><span class="chip">매일 오전 10시</span></div>
+<a class="open-btn brief" href="brief.html">🔔 오늘 브리핑 열기</a>
+</div>
 </div>
 
 <div class="note">
 <span class="paw">☁️</span>
-<span>두 시스템의 자료는 <b style="color:var(--purple)">클라우드에 저장</b>돼서 <b style="color:var(--purple)">어느 PC·기기에서든 함께</b> 볼 수 있어요. 중요한 자료는 각 화면의 인쇄/CSV 기능으로 한 번씩 백업해 두면 더 안심이에요.</span>
+<span>두 시스템의 자료는 <b style="color:var(--purple)">클라우드에 저장</b>돼서 <b style="color:var(--purple)">어느 PC·기기에서든 함께</b> 볼 수 있어요. '오늘 브리핑'은 <b style="color:var(--purple)">매일 오전 10시</b>에 자동으로 정리돼요.</span>
 </div>
 
 <div class="foot brand-font">🐾 옆커폰 · 커퐁이</div>
