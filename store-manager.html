@@ -175,6 +175,9 @@
   .crow .cfill{height:100%;border-radius:7px;min-width:2px;display:flex;align-items:center;justify-content:flex-end;padding-right:7px;color:#fff;font-size:10.5px;font-weight:800}
   .crow .cv{width:104px;text-align:right;flex:0 0 auto;color:var(--muted);font-weight:600}
   .crow .cv b{color:var(--ink)}
+  .subhead{font-weight:800;font-size:12.5px;color:var(--purple-d);margin:12px 0 6px;padding-bottom:4px;border-bottom:2px solid var(--lav2);list-style:none}
+  .subhead:first-child{margin-top:0}
+  .subhead span{color:var(--muted);font-weight:600;font-size:11.5px}
   .weakrow{padding:8px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
   .weakrow:last-child{border-bottom:none}
   .weakrow .wc{font-weight:800;color:var(--warn)}
@@ -752,9 +755,12 @@ function renderReport(){
     });
     weak.sort((a,b)=>b.lacks.length-a.lacks.length || b.p.act-a.p.act);
   }
-  document.getElementById('weak-list').innerHTML = weak.length? weak.slice(0,20).map(({s,p,lacks})=>
-    `<div class="weakrow"><span class="wn">${esc(s.name)}</span> <span class="muted">(${esc(s.gubun)}·개통 ${p.act})</span> — <span class="wc">약함:</span> ${lacks.map(l=>`<span class="weaktag">${l}</span>`).join('')}</div>`).join('')
-    : '<div class="muted" style="font-size:12.5px">'+(ym?'특정 채널이 그룹 평균 대비 크게 뒤처지는 매장이 없어요 👍':'실적 데이터가 있어야 분석돼요')+'</div>';
+  const weakRow=({s,p,lacks})=>`<div class="weakrow"><span class="wn">${esc(s.name)}</span> <span class="muted">(개통 ${p.act})</span> — <span class="wc">약함:</span> ${lacks.map(l=>`<span class="weaktag">${l}</span>`).join('')}</div>`;
+  const wGu=weak.filter(w=>w.s.gubun==='직영'), wGa=weak.filter(w=>w.s.gubun==='가맹');
+  document.getElementById('weak-list').innerHTML = weak.length? (
+      '<div class="subhead">🏢 직영 <span>'+wGu.length+'곳</span></div>'+(wGu.length?wGu.slice(0,15).map(weakRow).join(''):'<div class="muted" style="font-size:12px">없음 👍</div>')
+    + '<div class="subhead">🤝 가맹 <span>'+wGa.length+'곳</span></div>'+(wGa.length?wGa.slice(0,15).map(weakRow).join(''):'<div class="muted" style="font-size:12px">없음 👍</div>')
+    ) : '<div class="muted" style="font-size:12.5px">'+(ym?'특정 채널이 그룹 평균 대비 크게 뒤처지는 매장이 없어요 👍':'실적 데이터가 있어야 분석돼요')+'</div>';
 
   // region dist
   const byReg={};
@@ -772,9 +778,12 @@ function renderReport(){
     `<div class="distrow"><span class="lab">${g}등급</span><div class="bar-track"><div class="bar-fill" style="width:${c/maxG*100}%;background:${gcol[g]}">${c}</div></div></div>`).join('');
 
   // warn list
-  document.getElementById('warn-list').innerHTML = warned.length? warned.map(s=>
-    `<li><span class="nm2">${esc(s.name)}</span> <span class="why">${warnReasons(s).join(' · ')}</span><span class="tag">${esc(s.region||'')} ${esc(s.manager||'')}</span></li>`).join('')
-    : '<li class="muted">주의 매장 없음 👍</li>';
+  const warnRow=s=>`<li><span class="nm2">${esc(s.name)}</span> <span class="why">${warnReasons(s).join(' · ')}</span><span class="tag">${esc(s.region||'')} ${esc(s.manager||'')}</span></li>`;
+  const warnGu=warned.filter(s=>s.gubun==='직영'), warnGa=warned.filter(s=>s.gubun==='가맹');
+  document.getElementById('warn-list').innerHTML = warned.length? (
+      '<li class="subhead">🏢 직영 <span>'+warnGu.length+'곳</span></li>'+(warnGu.length?warnGu.map(warnRow).join(''):'<li class="muted">없음 👍</li>')
+    + '<li class="subhead">🤝 가맹 <span>'+warnGa.length+'곳</span></li>'+(warnGa.length?warnGa.map(warnRow).join(''):'<li class="muted">없음 👍</li>')
+    ) : '<li class="muted">주의 매장 없음 👍</li>';
 
   // marketing list
   const mkts=[];stores.forEach(s=>(s.marketing||[]).filter(m=>m.status!=='완료').forEach(m=>mkts.push({s,m})));
