@@ -72,6 +72,31 @@
        padding:3px 9px;border-bottom-left-radius:10px}
   .empty{text-align:center;padding:50px 20px;color:var(--muted);background:#fff;border:1.5px dashed var(--line);border-radius:var(--radius)}
   .empty b{color:var(--purple)}
+  /* view toggle */
+  .viewtog{display:flex;gap:0;border:1.5px solid var(--line);border-radius:9px;overflow:hidden}
+  .vt{border:none;background:#fff;padding:8px 12px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
+  .vt.active{background:var(--purple);color:#fff}
+  /* compact list */
+  .lgroup{background:#fff;border:1.5px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden}
+  .lghead{display:flex;align-items:center;gap:10px;padding:11px 15px;cursor:pointer;user-select:none;background:linear-gradient(90deg,#f7f4fc,#fff)}
+  .lghead:hover{background:#f2ecfb}
+  .lghead .arw{font-size:11px;color:var(--purple);transition:transform .15s;width:12px}
+  .lgroup.collapsed .arw{transform:rotate(-90deg)}
+  .lghead .rn{font-weight:800;font-size:14px}
+  .lghead .rc{font-size:12px;color:var(--muted);font-weight:600}
+  .lghead .rsum{margin-left:auto;font-size:12.5px;color:var(--purple-d);font-weight:800}
+  .lgroup.collapsed .lbody{display:none}
+  .lrow{display:flex;align-items:center;gap:10px;padding:9px 15px;border-top:1px solid var(--line);cursor:pointer;font-size:13px}
+  .lrow:hover{background:#faf8fe}
+  .lrow.warned{background:#fff8f9}
+  .lrow .lg-grade{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:11.5px;flex:0 0 auto}
+  .lrow .lnm{font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 0 auto;max-width:150px}
+  .lrow .lmgr{color:var(--muted);font-size:12px;flex:0 0 auto}
+  .lrow .lgu{font-size:10.5px;padding:2px 7px;border-radius:20px;font-weight:700;flex:0 0 auto}
+  .lrow .lsales{margin-left:auto;font-weight:800;color:var(--ink);flex:0 0 auto}
+  .lrow .lsales small{color:var(--muted);font-weight:600}
+  .lrow .lwarn{color:var(--warn);font-size:11px;font-weight:800;flex:0 0 auto}
+  .lrow .lline{font-size:11px;color:var(--purple);background:var(--chip);padding:2px 7px;border-radius:20px;flex:0 0 auto}
   /* modal */
   .modal-bg{position:fixed;inset:0;background:#2b234099;display:none;z-index:50;padding:20px;overflow:auto}
   .modal-bg.open{display:block}
@@ -170,10 +195,12 @@
       <select id="f-grade"><option value="">등급 전체</option><option>A</option><option>B</option><option>C</option><option value="none">미평가</option></select>
       <input type="text" id="f-search" placeholder="매장명·점장 검색">
       <label class="chk"><input type="checkbox" id="f-warn"> ⚠ 주의매장만</label>
+      <div class="viewtog"><button class="vt active" data-view="list">☰ 목록</button><button class="vt" data-view="card">▤ 카드</button></div>
       <div class="spacer"></div>
       <button class="btn" id="add-store">+ 매장 추가</button>
     </div>
-    <div id="store-grid" class="grid"></div>
+    <div id="store-list"></div>
+    <div id="store-grid" class="grid" style="display:none"></div>
     <div id="store-empty" class="empty" style="display:none">
       아직 매장이 없어요. <b>+ 매장 추가</b>로 하나씩 넣거나, <b>데이터·사용법</b> 탭에서 구글시트 CSV를 불러오세요.
     </div>
@@ -213,8 +240,17 @@
       기존 매출·인수인계 시스템처럼 클라우드 연결이 필요해요 — 원하시면 그 부분까지 이어서 붙여드릴게요.
       중요한 자료는 <b>내보내기</b>로 가끔 백업해 두세요.</div>
 
+      <h3>📈 매달 매출 불러오기</h3>
+      본사 <b>'전국 월별 매출' CSV</b>를 그대로 올리면, 지점명 기준으로 각 매장에 <b>월별 실적(매출·개통)</b>이 자동으로 들어가요.
+      매장 카드의 실적 추이가 채워지고, 매출이 떨어진 매장은 자동으로 <b>⚠주의</b>로 표시돼요. 매달 새 파일만 올리면 됩니다.
+      <div class="datebtns" style="margin-bottom:10px">
+        <button class="btn" id="imp-sales">📈 매출 CSV 불러오기</button>
+      </div>
+      <input type="file" id="file-sales" accept=".csv" style="display:none">
+
+      <h3>매장 목록 · 백업</h3>
       <div class="datebtns">
-        <button class="btn ghost" id="imp-csv">📥 CSV 불러오기</button>
+        <button class="btn ghost" id="imp-csv">📥 매장목록 CSV 불러오기</button>
         <button class="btn ghost" id="exp-csv">📤 CSV 내보내기</button>
         <button class="btn ghost" id="exp-json">💾 전체 백업(JSON)</button>
         <button class="btn ghost" id="imp-json">↩ 백업 복원(JSON)</button>
@@ -333,6 +369,12 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
 /* ============ FILTERS ============ */
 ['f-gubun','f-region','f-grade','f-warn'].forEach(id=>document.getElementById(id).addEventListener('change',renderStores));
 document.getElementById('f-search').addEventListener('input',renderStores);
+let viewMode='list';
+const collapsed={};
+document.querySelectorAll('.vt').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.vt').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); viewMode=b.dataset.view; renderStores();
+});
 function fillRegionFilter(){
   const sel=document.getElementById('f-region');
   const set=[...new Set(stores.map(s=>s.region).filter(Boolean))];
@@ -385,6 +427,42 @@ function renderStores(){
     </div>`;
   }).join('');
   grid.querySelectorAll('.scard').forEach(c=>c.onclick=()=>openModal(c.dataset.id));
+  renderList(list);
+  document.getElementById('store-grid').style.display = viewMode==='card'?'grid':'none';
+  document.getElementById('store-list').style.display = viewMode==='card'?'none':'block';
+}
+function renderList(list){
+  const el=document.getElementById('store-list');
+  // group by region
+  const groups={};
+  list.forEach(s=>{ const r=s.region||'미지정'; (groups[r]=groups[r]||[]).push(s); });
+  const order=[...REGIONS,'미지정'].filter(r=>groups[r]);
+  Object.keys(groups).forEach(r=>{ if(!order.includes(r)) order.push(r); });
+  el.innerHTML=order.map(r=>{
+    const arr=groups[r];
+    arr.sort((a,b)=> (isWarned(b)-isWarned(a)) || ((a.line||'').localeCompare(b.line||'','ko')) || (a.name||'').localeCompare(b.name||'','ko'));
+    const sum=arr.reduce((t,s)=>t+(lastSales(s)||0),0);
+    const isC=collapsed[r];
+    const rows=arr.map(s=>{
+      const w=isWarned(s), ls=lastSales(s);
+      const gcls=s.grade?('g-'+s.grade):'g-none';
+      return `<div class="lrow ${w?'warned':''}" data-id="${s.id}">
+        <span class="lg-grade ${gcls}">${s.grade||'?'}</span>
+        <span class="lnm">${esc(s.name)}</span>
+        ${s.line?`<span class="lline">${esc(s.line)}</span>`:''}
+        <span class="lgu ${s.gubun==='직영'?'bdg gu':'bdg ga'}" style="background:${s.gubun==='직영'?'#e7f0ff':'#fff0e6'};color:${s.gubun==='직영'?'#2657b8':'#b5541a'}">${esc(s.gubun||'')}</span>
+        <span class="lmgr">${esc(s.manager||'-')}</span>
+        ${w?'<span class="lwarn">⚠</span>':''}
+        <span class="lsales">${ls!=null?ls+'<small>만</small>':'<small>-</small>'}</span>
+      </div>`;
+    }).join('');
+    return `<div class="lgroup ${isC?'collapsed':''}" data-region="${esc(r)}">
+      <div class="lghead"><span class="arw">▼</span><span class="rn">${esc(r)}</span><span class="rc">${arr.length}개</span><span class="rsum">${sum.toLocaleString()}만</span></div>
+      <div class="lbody">${rows}</div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.lghead').forEach(h=>h.onclick=()=>{ const r=h.parentElement.dataset.region; collapsed[r]=!collapsed[r]; h.parentElement.classList.toggle('collapsed'); });
+  el.querySelectorAll('.lrow').forEach(row=>row.onclick=()=>openModal(row.dataset.id));
 }
 
 /* ============ MODAL / EDIT ============ */
@@ -641,6 +719,47 @@ function importCSV(text){
   save(); refresh();
   alert(added+'개 매장을 불러왔어요. (매장명·지역·라인·점장·오픈일만 반영, 민감정보는 제외)');
 }
+
+/* ---- 매출 CSV 불러오기 (전국 월별 매출 형식) ---- */
+function nrm(s){return String(s||'').replace(/\s+/g,'').trim();}
+function matchStore(idx,raw){
+  const f=nrm(raw), b=f.replace(/점$/,'');
+  let h=idx.filter(x=>x.f===f); if(h.length===1)return h[0].s;
+  h=idx.filter(x=>x.b===b); if(h.length===1)return h[0].s;
+  if(b.length>=2){
+    h=idx.filter(x=>x.b.endsWith(b)||b.endsWith(x.b)); if(h.length===1)return h[0].s;
+    h=idx.filter(x=>x.b.includes(b)||b.includes(x.b)); if(h.length===1)return h[0].s;
+  }
+  return null;
+}
+function importSales(text){
+  const rows=parseCSV(text);
+  let hi=rows.findIndex(r=>r.some(c=>/지점명/.test(c))); if(hi<0)hi=0;
+  const head=rows[hi].map(h=>h.trim());
+  const fc=(...k)=>head.findIndex(h=>k.some(x=>h.replace(/\s/g,'').includes(x)));
+  const ci={name:fc('지점명','매장명'),act:fc('총개통'),rev:fc('총매출','세후'),y:fc('년도','년'),m:head.findIndex(h=>h.trim()==='월')};
+  if(ci.name<0||ci.rev<0){alert('CSV에서 지점명/총매출 열을 찾지 못했어요.');return;}
+  const num=v=>Number(String(v||'').replace(/[^0-9.-]/g,''))||0;
+  const idx=stores.map(s=>{const f=nrm(s.name);return{s,f,b:f.replace(/점$/,'')};});
+  let matched=0; const unmatched=[]; const months=new Set();
+  for(let i=hi+1;i<rows.length;i++){
+    const r=rows[i]; const raw=(r[ci.name]||'').trim(); if(!raw||/지점명/.test(raw))continue;
+    const y=num(r[ci.y]), mo=num(ci.m>=0?r[ci.m]:0);
+    if(!y||!mo)continue;
+    const ym=`${y}-${String(mo).padStart(2,'0')}`;
+    const st=matchStore(idx,raw);
+    if(!st){unmatched.push(raw);continue;}
+    st.perf=(st.perf||[]).filter(p=>p.ym!==ym);
+    st.perf.push({ym,sales:Math.round(num(r[ci.rev])/10000),act:num(ci.act>=0?r[ci.act]:0)});
+    st.perf.sort((a,b)=>a.ym.localeCompare(b.ym));
+    matched++; months.add(ym);
+  }
+  save(); refresh();
+  alert('매출 '+matched+'건 반영 완료 ('+[...months].sort().join(', ')+').'+(unmatched.length?'\n\n매칭 실패 '+unmatched.length+'곳: '+unmatched.join(', ')+'\n→ 매장명을 확인하거나 직접 입력하세요.':''));
+}
+document.getElementById('imp-sales').onclick=()=>document.getElementById('file-sales').click();
+document.getElementById('file-sales').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>importSales(rd.result);rd.readAsText(f,'utf-8');e.target.value='';};
+
 let guessGubunFromFile='';
 document.getElementById('imp-csv').onclick=()=>document.getElementById('file-csv').click();
 document.getElementById('file-csv').onchange=e=>{
