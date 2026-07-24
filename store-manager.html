@@ -183,6 +183,30 @@
   .weakrow .wc{font-weight:800;color:var(--warn)}
   .weakrow .wn{font-weight:700}
   .weaktag{display:inline-block;font-size:11px;background:#fdeee7;color:#c1521f;padding:2px 7px;border-radius:20px;margin:2px 3px 0 0;font-weight:700}
+  /* charts */
+  .chartwrap{width:100%;overflow-x:auto}
+  .chart svg{display:block;max-width:100%;height:auto}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12px;font-weight:700}
+  .legend span{display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
+  .legend i{width:12px;height:3px;border-radius:2px;display:inline-block}
+  .legend i.dot{width:9px;height:9px;border-radius:50%}
+  .scope{display:flex;gap:6px;margin-bottom:10px}
+  .scope button{padding:5px 11px;border:1.5px solid var(--line);background:#fff;border-radius:20px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
+  .scope button.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+  /* star (칭찬/채찍) */
+  .stargrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.stargrid{grid-template-columns:1fr}}
+  .starcard{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px}
+  .starcard.up{background:linear-gradient(180deg,#eefaf2,#fff);border-color:#bfe6cd}
+  .starcard.down{background:linear-gradient(180deg,#fdf0f2,#fff);border-color:#f2c9d2}
+  .starcard.skill{background:linear-gradient(180deg,#f3effc,#fff);border-color:#ddd0f5;grid-column:1/-1}
+  .starcard .st{font-weight:800;font-size:13px;margin-bottom:8px}
+  .stardrow{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12.5px;border-top:1px dashed var(--line)}
+  .stardrow:first-of-type{border-top:none}
+  .stardrow .snm{font-weight:700}
+  .stardrow .sv{margin-left:auto;font-weight:800}
+  .sv.pos{color:var(--a)} .sv.neg{color:var(--c)}
+  .skilltag{display:inline-block;font-size:11px;background:#ece6f8;color:var(--purple-d);padding:2px 8px;border-radius:20px;margin:2px 3px 0 0;font-weight:700}
   /* help */
   .help{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:20px 22px;line-height:1.75;font-size:13.5px}
   .help h3{color:var(--purple-d);margin:18px 0 8px}
@@ -254,7 +278,10 @@
     </div>
     <div class="stat-row" id="stat-row"></div>
     <div class="rsec"><h3>🏢 직영 / 가맹 구분 실적</h3><div id="gubun-split"></div></div>
+    <div class="rsec"><h3>📈 월별 매출 추이 <span class="muted" style="font-weight:500;font-size:12px">— 전체·직영·가맹</span></h3><div id="sales-trend"></div></div>
+    <div class="rsec"><h3>🏆 칭찬할 매장 / 🔧 챙겨야 할 매장 <span class="muted" style="font-weight:500;font-size:12px">(전월 대비 급등·급락 · 채널 강점)</span></h3><div id="star-list"></div></div>
     <div class="rsec"><h3>📊 판매 유형(채널) 분석 <span class="muted" style="font-weight:500;font-size:12px">— 무선·유선·유심·알뜰·렌탈을 얼마나 파는지</span></h3><div id="chan-analysis"></div></div>
+    <div class="rsec"><h3>📊 판매유형 추이 <span class="muted" style="font-weight:500;font-size:12px">— 유선·유심·알뜰·렌탈 판매비율의 월별 변화</span></h3><div id="chan-trend"></div></div>
     <div class="rsec"><h3>🔎 채널별 약점 매장 <span class="muted" style="font-weight:500;font-size:12px">(개통은 있는데 특정 상품 판매 비중이 현저히 낮은 곳)</span></h3><div id="weak-list"></div></div>
     <div class="rsec"><h3>🗺 지역별 매장 현황</h3><div id="region-dist"></div></div>
     <div class="rsec"><h3>🎖 등급 분포</h3><div id="grade-dist"></div></div>
@@ -700,8 +727,41 @@ document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target.id=
 document.getElementById('add-store').onclick=()=>openModal(null);
 
 /* ============ REPORT ============ */
+let chanScope='all';
+function lineChartSVG(months, series, opts){
+  opts=opts||{}; const W=opts.w||700, H=opts.h||190, pad={l:46,r:12,t:12,b:24};
+  const xs=months.length; if(!xs) return '<div class="muted" style="font-size:12px">데이터 없음</div>';
+  const allv=series.flatMap(s=>s.data.filter(v=>v!=null)); if(!allv.length) return '<div class="muted" style="font-size:12px">데이터 없음</div>';
+  let max=Math.max(1,...allv), min=0;
+  const px=i=> pad.l + (xs<=1? (W-pad.l-pad.r)/2 : i*(W-pad.l-pad.r)/(xs-1));
+  const py=v=> pad.t + (H-pad.t-pad.b)*(1-(v-min)/((max-min)||1));
+  let g='';
+  for(let k=0;k<=4;k++){ const v=min+(max-min)*k/4, y=py(v);
+    g+=`<line x1="${pad.l}" y1="${y.toFixed(1)}" x2="${W-pad.r}" y2="${y.toFixed(1)}" stroke="#eee6f7" stroke-width="1"/>`;
+    g+=`<text x="${pad.l-6}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="9" fill="#9a8fb5">${opts.fmt?opts.fmt(v):Math.round(v)}</text>`; }
+  months.forEach((m,i)=>{ g+=`<text x="${px(i).toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="9" fill="#9a8fb5">${esc(m.slice(2))}</text>`; });
+  let lines='';
+  series.forEach(s=>{
+    const pts=s.data.map((v,i)=> v==null?null:`${px(i).toFixed(1)},${py(v).toFixed(1)}`).filter(Boolean);
+    if(pts.length>1) lines+=`<polyline points="${pts.join(' ')}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    s.data.forEach((v,i)=>{ if(v!=null) lines+=`<circle cx="${px(i).toFixed(1)}" cy="${py(v).toFixed(1)}" r="3" fill="${s.color}"/>`; });
+  });
+  return `<div class="chart chartwrap"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${g}${lines}</svg></div>`;
+}
+function legendHTML(series){ return '<div class="legend">'+series.map(s=>`<span><i class="${s.dot?'dot':''}" style="background:${s.color}"></i>${esc(s.name)}</span>`).join('')+'</div>'; }
+function renderChanTrend(){
+  const M=allMonths();
+  const pick= chanScope==='gu'? stores.filter(s=>s.gubun==='직영') : chanScope==='ga'? stores.filter(s=>s.gubun==='가맹') : stores;
+  const chans=[{k:'ws',l:'유선',c:'#2e9e6b'},{k:'us',l:'유심',c:'#e08a2b'},{k:'al',l:'알뜰',c:'#3b82c4'},{k:'rt',l:'렌탈',c:'#d64f6a'}];
+  const series=chans.map(c=>({name:c.l,color:c.c,dot:true,data:M.map(ym=>{let ch=0,act=0;pick.forEach(s=>{const p=pAt(s,ym);if(p){ch+=Number(p[c.k])||0;act+=Number(p.act)||0;}});return act?ch/act*100:null;})}));
+  const el=document.getElementById('chan-trend'); if(!el)return;
+  el.innerHTML=`<div class="scope"><button data-sc="all" class="${chanScope==='all'?'active':''}">전체</button><button data-sc="gu" class="${chanScope==='gu'?'active':''}">직영</button><button data-sc="ga" class="${chanScope==='ga'?'active':''}">가맹</button></div>`
+    + lineChartSVG(M, series, {fmt:v=>v.toFixed(0)+'%'}) + legendHTML(series);
+  el.querySelectorAll('.scope button').forEach(b=>b.onclick=()=>{ chanScope=b.dataset.sc; renderChanTrend(); });
+}
 function renderReport(){
   const ym=curMonth();
+  const pm=ym?prevMonth(ym):null;
   document.getElementById('report-date').textContent = ym? ('기준월 '+ym) : '실적 데이터 없음';
   const n=stores.length;
   const guArr=stores.filter(s=>s.gubun==='직영'), gaArr=stores.filter(s=>s.gubun==='가맹');
@@ -730,6 +790,29 @@ function renderReport(){
       <div class="gcard ga"><div class="gt">🤝 가맹 <span class="cnt">${gaArr.length}개 매장</span></div>${gkpi(Ga)}</div>
     </div>`;
 
+  // 월별 매출 추이
+  const M=allMonths();
+  const sser=arr=>M.map(ymm=>arr.reduce((t,s)=>{const p=pAt(s,ymm);return t+(p?Number(p.sales)||0:0)},0));
+  const salesSeries=[{name:'전체',color:'#4c2a8f',dot:true,data:sser(stores)},{name:'직영',color:'#3b82c4',dot:true,data:sser(guArr)},{name:'가맹',color:'#e08a2b',dot:true,data:sser(gaArr)}];
+  document.getElementById('sales-trend').innerHTML = lineChartSVG(M, salesSeries, {fmt:v=>v>=10000?(v/10000).toFixed(1)+'억':Math.round(v)+'만'}) + legendHTML(salesSeries) + '<div class="muted" style="font-size:11px;margin-top:4px">단위: 세로축 매출(만원/억원)</div>';
+
+  // 칭찬/채찍 매장
+  const movers=[];
+  if(ym&&pm){ stores.forEach(s=>{ const a=pAt(s,ym),b=pAt(s,pm); if(!a||!b)return; const cur=Number(a.sales)||0,prev=Number(b.sales)||0;
+    if(prev<200&&cur<200)return; const diff=cur-prev, pct=prev>0?diff/prev*100:(cur>0?100:0); movers.push({s,cur,prev,diff,pct}); }); }
+  const ups=movers.filter(m=>m.diff>0).sort((a,b)=>b.pct-a.pct).slice(0,5);
+  const downs=movers.filter(m=>m.diff<0).sort((a,b)=>a.pct-b.pct).slice(0,5);
+  const skills=[];
+  if(ym){ [{arr:guArr,g:G},{arr:gaArr,g:Ga}].forEach(({arr,g})=>{ const avg={}; CHAN.forEach(c=>avg[c.k]=g.act?g.ch[c.k]/g.act:0);
+    arr.forEach(s=>{ const p=pAt(s,ym); if(!p||p.act<15)return; CHAN.forEach(c=>{ if(c.k==='ms')return; const r=p[c.k]/p.act;
+      if(r>=0.12&&avg[c.k]>0&&r>=avg[c.k]*2) skills.push({s,ch:c.l,pct:r*100,cnt:p[c.k]}); }); }); }); skills.sort((a,b)=>b.pct-a.pct); }
+  const moverRow=(m,cls)=>`<div class="stardrow"><span class="snm">${esc(m.s.name)}</span> <span class="muted" style="font-size:11px">${m.prev}→${m.cur}만</span><span class="sv ${cls}">${m.diff>0?'+':''}${Math.round(m.pct)}%</span></div>`;
+  document.getElementById('star-list').innerHTML=`<div class="stargrid">
+    <div class="starcard up"><div class="st">📈 급상승 TOP5 <span class="muted" style="font-weight:500">(전월대비)</span></div>${ups.length?ups.map(m=>moverRow(m,'pos')).join(''):'<div class="muted" style="font-size:12px">해당 없음</div>'}</div>
+    <div class="starcard down"><div class="st">📉 급하락 TOP5 <span class="muted" style="font-weight:500">(전월대비)</span></div>${downs.length?downs.map(m=>moverRow(m,'neg')).join(''):'<div class="muted" style="font-size:12px">해당 없음</div>'}</div>
+    <div class="starcard skill"><div class="st">🏅 채널 강점 매장 <span class="muted" style="font-weight:500">(그룹 평균 2배↑ · 칭찬 포인트)</span></div>${skills.length?skills.slice(0,12).map(k=>`<div class="stardrow"><span class="snm">${esc(k.s.name)}</span> <span class="muted" style="font-size:11px">(${esc(k.s.gubun)})</span> <span class="skilltag">${k.ch} ${k.pct.toFixed(0)}%·${k.cnt}건</span></div>`).join(''):'<div class="muted" style="font-size:12px">특출난 채널 강점 매장이 이 달엔 없어요</div>'}</div>
+  </div>`;
+
   // 채널(판매유형) 분석
   function chanCol(title,a,cls){
     if(!a.act) return `<div class="chan-col"><div class="cc-t">${title}</div><div class="muted" style="font-size:12px">이 달 실적 없음</div></div>`;
@@ -741,6 +824,7 @@ function renderReport(){
   }
   document.getElementById('chan-analysis').innerHTML =
     chanCol('🏢 직영 판매 비율', G, 'var(--purple)') + chanCol('🤝 가맹 판매 비율', Ga, '#e08a2b');
+  renderChanTrend();
 
   // 채널별 약점 매장 (그룹 평균 대비 특정 채널 크게 부진)
   const weak=[];
@@ -836,8 +920,10 @@ function importCSV(text){
 
 /* ---- 매출 CSV 불러오기 (전국 월별 매출 형식) ---- */
 function nrm(s){return String(s||'').replace(/\s+/g,'').trim();}
+const SALES_ALIAS={'창녕점':'경남창녕점','세천점':'대구세천점','안동옥동':'안동옥동점','연경점':'대구연경점','만평점':'대구만평점','봉덕점':'대구봉덕점','이천점':'경기이천점','안산점':'경기안산점','왜관점':'칠곡왜관점','수원역':'수원역점','구미원호':'구미원호점','수원성균관대역':'성균관대역','두류점':'대구두류점','중동점':'대구중동점','익산부송':'익산부송점','제주영어교육도시점':'제주영어교육도시점(중문점)','서귀포시중문점':'제주영어교육도시점(중문점)','님구계명대점':'남구계명대점','제주서귀포':'제주서귀포점'};
 function matchStore(idx,raw){
   const f=nrm(raw), b=f.replace(/점$/,'');
+  if(SALES_ALIAS[f]){ const t=nrm(SALES_ALIAS[f]); const hh=idx.filter(x=>x.f===t); if(hh.length)return hh[0].s; }
   let h=idx.filter(x=>x.f===f); if(h.length===1)return h[0].s;
   h=idx.filter(x=>x.b===b); if(h.length===1)return h[0].s;
   if(b.length>=2){
@@ -846,37 +932,40 @@ function matchStore(idx,raw){
   }
   return null;
 }
-function importSales(text){
+function importSales(text, fname){
   const rows=parseCSV(text);
   let hi=rows.findIndex(r=>r.some(c=>/지점명/.test(c))); if(hi<0)hi=0;
   const head=rows[hi].map(h=>h.trim());
-  const fc=(...k)=>head.findIndex(h=>k.some(x=>h.replace(/\s/g,'').includes(x)));
-  const H=h=>head.findIndex(x=>x.replace(/\s/g,'')===h);
-  const ci={name:fc('지점명','매장명'),act:fc('총개통'),rev:fc('총매출','세후'),y:fc('년도'),m:H('월'),
-    ms:H('무선'),wr:H('웨어러블'),us:head.findIndex(x=>x.replace(/\s/g,'').includes('유심')||x.includes('MNP')),ws:H('유선'),al:H('알뜰'),rt:H('렌탈'),mg:fc('평균마진','마진')};
-  if(ci.name<0||ci.rev<0){alert('CSV에서 지점명/총매출 열을 찾지 못했어요.');return;}
+  const ns=x=>String(x).replace(/\s/g,'');
+  const eq=h=>head.findIndex(x=>ns(x)===h);
+  const inc=(...k)=>head.findIndex(x=>k.some(y=>ns(x).includes(y)));
+  const ci={name:inc('지점명','매장명'),act:inc('총개통'),ms:eq('무선'),wr:eq('웨어러블'),us:inc('MNP'),ws:eq('유선'),al:eq('알뜰'),rt:eq('렌탈'),mg:inc('평균마진','마진')};
+  const cHu=head.findIndex(x=>ns(x).includes('세후')), cJn=head.findIndex(x=>ns(x).includes('세전')), cTot=head.findIndex(x=>ns(x).includes('총매출'));
+  if(ci.name<0||(cHu<0&&cJn<0&&cTot<0)){alert('CSV에서 지점명/총매출 열을 찾지 못했어요.');return;}
   const num=v=>Number(String(v||'').replace(/[^0-9.-]/g,''))||0;
-  const mc={};
-  for(let i=hi+1;i<rows.length;i++){const r=rows[i]; if(!(r[ci.name]||'').trim())continue; const y=num(r[ci.y]),mo=num(ci.m>=0?r[ci.m]:0); if(y&&mo){const k=y+'-'+String(mo).padStart(2,'0');mc[k]=(mc[k]||0)+1;}}
-  const guess=Object.keys(mc).sort((a,b)=>mc[b]-mc[a])[0]||'';
-  const ymIn=prompt('이 매출 파일의 기준 연월을 입력하세요 (YYYY-MM).\n파일의 모든 행에 이 달로 통일 적용돼요 (월이 섞여있어도 OK).', guess);
-  if(!ymIn) return;
-  const ym=ymIn.trim();
+  const rev=r=>{ let v=cHu>=0?num(r[cHu]):0; if(v<=0&&cJn>=0)v=num(r[cJn]); if(v<=0&&cTot>=0)v=num(r[cTot]); return v; };
+  // 기준월: 파일명 자동 인식 → 없으면 데이터 → 없으면 입력
+  let ym=''; const fm=(fname||'').match(/(20)?(2\d)[.\-_ ](\d{1,2})/);
+  if(fm){ ym='20'+fm[2]+'-'+String(+fm[3]).padStart(2,'0'); }
+  else{ const yc=inc('년도'), mc2=eq('월'); const cnt={};
+    for(let i=hi+1;i<rows.length;i++){const r=rows[i];if(!(r[ci.name]||'').trim())continue;const y=num(yc>=0?r[yc]:0),mo=num(mc2>=0?r[mc2]:0);if(y&&mo){const k=y+'-'+String(mo).padStart(2,'0');cnt[k]=(cnt[k]||0)+1;}}
+    const guess=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0]||'2026-06';
+    const ymIn=prompt('이 매출 파일의 기준 연월 (YYYY-MM)', guess); if(!ymIn)return; ym=ymIn.trim(); }
   const idx=stores.map(s=>{const f=nrm(s.name);return{s,f,b:f.replace(/점$/,'')};});
   let matched=0; const unmatched=[];
   for(let i=hi+1;i<rows.length;i++){
     const r=rows[i]; const raw=(r[ci.name]||'').trim(); if(!raw||/지점명/.test(raw))continue;
     const st=matchStore(idx,raw); if(!st){unmatched.push(raw);continue;}
-    const e={ym,sales:Math.round(num(r[ci.rev])/10000),act:num(ci.act>=0?r[ci.act]:0)};
-    ['ms','wr','us','ws','al','rt','mg'].forEach(k=>{ if(ci[k]>=0) e[k]=num(r[ci[k]]); });
+    const e={ym,sales:Math.round(rev(r)/10000),act:num(ci.act>=0?r[ci.act]:0)};
+    ['ms','wr','us','ws','al','rt','mg'].forEach(k=>{ if(ci[k]>=0){const v=num(r[ci[k]]); if(v)e[k]=v;} });
     st.perf=(st.perf||[]).filter(p=>p.ym!==ym); st.perf.push(e); st.perf.sort((a,b)=>a.ym.localeCompare(b.ym));
     matched++;
   }
-  save(); refresh();
+  selMonth=ym; save(); refresh();
   alert('['+ym+'] 매출 '+matched+'건 반영 완료.'+(unmatched.length?'\n\n매칭 실패 '+unmatched.length+'곳: '+unmatched.join(', ')+'\n→ 매장명을 확인하세요.':''));
 }
 document.getElementById('imp-sales').onclick=()=>document.getElementById('file-sales').click();
-document.getElementById('file-sales').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>importSales(rd.result);rd.readAsText(f,'utf-8');e.target.value='';};
+document.getElementById('file-sales').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>importSales(rd.result, f.name);rd.readAsText(f,'utf-8');e.target.value='';};
 
 let guessGubunFromFile='';
 document.getElementById('imp-csv').onclick=()=>document.getElementById('file-csv').click();
