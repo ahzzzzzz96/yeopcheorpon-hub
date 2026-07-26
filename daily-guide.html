@@ -38,6 +38,16 @@
   .hero h1{font-family:'Jua'; font-weight:400; margin:0 0 6px; font-size:26px; line-height:1.25;}
   .hero p{margin:0; opacity:.92; font-size:13.5px; line-height:1.6;}
   .hero .who{display:inline-block; margin-top:12px; background:rgba(255,255,255,.18); border-radius:999px; padding:5px 13px; font-size:12.5px; font-weight:700;}
+  .store-row{margin-bottom:12px;}
+  .store-chip{display:inline-flex; align-items:center; gap:7px; background:rgba(255,255,255,.2); border:1.5px solid rgba(255,255,255,.4); color:#fff; font-family:'Jua'; font-size:16px; padding:8px 16px; border-radius:999px; cursor:pointer;}
+  .store-chip:hover{background:rgba(255,255,255,.3);}
+  .store-chip.hide{display:none;}
+  .store-edit{display:none; align-items:center; gap:6px; flex-wrap:wrap;}
+  .store-edit.show{display:inline-flex;}
+  .store-edit input{border:none; border-radius:999px; padding:8px 14px; font-size:14px; font-weight:700; font-family:'Noto Sans KR',sans-serif; outline:none; width:160px;}
+  .store-edit button{border:none; border-radius:999px; padding:8px 14px; font-weight:800; font-size:13px; cursor:pointer; font-family:'Noto Sans KR',sans-serif;}
+  #storeSave{background:#fff; color:var(--purple-d);}
+  #storeCancel{background:rgba(255,255,255,.22); color:#fff;}
 
   /* view tabs */
   .vtabs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
@@ -201,6 +211,14 @@
   </div>
 
   <div class="hero">
+    <div class="store-row">
+      <button class="store-chip" id="storeChip">🏪 매장 이름 설정하기</button>
+      <span class="store-edit" id="storeEdit">
+        <input id="storeInput" type="text" placeholder="예: 부진점" maxlength="24" autocomplete="off">
+        <button id="storeSave">저장</button>
+        <button id="storeCancel">취소</button>
+      </span>
+    </div>
     <h1>매장 데일리 루틴 &amp; 가이드</h1>
     <p>오늘 요일·시간에 맞는 <b style="color:#fff">할 일</b>이 순서대로 떠요. 업무를 누르면 <b style="color:#fff">"어떻게 하는지"</b>가 옆(또는 팝업)에 나옵니다. 하루를 다 끝내면 <b style="color:#fff">달력에 "참 잘했어요" 도장</b>이 찍혀요! 🎉</p>
     <span class="who">담당 · 백지현 슈퍼바이저</span>
@@ -285,7 +303,7 @@
   </div>
 
   <div class="foot">
-    옆커폰 대구지사 · 매장 데일리 루틴 &amp; 가이드 v9<br/>
+    옆커폰 대구지사 · 매장 데일리 루틴 &amp; 가이드 v10<br/>
     오늘 체크를 초기화하려면 <a class="reset" id="resetBtn">여기</a>를 누르세요.
   </div>
 </div>
@@ -630,11 +648,34 @@ const todayDay=now.getDay();
 let selectedDay=todayDay;
 let selectedKey=null;
 let lastPct=-1;
-function keyFor(dt){ return "ycp_daily_"+dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate(); }
-const STORE_KEY=keyFor(now);
+let storeName=""; try{ storeName=localStorage.getItem("ycp_store_name")||""; }catch(e){}
+function keyFor(dt){ return "ycp_daily_"+storeName+"_"+dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate(); }
 
-function loadChecks(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)||"{}"); }catch(e){ return {}; } }
-function saveChecks(o){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(o)); }catch(e){} }
+function loadChecks(){ try{ return JSON.parse(localStorage.getItem(keyFor(now))||"{}"); }catch(e){ return {}; } }
+function saveChecks(o){ try{ localStorage.setItem(keyFor(now), JSON.stringify(o)); }catch(e){} }
+
+function escapeHtml(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function renderStore(){
+  var chip=document.getElementById("storeChip");
+  if(storeName){ chip.innerHTML="🏪 "+escapeHtml(storeName)+" &nbsp;✎"; document.title=storeName+" · 매장 데일리 루틴 & 가이드"; }
+  else { chip.textContent="🏪 매장 이름 설정하기"; document.title="매장 데일리 루틴 & 가이드"; }
+}
+function closeStoreEdit(){ document.getElementById("storeEdit").classList.remove("show"); document.getElementById("storeChip").classList.remove("hide"); }
+function openStoreEdit(){
+  document.getElementById("storeChip").classList.add("hide");
+  document.getElementById("storeEdit").classList.add("show");
+  var inp=document.getElementById("storeInput"); inp.value=storeName; inp.focus(); inp.select();
+}
+function saveStore(){
+  var v=document.getElementById("storeInput").value.trim();
+  storeName=v; try{ localStorage.setItem("ycp_store_name", v); }catch(e){}
+  closeStoreEdit(); renderStore(); renderAll();
+  if(document.getElementById("viewCal").style.display!=="none") renderCalendar();
+}
+document.getElementById("storeChip").onclick=openStoreEdit;
+document.getElementById("storeSave").onclick=saveStore;
+document.getElementById("storeCancel").onclick=closeStoreEdit;
+document.getElementById("storeInput").addEventListener("keydown",function(e){ if(e.key==="Enter") saveStore(); if(e.key==="Escape") closeStoreEdit(); });
 
 /* ---- 뷰 전환 ---- */
 const VIEWS={today:"viewToday", cal:"viewCal", scripts:"viewScripts", daily:"viewDaily"};
@@ -726,7 +767,7 @@ function renderHeader(){
   document.getElementById("todayLabel").innerHTML=
     (isToday? `오늘은 <span style="color:#6B3FA8">${DAY_KR[selectedDay]}요일</span> 입니다`
             : `${DAY_KR[selectedDay]}요일 (미리보기)`)+
-    `<small>${now.getMonth()+1}월 ${now.getDate()}일 · 운영 10:30~20:00 · 17~18시는 요일별 특화</small>`;
+    `<small>${storeName?escapeHtml(storeName)+" · ":""}${now.getMonth()+1}월 ${now.getDate()}일 · 운영 10:30~20:00 · 17~18시는 요일별 특화</small>`;
   document.getElementById("previewNote").classList.toggle("show", !isToday);
 }
 function guideHTML(item, key){
@@ -867,10 +908,11 @@ function renderAll(){ renderDayTabs(); renderHeader(); renderTasks(); renderProg
 
 document.getElementById("resetBtn").onclick=()=>{
   if(confirm("오늘 체크 기록을 초기화할까요? (지난 날짜 도장은 그대로 유지됩니다)")){
-    localStorage.removeItem(STORE_KEY); selectedKey=null; lastPct=-1; renderAll(); resetGuide();
+    localStorage.removeItem(keyFor(now)); selectedKey=null; lastPct=-1; renderAll(); resetGuide();
   }
 };
 
+renderStore();
 renderAll();
 </script>
 </body>
