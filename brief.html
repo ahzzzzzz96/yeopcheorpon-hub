@@ -81,6 +81,7 @@ const looksTest = s => !s || /^(1+|ㅇ+|3+|test|테스트|ㄴ+|ㅁ+)$/i.test(Str
 function fmtKST(ts){
   try{ return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(ts)); }catch(e){ return ''; }
 }
+function fmtDateKo(s){ const t=String(s).split('-'); return t.length>=3 ? `${Number(t[1])}월 ${Number(t[2])}일` : String(s); }
 
 async function loadBrief(){
   document.getElementById('content').innerHTML = '<div class="state">데이터를 불러오는 중이에요…</div>';
@@ -108,20 +109,29 @@ async function loadBrief(){
     });
   }catch(e){}
 
+  // 날짜는 항상 '오늘'(한국시간) 기준으로 표시 — 데이터와 무관하게 매일 갱신
+  const todayStr = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date());
+  const [ty,tm,td] = todayStr.split('-').map(Number);
+  const wd = new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',weekday:'short'}).format(new Date());
   const dt = document.getElementById('date');
-  if(snap && snap.today){
-    const t=snap.today.split('-');
-    dt.textContent = `${t[0]}년 ${Number(t[1])}월 ${Number(t[2])}일 기준`;
-  } else dt.textContent='';
-  document.getElementById('foot').innerHTML = (updatedAt? `마지막 업데이트: ${fmtKST(updatedAt)} · ` : '') + '매일 오전 10시 자동 갱신';
+  dt.textContent = `${ty}년 ${tm}월 ${td}일 (${wd})`;
+  const isToday = !!(snap && snap.today === todayStr);
+  document.getElementById('foot').innerHTML = (updatedAt? `가장 최근 매출 보고: ${fmtKST(updatedAt)} · ` : '') + '매장 보고가 들어오면 자동으로 반영돼요';
 
-  render(snap, handover);
+  render(snap, handover, isToday);
 }
 
-function render(snap, handover){
+function render(snap, handover, isToday){
   let html='';
-  if(!snap || !snap.stores){
-    html = `<div class="state">아직 브리핑이 생성되지 않았어요.<br>매일 오전 10시에 자동으로 만들어져요.</div>`;
+  // 오늘 보고가 없거나(스냅샷이 예전 날짜) 데이터가 없으면 → 옛날 데이터 대신 '특이사항 없음'으로 깔끔 정리
+  if(!snap || !snap.stores || !isToday){
+    let note;
+    if(snap && snap.today && !isToday){
+      note = `오늘은 아직 매장 보고가 들어오지 않았어요.<br><span style="font-size:12.5px;color:var(--muted)">가장 최근 보고: ${fmtDateKo(snap.today)} · 새 보고가 들어오면 자동 반영돼요</span>`;
+    } else {
+      note = `아직 오늘 브리핑 데이터가 없어요.<br><span style="font-size:12.5px;color:var(--muted)">매장이 보고를 입력하면 여기에 표시돼요.</span>`;
+    }
+    html = `<div class="allgood">✅ 특이사항 없음</div><div class="state">${note}</div>`;
     document.getElementById('content').innerHTML = html + handoverHtml(handover);
     return;
   }
