@@ -810,9 +810,11 @@ function renderPerfChan(s){
   const el=document.getElementById('perf-chan'); if(!el)return;
   const ym=curMonth(); const p=ym?pAt(s,ym):((s.perf||[]).slice(-1)[0]);
   if(!p||!p.act || p.ms==null){ el.innerHTML=''; return; }
+  const _ms=Number(p.ms)||0, _ws=Number(p.ws)||0, _wsr=_ms? (_ws/_ms*100):0;
   el.innerHTML=`<div style="font-size:11.5px;color:var(--muted);font-weight:700;margin-bottom:5px">${esc(p.ym)} 판매유형 · 개통 ${p.act}건${p.mg?' · 평균마진 '+Number(p.mg).toLocaleString()+'원':''}</div>`+
     '<div style="display:flex;gap:6px;flex-wrap:wrap">'+CHAN.map(c=>{const v=Number(p[c.k])||0,pct=p.act?(v/p.act*100):0;
-      return `<span class="bdg" style="font-size:11px">${c.l} ${v}<b style="color:var(--purple-d)"> ${pct.toFixed(0)}%</b></span>`;}).join('')+'</div>';
+      const extra = (c.k==='ms' && _ms) ? ` <span style="color:#2e9e6b;font-weight:800">(유선 ${_wsr.toFixed(0)}%)</span>` : '';
+      return `<span class="bdg" style="font-size:11px">${c.l} ${v}<b style="color:var(--purple-d)"> ${pct.toFixed(0)}%</b>${extra}</span>`;}).join('')+'</div>';
 }
 function renderPerfTrend(s){
   const el=document.getElementById('perf-trend'); if(!el)return;
