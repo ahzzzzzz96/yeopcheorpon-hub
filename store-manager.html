@@ -352,7 +352,6 @@
     <div class="rsec"><h3>🏆 칭찬할 매장 / 🔧 챙겨야 할 매장 <span class="muted" style="font-weight:500;font-size:12px">(전월 대비 급등·급락 · 채널 강점)</span></h3><div id="star-list"></div></div>
     <div class="rsec"><h3>📊 판매 유형(채널) 분석 <span class="muted" style="font-weight:500;font-size:12px">— 무선·유선·유심·알뜰·렌탈을 얼마나 파는지</span></h3><div id="chan-analysis"></div></div>
     <div class="rsec"><h3>📊 판매유형 분석 <span class="muted" style="font-weight:500;font-size:12px">— 채널별 추이 + 어느 매장이 무엇을 잘 파는지 한눈에</span></h3><div id="chan-trend"></div></div>
-    <div class="rsec"><h3>📅 매장별 판매유형 3개월 추이 <span class="muted" style="font-weight:500;font-size:12px">— 각 매장 최근 3개월 무선·유선·유심·알뜰·렌탈 흐름 (라인/담당으로 좁혀서 보세요)</span></h3><div id="store-chan3m"></div></div>
     <div class="rsec"><h3>🔎 채널별 약점 매장 <span class="muted" style="font-weight:500;font-size:12px">(개통은 있는데 특정 상품 판매 비중이 현저히 낮은 곳)</span></h3><div id="weak-list"></div></div>
     <div class="rsec"><h3>🗺 지역별 매장 현황</h3><div id="region-dist"></div></div>
     <div class="rsec"><h3>🎖 등급 분포</h3><div id="grade-dist"></div></div>
@@ -1039,19 +1038,6 @@ function renderReport(){
   document.getElementById('chan-analysis').innerHTML =
     (showGu?chanCol('🏢 직영 판매 비율', G, 'var(--purple)'):'') + (showGa?chanCol('🤝 가맹 판매 비율', Ga, '#e08a2b'):'');
   renderChanTrend();
-
-  // 매장별 판매유형 3개월 추이 (현재 라인/구분 스코프)
-  const c3mEl=document.getElementById('store-chan3m');
-  if(c3mEl){
-    const c3mArr=VS.filter(s=>(s.perf||[]).some(p=>p.act)); const cap=30;
-    if(!c3mArr.length){ c3mEl.innerHTML='<div class="muted" style="font-size:12.5px">실적 데이터가 있는 매장이 없어요</div>'; }
-    else{
-      c3mEl.innerHTML = c3mArr.slice(0,cap).map(s=>`<div style="margin:0 0 14px">
-        <div style="font-weight:800;font-size:13px;color:var(--ink);margin-bottom:2px">${esc(s.name)} <span class="muted" style="font-weight:500;font-size:11px">${esc(s.line||'')}${svOf(s)?' · 👤'+esc(svOf(s)):''} · ${esc(s.gubun||'')}</span></div>
-        ${chan3mTable(s)}</div>`).join('')
-        + (c3mArr.length>cap?`<div class="muted" style="font-size:12px">…외 ${c3mArr.length-cap}곳 더 있어요. 상단 '라인' 또는 '담당'으로 좁혀서 보세요.</div>`:'');
-    }
-  }
 
   // 채널별 약점 매장 (그룹 평균 대비 특정 채널 크게 부진)
   const weak=[];
