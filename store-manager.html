@@ -352,6 +352,7 @@
     <div class="rsec"><h3>🏆 칭찬할 매장 / 🔧 챙겨야 할 매장 <span class="muted" style="font-weight:500;font-size:12px">(전월 대비 급등·급락 · 채널 강점)</span></h3><div id="star-list"></div></div>
     <div class="rsec"><h3>📊 판매 유형(채널) 분석 <span class="muted" style="font-weight:500;font-size:12px">— 무선·유선·유심·알뜰·렌탈을 얼마나 파는지</span></h3><div id="chan-analysis"></div></div>
     <div class="rsec"><h3>📊 판매유형 분석 <span class="muted" style="font-weight:500;font-size:12px">— 채널별 추이 + 어느 매장이 무엇을 잘 파는지 한눈에</span></h3><div id="chan-trend"></div></div>
+    <div class="rsec"><h3>📅 매장별 판매유형 3개월 추이 <span class="muted" style="font-weight:500;font-size:12px">— 전 매장(또는 선택 라인/담당) 최근 3개월 그래프 · 유선비=유선÷(무선+유심)</span></h3><div id="store-chan3m"></div></div>
     <div class="rsec"><h3>🔎 채널별 약점 매장 <span class="muted" style="font-weight:500;font-size:12px">(개통은 있는데 특정 상품 판매 비중이 현저히 낮은 곳)</span></h3><div id="weak-list"></div></div>
     <div class="rsec"><h3>🗺 지역별 매장 현황</h3><div id="region-dist"></div></div>
     <div class="rsec"><h3>🎖 등급 분포</h3><div id="grade-dist"></div></div>
@@ -503,17 +504,19 @@ function svStores(){ return svView==='all'? stores : stores.filter(s=>svOf(s)===
 function curMg(s){ const ym=curMonth(); const p=ym?pAt(s,ym):((s.perf||[]).slice(-1)[0]); return (p&&p.mg!=null&&p.mg!=='')?(Number(p.mg)||0):null; }
 /* 최근 3개월 판매유형 추이 그래프 (월별 100% 누적막대 · 유선비=유선÷(무선+유심)) */
 const CH3_COL={ms:'#6d3ecb',ws:'#2e9e6b',us:'#e08a2b',al:'#3b82c4',rt:'#d64f6a'};
-function chan3mChart(s){
+function chan3mLegend(){ return '<div class="legend" style="margin:2px 0 7px">'+CHAN.map(c=>`<span><i class="dot" style="background:${CH3_COL[c.k]}"></i>${c.l}</span>`).join('')+'</div>'; }
+function chan3mChart(s, opt){ opt=opt||{};
   const M=(s.perf||[]).map(p=>p.ym).filter(Boolean).sort().slice(-3);
-  if(!M.length) return '';
-  const legend='<div class="legend" style="margin:2px 0 7px">'+CHAN.map(c=>`<span><i class="dot" style="background:${CH3_COL[c.k]}"></i>${c.l}</span>`).join('')+'</div>';
+  if(!M.length) return opt.noTitle?'<div class="muted" style="font-size:11px;margin:2px 0 8px">실적 없음</div>':'';
   const bars=M.map(ym=>{ const p=pAt(s,ym); if(!p) return '';
     const act=Number(p.act)||0, ms=Number(p.ms)||0, us=Number(p.us)||0, ws=Number(p.ws)||0;
     const den=ms+us, wsr=den? ws/den*100 : 0;
     const segs=CHAN.map(c=>{ const v=Number(p[c.k])||0, w=act? v/act*100:0;
       return w>0?`<div title="${c.l} ${v}건 (${w.toFixed(0)}%)" style="width:${w}%;background:${CH3_COL[c.k]}">${w>=12?c.l+' '+w.toFixed(0)+'%':''}</div>`:''; }).join('');
     return `<div class="c3bar-row"><span class="c3bar-ym">${esc(ym.slice(2))}</span><div class="c3bar">${segs}</div><span class="c3bar-meta">개통 ${act} · 유선비 <b>${den?wsr.toFixed(0)+'%':'-'}</b></span></div>`; }).join('');
-  return `<div style="font-size:12px;font-weight:800;color:var(--purple-d);margin:10px 0 4px">📊 최근 3개월 판매유형 추이 <span class="muted" style="font-weight:500;font-size:11px">(월별 비중 · 유선비=유선÷(무선+유심))</span></div>${legend}${bars}`;
+  const title = opt.noTitle?'':`<div style="font-size:12px;font-weight:800;color:var(--purple-d);margin:10px 0 4px">📊 최근 3개월 판매유형 추이 <span class="muted" style="font-weight:500;font-size:11px">(월별 비중 · 유선비=유선÷(무선+유심))</span></div>`;
+  const legend = opt.noLegend?'':chan3mLegend();
+  return title+legend+bars;
 }
 function allMonths(){ return [...new Set(stores.flatMap(s=>(s.perf||[]).map(p=>p.ym)))].filter(Boolean).sort(); }
 function pAt(s,ym){ return (s.perf||[]).find(p=>p.ym===ym); }
@@ -1040,6 +1043,19 @@ function renderReport(){
   document.getElementById('chan-analysis').innerHTML =
     (showGu?chanCol('🏢 직영 판매 비율', G, 'var(--purple)'):'') + (showGa?chanCol('🤝 가맹 판매 비율', Ga, '#e08a2b'):'');
   renderChanTrend();
+
+  // 매장별 판매유형 3개월 추이 (그래프 · 현재 라인/구분 스코프, 범례는 상단 1회)
+  const c3mEl=document.getElementById('store-chan3m');
+  if(c3mEl){
+    const arr=VS.filter(s=>(s.perf||[]).some(p=>p.act)); const cap=100;
+    if(!arr.length){ c3mEl.innerHTML='<div class="muted" style="font-size:12.5px">실적 데이터가 있는 매장이 없어요</div>'; }
+    else{
+      c3mEl.innerHTML = chan3mLegend() + arr.slice(0,cap).map(s=>`<div style="margin:0 0 12px;padding-bottom:8px;border-bottom:1px dashed var(--line)">
+        <div style="font-weight:800;font-size:12.5px;color:var(--ink);margin-bottom:3px">${esc(s.name)} <span class="muted" style="font-weight:500;font-size:11px">${esc(s.line||'')}${svOf(s)?' · 👤'+esc(svOf(s)):''} · ${esc(s.gubun||'')}</span></div>
+        ${chan3mChart(s,{noLegend:true,noTitle:true})}</div>`).join('')
+        + (arr.length>cap?`<div class="muted" style="font-size:12px">…외 ${arr.length-cap}곳. '라인' 또는 '담당'으로 좁혀서 보세요.</div>`:'');
+    }
+  }
 
   // 채널별 약점 매장 (그룹 평균 대비 특정 채널 크게 부진)
   const weak=[];
