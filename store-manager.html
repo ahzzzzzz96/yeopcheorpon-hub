@@ -175,18 +175,21 @@
   .c3bar>div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:9.5px;font-weight:800;min-width:0;white-space:nowrap;overflow:hidden}
   .c3bar-meta{flex:0 0 auto;color:var(--muted);font-weight:600;white-space:nowrap;font-size:10.5px}
   .c3bar-meta b{color:#2e9e6b;font-size:11.5px}
-  .c3sum{min-width:640px}
+  .c3sum{min-width:1010px}
   .c3sum .chead,.c3sum .crow{display:flex;align-items:center;gap:12px;font-size:12.5px}
   .c3sum .chead{color:var(--muted);font-weight:800;font-size:11px;padding:0 10px 6px;border-bottom:2px solid var(--line)}
   .c3sum .crow{padding:9px 10px;border-bottom:1px solid #f0ecf9;cursor:pointer}
   .c3sum .crow:hover{background:#faf8fe}
   .c3sum .cnm{font-weight:800;flex:0 0 200px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .c3sum .cnm small{color:var(--muted);font-weight:500;font-size:11px;margin-left:5px}
+  .c3sum .csales{flex:0 0 180px;font-weight:700;color:var(--purple-d);font-variant-numeric:tabular-nums}
+  .c3sum .csales .arw{color:#c3bcd6;font-weight:900;margin:0 4px}
   .c3sum .svchip{display:inline-block;font-size:10px;color:#fff;padding:1px 7px;border-radius:20px;font-weight:800;margin-left:4px}
   .c3sum .cspark{flex:0 0 70px;display:flex;align-items:flex-end;gap:4px;height:24px}
   .c3sum .cspark i{flex:1;background:#2e9e6b;border-radius:2px 2px 0 0;display:block;opacity:.85;min-height:2px}
-  .c3sum .cwsr{flex:0 0 200px;font-weight:700;color:#1f7a55;font-variant-numeric:tabular-nums}
-  .c3sum .cwsr .arw{color:#c3bcd6;font-weight:900;margin:0 4px}
+  .c3sum .cwsr{flex:0 0 190px;font-weight:700;color:#1f7a55;font-variant-numeric:tabular-nums}
+  .c3sum .cwsr .arw,.c3sum .cetc .arw{color:#c3bcd6;font-weight:900;margin:0 4px}
+  .c3sum .cetc{flex:0 0 165px;font-weight:700;color:#c17d1a;font-variant-numeric:tabular-nums}
   .c3sum .ctrend{flex:0 0 64px;font-weight:900;font-size:13px}
   .c3sum .up{color:#2e9e6b}.c3sum .dn{color:#d64f6a}.c3sum .fl{color:#9a8fb5}
   .c3sum .cact{flex:0 0 84px;color:var(--muted);font-weight:700;text-align:right}
@@ -541,7 +544,7 @@ function chan3mSummary(arr){
     const w=M.map(ym=>wsrOf(pAt(s,ym))); while(w.length<3) w.unshift(null);
     const last=[...w].reverse().find(x=>x!=null); return {s,M,w,last:last==null?-1:last}; });
   withKey.sort((a,b)=> b.last-a.last || (a.s.name||'').localeCompare(b.s.name||'','ko'));
-  const head=`<div class="chead"><span class="cnm">매장</span><span class="cspark">유선비 추이</span><span class="cwsr">최근 3개월 유선비</span><span class="ctrend">추세</span><span class="cact">최근 개통</span></div>`;
+  const head=`<div class="chead"><span class="cnm">매장</span><span class="csales">매출(만·3개월)</span><span class="cspark">유선비 추이</span><span class="cwsr">유선비(3개월)</span><span class="ctrend">추세</span><span class="cetc">기타(유심·알뜰·렌탈)</span><span class="cact">최근 개통</span></div>`;
   const rows=withKey.map(({s,M,w})=>{
     const mx=Math.max(12,...w.map(x=>x==null?0:x));
     const spark=w.map(x=> x==null?'<i style="opacity:.15;background:#c3bcd6"></i>':`<i style="height:${Math.max(15,x/mx*100)}%"></i>`).join('');
@@ -549,13 +552,23 @@ function chan3mSummary(arr){
     const diff=(last==null?0:last)-(first==null?0:first);
     const tr = first==null?['fl','―']: diff>1?['up','▲ 상승']: diff<-1?['dn','▼ 하락']:['fl','― 유지'];
     const seq=w.map(x=>x==null?'-':x+'%').join('<span class="arw">→</span>');
+    const etc=M.map(ym=>{ const p=pAt(s,ym); if(!p) return null; const a=Number(p.act)||0; const e=(Number(p.us)||0)+(Number(p.al)||0)+(Number(p.rt)||0); return a? Math.round(e/a*100):null; });
+    while(etc.length<3) etc.unshift(null);
+    const etcSeq=etc.map(x=>x==null?'-':x+'%').join('<span class="arw">→</span>');
     const lp=M.length?pAt(s,M[M.length-1]):null, act=lp?(Number(lp.act)||0):0;
+    const sal=M.map(ym=>{ const p=pAt(s,ym); return (p&&p.sales!=null)?(Number(p.sales)||0):null; });
+    while(sal.length<3) sal.unshift(null);
+    const sf=sal.find(x=>x!=null), sl=[...sal].reverse().find(x=>x!=null);
+    const sarw=(sf==null||sl==null)?'':(sl>sf?' <span style="color:#2e9e6b">▲</span>':sl<sf?' <span style="color:#d64f6a">▼</span>':' <span style="color:#9a8fb5">―</span>');
+    const salSeq=sal.map(x=>x==null?'-':x.toLocaleString()).join('<span class="arw">→</span>')+sarw;
     const svv=svOf(s);
     return `<div class="crow" data-id="${s.id}">
       <span class="cnm">${esc(s.name)}<small>${esc(s.line||'-')} · ${esc(s.gubun||'')}</small>${svv?`<span class="svchip" style="background:${svColor(svv)}">${esc(svv)}</span>`:''}</span>
+      <span class="csales">${salSeq}</span>
       <span class="cspark">${spark}</span>
       <span class="cwsr">${seq}</span>
       <span class="ctrend ${tr[0]}">${tr[1]}</span>
+      <span class="cetc">${etcSeq}</span>
       <span class="cact">개통 <b>${act}</b></span></div>`;
   }).join('');
   return `<div class="c3sum" style="overflow-x:auto">${head}${rows}</div>`;
