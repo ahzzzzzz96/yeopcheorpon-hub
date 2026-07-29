@@ -169,12 +169,12 @@
   .svsw button.active{background:#1f9d76;color:#fff}
   .lrow .lsv{font-size:10.5px;color:#fff;padding:2px 8px;border-radius:20px;flex:0 0 auto;font-weight:800}
   .lrow .lmarg{font-size:11px;color:#b5541a;background:#fff4ea;padding:2px 7px;border-radius:20px;flex:0 0 auto;font-weight:700}
-  table.c3m{width:100%;border-collapse:collapse;font-size:11px;margin-top:2px}
-  table.c3m th,table.c3m td{border:1px solid var(--line);padding:4px 5px;text-align:center;white-space:nowrap}
-  table.c3m th{background:var(--lav);color:var(--purple-d);font-weight:800}
-  table.c3m td:first-child,table.c3m th:first-child{background:#faf8fe;font-weight:800;color:var(--ink)}
-  table.c3m td small{color:var(--muted);font-weight:600;font-size:9.5px}
-  table.c3m td.wsr{color:#2e9e6b;font-weight:800}
+  .c3bar-row{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:11px}
+  .c3bar-ym{width:40px;font-weight:800;color:var(--ink);flex:0 0 auto}
+  .c3bar{flex:1;display:flex;height:22px;border-radius:6px;overflow:hidden;background:#f0ecf9;min-width:0}
+  .c3bar>div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:9.5px;font-weight:800;min-width:0;white-space:nowrap;overflow:hidden}
+  .c3bar-meta{flex:0 0 auto;color:var(--muted);font-weight:600;white-space:nowrap;font-size:10.5px}
+  .c3bar-meta b{color:#2e9e6b;font-size:11.5px}
   /* rank */
   .rankmetrics{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
   .rankmetrics button{padding:8px 14px;border:1.5px solid var(--line);background:#fff;border-radius:20px;font-size:13px;font-weight:800;color:var(--muted);cursor:pointer;font-family:inherit}
@@ -501,17 +501,19 @@ function svColor(name){ return SV_COLOR[name]||'#9a8fb5'; }
 function svStores(){ return svView==='all'? stores : stores.filter(s=>svOf(s)===svView); }
 /* 기준월(또는 최근) 평균마진(원) */
 function curMg(s){ const ym=curMonth(); const p=ym?pAt(s,ym):((s.perf||[]).slice(-1)[0]); return (p&&p.mg!=null&&p.mg!=='')?(Number(p.mg)||0):null; }
-/* 최근 3개월 판매유형 추이 표 (건수·개통대비% · 유선비=유선÷무선) */
-function chan3mTable(s){
+/* 최근 3개월 판매유형 추이 그래프 (월별 100% 누적막대 · 유선비=유선÷(무선+유심)) */
+const CH3_COL={ms:'#6d3ecb',ws:'#2e9e6b',us:'#e08a2b',al:'#3b82c4',rt:'#d64f6a'};
+function chan3mChart(s){
   const M=(s.perf||[]).map(p=>p.ym).filter(Boolean).sort().slice(-3);
   if(!M.length) return '';
-  const head=`<tr><th>월</th>${CHAN.map(c=>`<th>${c.l}</th>`).join('')}<th>개통</th><th>유선비</th></tr>`;
-  const rows=M.map(ym=>{ const p=pAt(s,ym); if(!p) return '';
-    const act=Number(p.act)||0;
-    const cells=CHAN.map(c=>{ const v=Number(p[c.k])||0; const pct=act?(v/act*100):0; return `<td>${v}<small> ${pct.toFixed(0)}%</small></td>`; }).join('');
-    const ms=Number(p.ms)||0, ws=Number(p.ws)||0, wsr=ms?(ws/ms*100):0;
-    return `<tr><td>${esc(ym.slice(2))}</td>${cells}<td>${act}</td><td class="wsr">${ms?wsr.toFixed(0)+'%':'-'}</td></tr>`; }).join('');
-  return `<div style="font-size:12px;font-weight:800;color:var(--purple-d);margin:10px 0 4px">📊 최근 3개월 판매유형 추이 <span class="muted" style="font-weight:500;font-size:11px">(건수 · 개통대비% · 유선비=유선÷무선)</span></div><table class="c3m">${head}${rows}</table>`;
+  const legend='<div class="legend" style="margin:2px 0 7px">'+CHAN.map(c=>`<span><i class="dot" style="background:${CH3_COL[c.k]}"></i>${c.l}</span>`).join('')+'</div>';
+  const bars=M.map(ym=>{ const p=pAt(s,ym); if(!p) return '';
+    const act=Number(p.act)||0, ms=Number(p.ms)||0, us=Number(p.us)||0, ws=Number(p.ws)||0;
+    const den=ms+us, wsr=den? ws/den*100 : 0;
+    const segs=CHAN.map(c=>{ const v=Number(p[c.k])||0, w=act? v/act*100:0;
+      return w>0?`<div title="${c.l} ${v}건 (${w.toFixed(0)}%)" style="width:${w}%;background:${CH3_COL[c.k]}">${w>=12?c.l+' '+w.toFixed(0)+'%':''}</div>`:''; }).join('');
+    return `<div class="c3bar-row"><span class="c3bar-ym">${esc(ym.slice(2))}</span><div class="c3bar">${segs}</div><span class="c3bar-meta">개통 ${act} · 유선비 <b>${den?wsr.toFixed(0)+'%':'-'}</b></span></div>`; }).join('');
+  return `<div style="font-size:12px;font-weight:800;color:var(--purple-d);margin:10px 0 4px">📊 최근 3개월 판매유형 추이 <span class="muted" style="font-weight:500;font-size:11px">(월별 비중 · 유선비=유선÷(무선+유심))</span></div>${legend}${bars}`;
 }
 function allMonths(){ return [...new Set(stores.flatMap(s=>(s.perf||[]).map(p=>p.ym)))].filter(Boolean).sort(); }
 function pAt(s,ym){ return (s.perf||[]).find(p=>p.ym===ym); }
@@ -832,12 +834,12 @@ function renderPerfChan(s){
   const el=document.getElementById('perf-chan'); if(!el)return;
   const ym=curMonth(); const p=ym?pAt(s,ym):((s.perf||[]).slice(-1)[0]);
   if(!p||!p.act || p.ms==null){ el.innerHTML=''; return; }
-  const _ms=Number(p.ms)||0, _ws=Number(p.ws)||0, _wsr=_ms? (_ws/_ms*100):0;
+  const _ms=Number(p.ms)||0, _ws=Number(p.ws)||0, _us=Number(p.us)||0, _den=_ms+_us, _wsr=_den? (_ws/_den*100):0;
   el.innerHTML=`<div style="font-size:11.5px;color:var(--muted);font-weight:700;margin-bottom:5px">${esc(p.ym)} 판매유형 · 개통 ${p.act}건${p.mg?' · 평균마진 '+Number(p.mg).toLocaleString()+'원':''}</div>`+
     '<div style="display:flex;gap:6px;flex-wrap:wrap">'+CHAN.map(c=>{const v=Number(p[c.k])||0,pct=p.act?(v/p.act*100):0;
-      const extra = (c.k==='ms' && _ms) ? ` <span style="color:#2e9e6b;font-weight:800">(유선 ${_wsr.toFixed(0)}%)</span>` : '';
+      const extra = (c.k==='ms' && _den) ? ` <span style="color:#2e9e6b;font-weight:800">(유선비 ${_wsr.toFixed(0)}%)</span>` : '';
       return `<span class="bdg" style="font-size:11px">${c.l} ${v}<b style="color:var(--purple-d)"> ${pct.toFixed(0)}%</b>${extra}</span>`;}).join('')+'</div>'
-    + chan3mTable(s);
+    + chan3mChart(s);
 }
 function renderPerfTrend(s){
   const el=document.getElementById('perf-trend'); if(!el)return;
