@@ -168,6 +168,13 @@
   .svsw button{border:none;background:#fff;padding:7px 12px;font-size:12.5px;font-weight:800;color:var(--muted);cursor:pointer;font-family:inherit}
   .svsw button.active{background:#1f9d76;color:#fff}
   .lrow .lsv{font-size:10.5px;color:#fff;padding:2px 8px;border-radius:20px;flex:0 0 auto;font-weight:800}
+  .lrow .lmarg{font-size:11px;color:#b5541a;background:#fff4ea;padding:2px 7px;border-radius:20px;flex:0 0 auto;font-weight:700}
+  table.c3m{width:100%;border-collapse:collapse;font-size:11px;margin-top:2px}
+  table.c3m th,table.c3m td{border:1px solid var(--line);padding:4px 5px;text-align:center;white-space:nowrap}
+  table.c3m th{background:var(--lav);color:var(--purple-d);font-weight:800}
+  table.c3m td:first-child,table.c3m th:first-child{background:#faf8fe;font-weight:800;color:var(--ink)}
+  table.c3m td small{color:var(--muted);font-weight:600;font-size:9.5px}
+  table.c3m td.wsr{color:#2e9e6b;font-weight:800}
   /* rank */
   .rankmetrics{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
   .rankmetrics button{padding:8px 14px;border:1.5px solid var(--line);background:#fff;border-radius:20px;font-size:13px;font-weight:800;color:var(--muted);cursor:pointer;font-family:inherit}
@@ -345,6 +352,7 @@
     <div class="rsec"><h3>🏆 칭찬할 매장 / 🔧 챙겨야 할 매장 <span class="muted" style="font-weight:500;font-size:12px">(전월 대비 급등·급락 · 채널 강점)</span></h3><div id="star-list"></div></div>
     <div class="rsec"><h3>📊 판매 유형(채널) 분석 <span class="muted" style="font-weight:500;font-size:12px">— 무선·유선·유심·알뜰·렌탈을 얼마나 파는지</span></h3><div id="chan-analysis"></div></div>
     <div class="rsec"><h3>📊 판매유형 분석 <span class="muted" style="font-weight:500;font-size:12px">— 채널별 추이 + 어느 매장이 무엇을 잘 파는지 한눈에</span></h3><div id="chan-trend"></div></div>
+    <div class="rsec"><h3>📅 매장별 판매유형 3개월 추이 <span class="muted" style="font-weight:500;font-size:12px">— 각 매장 최근 3개월 무선·유선·유심·알뜰·렌탈 흐름 (라인/담당으로 좁혀서 보세요)</span></h3><div id="store-chan3m"></div></div>
     <div class="rsec"><h3>🔎 채널별 약점 매장 <span class="muted" style="font-weight:500;font-size:12px">(개통은 있는데 특정 상품 판매 비중이 현저히 낮은 곳)</span></h3><div id="weak-list"></div></div>
     <div class="rsec"><h3>🗺 지역별 매장 현황</h3><div id="region-dist"></div></div>
     <div class="rsec"><h3>🎖 등급 분포</h3><div id="grade-dist"></div></div>
@@ -492,6 +500,20 @@ function autoSV(s){ if(!s) return ''; if(SV_STORE_OVERRIDE[s.name]) return SV_ST
 function svOf(s){ if(!s) return ''; if(s.sv) return s.sv; return autoSV(s); }
 function svColor(name){ return SV_COLOR[name]||'#9a8fb5'; }
 function svStores(){ return svView==='all'? stores : stores.filter(s=>svOf(s)===svView); }
+/* 기준월(또는 최근) 평균마진(원) */
+function curMg(s){ const ym=curMonth(); const p=ym?pAt(s,ym):((s.perf||[]).slice(-1)[0]); return (p&&p.mg!=null&&p.mg!=='')?(Number(p.mg)||0):null; }
+/* 최근 3개월 판매유형 추이 표 (건수·개통대비% · 유선비=유선÷무선) */
+function chan3mTable(s){
+  const M=(s.perf||[]).map(p=>p.ym).filter(Boolean).sort().slice(-3);
+  if(!M.length) return '';
+  const head=`<tr><th>월</th>${CHAN.map(c=>`<th>${c.l}</th>`).join('')}<th>개통</th><th>유선비</th></tr>`;
+  const rows=M.map(ym=>{ const p=pAt(s,ym); if(!p) return '';
+    const act=Number(p.act)||0;
+    const cells=CHAN.map(c=>{ const v=Number(p[c.k])||0; const pct=act?(v/act*100):0; return `<td>${v}<small> ${pct.toFixed(0)}%</small></td>`; }).join('');
+    const ms=Number(p.ms)||0, ws=Number(p.ws)||0, wsr=ms?(ws/ms*100):0;
+    return `<tr><td>${esc(ym.slice(2))}</td>${cells}<td>${act}</td><td class="wsr">${ms?wsr.toFixed(0)+'%':'-'}</td></tr>`; }).join('');
+  return `<div style="font-size:12px;font-weight:800;color:var(--purple-d);margin:10px 0 4px">📊 최근 3개월 판매유형 추이 <span class="muted" style="font-weight:500;font-size:11px">(건수 · 개통대비% · 유선비=유선÷무선)</span></div><table class="c3m">${head}${rows}</table>`;
+}
 function allMonths(){ return [...new Set(stores.flatMap(s=>(s.perf||[]).map(p=>p.ym)))].filter(Boolean).sort(); }
 function pAt(s,ym){ return (s.perf||[]).find(p=>p.ym===ym); }
 function prevMonth(ym){ const m=allMonths(); const i=m.indexOf(ym); return i>0?m[i-1]:null; }
@@ -657,7 +679,7 @@ function renderList(list){
     const sum=arr.reduce((t,s)=>t+(lastSales(s)||0),0);
     const isC=collapsed[r];
     const rows=arr.map(s=>{
-      const w=isWarned(s), ls=lastSales(s);
+      const w=isWarned(s), ls=lastSales(s), mm=curMg(s);
       const gcls=s.grade?('g-'+s.grade):'g-none';
       return `<div class="lrow ${w&&!isClosed(s)?'warned':''} ${isClosed(s)?'closed':''}" data-id="${s.id}">
         <span class="lg-grade ${gcls}">${s.grade||'?'}</span>
@@ -669,6 +691,7 @@ function renderList(list){
         <span class="lgu ${s.gubun==='직영'?'bdg gu':'bdg ga'}" style="background:${s.gubun==='직영'?'#e7f0ff':'#fff0e6'};color:${s.gubun==='직영'?'#2657b8':'#b5541a'}">${esc(s.gubun||'')}</span>
         <span class="lmgr">${esc(s.manager||'-')}</span>
         ${w&&!isClosed(s)?'<span class="lwarn">⚠</span>':''}
+        ${mm?`<span class="lmarg">마진 ${mm.toLocaleString()}원</span>`:''}
         <span class="lsales">${ls!=null?ls+'<small>만</small>':'<small>-</small>'}</span>
       </div>`;
     }).join('');
@@ -814,7 +837,8 @@ function renderPerfChan(s){
   el.innerHTML=`<div style="font-size:11.5px;color:var(--muted);font-weight:700;margin-bottom:5px">${esc(p.ym)} 판매유형 · 개통 ${p.act}건${p.mg?' · 평균마진 '+Number(p.mg).toLocaleString()+'원':''}</div>`+
     '<div style="display:flex;gap:6px;flex-wrap:wrap">'+CHAN.map(c=>{const v=Number(p[c.k])||0,pct=p.act?(v/p.act*100):0;
       const extra = (c.k==='ms' && _ms) ? ` <span style="color:#2e9e6b;font-weight:800">(유선 ${_wsr.toFixed(0)}%)</span>` : '';
-      return `<span class="bdg" style="font-size:11px">${c.l} ${v}<b style="color:var(--purple-d)"> ${pct.toFixed(0)}%</b>${extra}</span>`;}).join('')+'</div>';
+      return `<span class="bdg" style="font-size:11px">${c.l} ${v}<b style="color:var(--purple-d)"> ${pct.toFixed(0)}%</b>${extra}</span>`;}).join('')+'</div>'
+    + chan3mTable(s);
 }
 function renderPerfTrend(s){
   const el=document.getElementById('perf-trend'); if(!el)return;
@@ -952,9 +976,9 @@ function renderReport(){
   if(gubunView!=='all') chanScope = gubunView==='직영'?'gu':'ga';
   const warned=AS.filter(isWarned);
   const openIss=AS.reduce((a,s)=>a+(s.issues||[]).filter(i=>i.status!=='완료').length,0);
-  function agg(arr){ let sales=0,act=0,rep=0; const ch={ms:0,ws:0,us:0,al:0,rt:0};
-    arr.forEach(s=>{ const p=ym?pAt(s,ym):null; if(p){ rep++; sales+=Number(p.sales)||0; act+=Number(p.act)||0; CHAN.forEach(c=>ch[c.k]+=Number(p[c.k])||0);} });
-    return {sales,act,rep,ch}; }
+  function agg(arr){ let sales=0,act=0,rep=0,mgw=0; const ch={ms:0,ws:0,us:0,al:0,rt:0};
+    arr.forEach(s=>{ const p=ym?pAt(s,ym):null; if(p){ rep++; sales+=Number(p.sales)||0; act+=Number(p.act)||0; mgw+=(Number(p.mg)||0)*(Number(p.act)||0); CHAN.forEach(c=>ch[c.k]+=Number(p[c.k])||0);} });
+    return {sales,act,rep,ch,mgw}; }
   const A=agg(AS), G=agg(guArr), Ga=agg(gaArr);
   document.getElementById('stat-row').innerHTML=`
     <div class="stat"><div class="n">${n}</div><div class="l">${excluded>0?'영업 매장':'총 매장'}</div></div>
@@ -969,6 +993,7 @@ function renderReport(){
      <div>매출<b>${a.sales.toLocaleString()}만</b></div>
      <div>개통<b>${a.act.toLocaleString()}건</b></div>
      <div>매장당 매출<b>${a.rep?Math.round(a.sales/a.rep).toLocaleString():'-'}만</b></div>
+     <div>평균마진<b>${a.act&&a.mgw?Math.round(a.mgw/a.act).toLocaleString()+'원':'-'}</b></div>
      <div>실적매장<b>${a.rep}곳</b></div></div>`; }
   document.getElementById('gubun-split').innerHTML=`<div class="gsplit">
       <div class="gcard gu"><div class="gt">🏢 직영 <span class="cnt">${guArr.length}개 매장</span></div>${gkpi(G)}</div>
@@ -1014,6 +1039,19 @@ function renderReport(){
   document.getElementById('chan-analysis').innerHTML =
     (showGu?chanCol('🏢 직영 판매 비율', G, 'var(--purple)'):'') + (showGa?chanCol('🤝 가맹 판매 비율', Ga, '#e08a2b'):'');
   renderChanTrend();
+
+  // 매장별 판매유형 3개월 추이 (현재 라인/구분 스코프)
+  const c3mEl=document.getElementById('store-chan3m');
+  if(c3mEl){
+    const c3mArr=VS.filter(s=>(s.perf||[]).some(p=>p.act)); const cap=30;
+    if(!c3mArr.length){ c3mEl.innerHTML='<div class="muted" style="font-size:12.5px">실적 데이터가 있는 매장이 없어요</div>'; }
+    else{
+      c3mEl.innerHTML = c3mArr.slice(0,cap).map(s=>`<div style="margin:0 0 14px">
+        <div style="font-weight:800;font-size:13px;color:var(--ink);margin-bottom:2px">${esc(s.name)} <span class="muted" style="font-weight:500;font-size:11px">${esc(s.line||'')}${svOf(s)?' · 👤'+esc(svOf(s)):''} · ${esc(s.gubun||'')}</span></div>
+        ${chan3mTable(s)}</div>`).join('')
+        + (c3mArr.length>cap?`<div class="muted" style="font-size:12px">…외 ${c3mArr.length-cap}곳 더 있어요. 상단 '라인' 또는 '담당'으로 좁혀서 보세요.</div>`:'');
+    }
+  }
 
   // 채널별 약점 매장 (그룹 평균 대비 특정 채널 크게 부진)
   const weak=[];
@@ -1074,7 +1112,7 @@ function renderReport(){
 
 /* ============ RANK ============ */
 let rankMetric='sales';
-const RANK_METRICS=[{k:'sales',l:'💰 매출',ch:false},{k:'act',l:'📱 총개통',ch:false},{k:'ms',l:'무선',ch:true},{k:'ws',l:'유선',ch:true},{k:'us',l:'유심',ch:true},{k:'al',l:'알뜰',ch:true},{k:'rt',l:'렌탈',ch:true}];
+const RANK_METRICS=[{k:'sales',l:'💰 매출',ch:false},{k:'act',l:'📱 총개통',ch:false},{k:'mg',l:'💵 평균마진',ch:false},{k:'ms',l:'무선',ch:true},{k:'ws',l:'유선',ch:true},{k:'us',l:'유심',ch:true},{k:'al',l:'알뜰',ch:true},{k:'rt',l:'렌탈',ch:true}];
 function renderRank(){
   const ym=curMonth();
   document.getElementById('rank-date').textContent=(ym?('기준월 '+ym):'실적 없음')+' · '+(gubunView==='all'?'전체':gubunView)+' 담당'+(svView!=='all'?(' · 👤'+svView+' SV'):'');
@@ -1084,8 +1122,8 @@ function renderRank(){
   const arr=viewStores().filter(s=>isActiveAt(s,ym)).map(s=>{ const p=ym?pAt(s,ym):null; return {s,v:p?(Number(p[rankMetric])||0):0}; }).filter(x=>x.v>0);
   arr.sort((a,b)=>b.v-a.v);
   const max=arr.length?arr[0].v:1;
-  const unit=rankMetric==='sales'?'만':'건';
-  const col={sales:'var(--purple)',act:'#7c3aed',ms:'#6d3ecb',ws:'#2e9e6b',us:'#e08a2b',al:'#3b82c4',rt:'#d64f6a'}[rankMetric]||'var(--purple)';
+  const unit=rankMetric==='sales'?'만':rankMetric==='mg'?'원':'건';
+  const col={sales:'var(--purple)',act:'#7c3aed',mg:'#b5541a',ms:'#6d3ecb',ws:'#2e9e6b',us:'#e08a2b',al:'#3b82c4',rt:'#d64f6a'}[rankMetric]||'var(--purple)';
   document.getElementById('rank-list').innerHTML= arr.length? arr.map((x,i)=>{
     const p=pAt(x.s,ym); const pct= met.ch&&p&&p.act? ' <small>('+(x.v/p.act*100).toFixed(0)+'%)</small>':'';
     return `<div class="rkrow ${i<3?'top'+(i+1):''}" data-id="${x.s.id}">
