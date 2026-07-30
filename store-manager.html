@@ -175,6 +175,11 @@
   .c3bar>div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:9.5px;font-weight:800;min-width:0;white-space:nowrap;overflow:hidden}
   .c3bar-meta{flex:0 0 auto;color:var(--muted);font-weight:600;white-space:nowrap;font-size:10.5px}
   .c3bar-meta b{color:#2e9e6b;font-size:11.5px}
+  .c3wrap{overflow-x:auto;max-width:100%;padding-bottom:6px}
+  .c3wrap::-webkit-scrollbar{height:10px}
+  .c3wrap::-webkit-scrollbar-track{background:#f2eefb;border-radius:20px}
+  .c3wrap::-webkit-scrollbar-thumb{background:#c3bcd6;border-radius:20px}
+  .c3wrap::-webkit-scrollbar-thumb:hover{background:#a99fc4}
   .c3sum{min-width:1260px}
   .c3sum .chead,.c3sum .crow{display:flex;align-items:center;gap:12px;font-size:12.5px}
   .c3sum .chead{color:var(--muted);font-weight:800;font-size:11px;padding:0 10px 6px;border-bottom:2px solid var(--line)}
@@ -194,6 +199,7 @@
   .c3sum .cmg .arw{color:#c3bcd6;font-weight:900;margin:0 4px}
   /* 전체화면 모드 */
   #rsec-chan3m.fsmode{position:fixed;inset:0;z-index:200;margin:0;border-radius:0;overflow:auto;background:#fff;max-width:none;padding:18px 22px}
+  #rsec-chan3m.fsmode .c3wrap{overflow-x:visible}
   #rsec-chan3m.fsmode .c3sum{min-width:0;width:100%}
   #rsec-chan3m.fsmode .c3sum .chead,#rsec-chan3m.fsmode .c3sum .crow{font-size:15px;gap:10px}
   #rsec-chan3m.fsmode .c3sum .chead{font-size:13px;padding-bottom:9px}
@@ -390,7 +396,8 @@
     <div class="rsec"><h3>📊 판매 유형(채널) 분석 <span class="muted" style="font-weight:500;font-size:12px">— 무선·유선·유심·알뜰·렌탈을 얼마나 파는지</span></h3><div id="chan-analysis"></div></div>
     <div class="rsec"><h3>📊 판매유형 분석 <span class="muted" style="font-weight:500;font-size:12px">— 채널별 추이 + 어느 매장이 무엇을 잘 파는지 한눈에</span></h3><div id="chan-trend"></div></div>
     <div class="rsec" id="rsec-chan3m"><h3 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">📅 매장별 유선비 3개월 추이 <span class="muted" style="font-weight:500;font-size:12px">— 전 매장(또는 선택 라인/담당) 한 줄 비교 · 유선비=유선÷(무선+유심) · 유선비 높은 순 · 매장 클릭 시 상세</span>
-      <button class="btn ghost sm" id="fs-chan3m" style="margin-left:auto">⛶ 전체화면</button></h3><div id="store-chan3m"></div></div>
+      <button class="btn ghost sm" id="fs-chan3m" style="margin-left:auto">⛶ 전체화면</button></h3>
+      <div class="muted" style="font-size:11px;margin:-4px 0 6px">↔ 표가 넓어요 — 좌우로 밀어서 보거나 <b>⛶ 전체화면</b>을 누르면 한눈에 보여요</div><div id="store-chan3m"></div></div>
     <div class="rsec"><h3>🔎 채널별 약점 매장 <span class="muted" style="font-weight:500;font-size:12px">(개통은 있는데 특정 상품 판매 비중이 현저히 낮은 곳)</span></h3><div id="weak-list"></div></div>
     <div class="rsec"><h3>🗺 지역별 매장 현황</h3><div id="region-dist"></div></div>
     <div class="rsec"><h3>🎖 등급 분포</h3><div id="grade-dist"></div></div>
@@ -596,7 +603,7 @@ function chan3mSummary(arr){
       <span class="cmg">${mgSeq}</span>
       <span class="cact">개통 <b>${act}</b></span></div>`;
   }).join('');
-  return `<div class="c3sum" style="overflow-x:auto">${head}${rows}</div>`;
+  return `<div class="c3wrap"><div class="c3sum">${head}${rows}</div></div>`;
 }
 function allMonths(){ return [...new Set(stores.flatMap(s=>(s.perf||[]).map(p=>p.ym)))].filter(Boolean).sort(); }
 function pAt(s,ym){ return (s.perf||[]).find(p=>p.ym===ym); }
