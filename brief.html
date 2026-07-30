@@ -207,7 +207,7 @@ var H={apikey:KEY, Authorization:'Bearer '+KEY};
 var card=document.createElement('section');
 card.id='store-brief';
 card.style.cssText='background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 18px;margin:14px 0;box-shadow:0 1px 2px rgba(20,20,40,.05)';
-card.innerHTML='<div style="font-weight:800;font-size:15px;margin-bottom:9px">🏬 매장분석 특이사항 <span id="sb-ym" style="font-weight:500;color:var(--muted);font-size:12px"></span></div><div id="sb-body" style="font-size:13px;line-height:1.75;color:var(--ink)">불러오는 중…</div><div style="margin-top:10px"><a href="store-manager.html" style="font-size:12px;font-weight:700;color:#6B3FA8;text-decoration:none">매장분석 자세히 보기 →</a></div>';
+card.innerHTML='<div style="font-weight:800;font-size:15px;margin-bottom:9px">🏬 매장분석 특이사항 <span id="sb-ym" style="font-weight:500;color:var(--muted);font-size:12px"></span></div><div id="sb-body" style="font-size:13px;line-height:1.75;color:var(--ink)">불러오는 중…</div><div style="margin-top:10px"><a href="sm-ac85909903e9.html" style="font-size:12px;font-weight:700;color:#6B3FA8;text-decoration:none">매장분석 자세히 보기 →</a></div>';
 function place(){var c=document.getElementById('content'); if(c&&c.parentNode){c.parentNode.insertBefore(card,c.nextSibling);} else {document.body.appendChild(card);}}
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',place);} else {place();}
 function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
