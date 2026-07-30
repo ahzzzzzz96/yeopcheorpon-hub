@@ -192,6 +192,22 @@
   .c3sum .cetc{flex:0 0 165px;font-weight:700;color:#c17d1a;font-variant-numeric:tabular-nums}
   .c3sum .cmg{flex:0 0 250px;font-weight:700;color:#b5541a;font-variant-numeric:tabular-nums}
   .c3sum .cmg .arw{color:#c3bcd6;font-weight:900;margin:0 4px}
+  /* 전체화면 모드 */
+  #rsec-chan3m.fsmode{position:fixed;inset:0;z-index:200;margin:0;border-radius:0;overflow:auto;background:#fff;max-width:none;padding:18px 22px}
+  #rsec-chan3m.fsmode .c3sum{min-width:0;width:100%}
+  #rsec-chan3m.fsmode .c3sum .chead,#rsec-chan3m.fsmode .c3sum .crow{font-size:15px;gap:10px}
+  #rsec-chan3m.fsmode .c3sum .chead{font-size:13px;padding-bottom:9px}
+  #rsec-chan3m.fsmode .c3sum .crow{padding:13px 10px}
+  #rsec-chan3m.fsmode .c3sum .cnm{flex:0 0 235px;font-size:15px}
+  #rsec-chan3m.fsmode .c3sum .csales{flex:1 1 215px;white-space:nowrap}
+  #rsec-chan3m.fsmode .c3sum .cwsr{flex:1 1 205px;white-space:nowrap}
+  #rsec-chan3m.fsmode .c3sum .cetc{flex:1 1 180px;white-space:nowrap}
+  #rsec-chan3m.fsmode .c3sum .cmg{flex:1 1 290px;white-space:nowrap}
+  #rsec-chan3m.fsmode .c3sum .cspark{flex:0 0 84px;height:30px}
+  #rsec-chan3m.fsmode .c3sum .ctrend{flex:0 0 78px;font-size:15px}
+  #rsec-chan3m.fsmode .c3sum .cact{flex:0 0 96px}
+  #rsec-chan3m.fsmode .svchip{font-size:11.5px}
+  body.fslock{overflow:hidden}
   .c3sum .ctrend{flex:0 0 64px;font-weight:900;font-size:13px}
   .c3sum .up{color:#2e9e6b}.c3sum .dn{color:#d64f6a}.c3sum .fl{color:#9a8fb5}
   .c3sum .cact{flex:0 0 84px;color:var(--muted);font-weight:700;text-align:right}
@@ -373,7 +389,8 @@
     <div class="rsec"><h3>🏆 칭찬할 매장 / 🔧 챙겨야 할 매장 <span class="muted" style="font-weight:500;font-size:12px">(전월 대비 급등·급락 · 채널 강점)</span></h3><div id="star-list"></div></div>
     <div class="rsec"><h3>📊 판매 유형(채널) 분석 <span class="muted" style="font-weight:500;font-size:12px">— 무선·유선·유심·알뜰·렌탈을 얼마나 파는지</span></h3><div id="chan-analysis"></div></div>
     <div class="rsec"><h3>📊 판매유형 분석 <span class="muted" style="font-weight:500;font-size:12px">— 채널별 추이 + 어느 매장이 무엇을 잘 파는지 한눈에</span></h3><div id="chan-trend"></div></div>
-    <div class="rsec"><h3>📅 매장별 유선비 3개월 추이 <span class="muted" style="font-weight:500;font-size:12px">— 전 매장(또는 선택 라인/담당) 한 줄 비교 · 유선비=유선÷(무선+유심) · 유선비 높은 순 · 매장 클릭 시 상세</span></h3><div id="store-chan3m"></div></div>
+    <div class="rsec" id="rsec-chan3m"><h3 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">📅 매장별 유선비 3개월 추이 <span class="muted" style="font-weight:500;font-size:12px">— 전 매장(또는 선택 라인/담당) 한 줄 비교 · 유선비=유선÷(무선+유심) · 유선비 높은 순 · 매장 클릭 시 상세</span>
+      <button class="btn ghost sm" id="fs-chan3m" style="margin-left:auto">⛶ 전체화면</button></h3><div id="store-chan3m"></div></div>
     <div class="rsec"><h3>🔎 채널별 약점 매장 <span class="muted" style="font-weight:500;font-size:12px">(개통은 있는데 특정 상품 판매 비중이 현저히 낮은 곳)</span></h3><div id="weak-list"></div></div>
     <div class="rsec"><h3>🗺 지역별 매장 현황</h3><div id="region-dist"></div></div>
     <div class="rsec"><h3>🎖 등급 분포</h3><div id="grade-dist"></div></div>
@@ -1173,6 +1190,20 @@ function renderReport(){
     `<li><span class="nm2">${esc(s.name)}</span> ${esc(i.title)} → <b>${esc(i.action||'조치 미정')}</b> <span class="tag">${esc(i.due||'')} ${esc(i.status||'')}</span></li>`).join('')
     : '<li class="muted">미해결 문제 없음 👍</li>';
 }
+
+/* ---- 3개월 추이 전체화면 토글 ---- */
+(function(){
+  const sec=document.getElementById('rsec-chan3m'), btn=document.getElementById('fs-chan3m');
+  if(!sec||!btn) return;
+  function setFS(on){
+    sec.classList.toggle('fsmode',on);
+    document.body.classList.toggle('fslock',on);
+    btn.textContent = on? '✕ 닫기 (ESC)' : '⛶ 전체화면';
+    if(on) sec.scrollTop=0;
+  }
+  btn.onclick=(e)=>{ e.stopPropagation(); setFS(!sec.classList.contains('fsmode')); };
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && sec.classList.contains('fsmode')) setFS(false); });
+})();
 
 /* ============ RANK ============ */
 let rankMetric='sales';
