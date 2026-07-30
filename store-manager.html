@@ -175,7 +175,7 @@
   .c3bar>div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:9.5px;font-weight:800;min-width:0;white-space:nowrap;overflow:hidden}
   .c3bar-meta{flex:0 0 auto;color:var(--muted);font-weight:600;white-space:nowrap;font-size:10.5px}
   .c3bar-meta b{color:#2e9e6b;font-size:11.5px}
-  .c3sum{min-width:1010px}
+  .c3sum{min-width:1120px}
   .c3sum .chead,.c3sum .crow{display:flex;align-items:center;gap:12px;font-size:12.5px}
   .c3sum .chead{color:var(--muted);font-weight:800;font-size:11px;padding:0 10px 6px;border-bottom:2px solid var(--line)}
   .c3sum .crow{padding:9px 10px;border-bottom:1px solid #f0ecf9;cursor:pointer}
@@ -190,6 +190,7 @@
   .c3sum .cwsr{flex:0 0 190px;font-weight:700;color:#1f7a55;font-variant-numeric:tabular-nums}
   .c3sum .cwsr .arw,.c3sum .cetc .arw{color:#c3bcd6;font-weight:900;margin:0 4px}
   .c3sum .cetc{flex:0 0 165px;font-weight:700;color:#c17d1a;font-variant-numeric:tabular-nums}
+  .c3sum .cmg{flex:0 0 110px;font-weight:800;color:#b5541a;font-variant-numeric:tabular-nums}
   .c3sum .ctrend{flex:0 0 64px;font-weight:900;font-size:13px}
   .c3sum .up{color:#2e9e6b}.c3sum .dn{color:#d64f6a}.c3sum .fl{color:#9a8fb5}
   .c3sum .cact{flex:0 0 84px;color:var(--muted);font-weight:700;text-align:right}
@@ -544,7 +545,7 @@ function chan3mSummary(arr){
     const w=M.map(ym=>wsrOf(pAt(s,ym))); while(w.length<3) w.unshift(null);
     const last=[...w].reverse().find(x=>x!=null); return {s,M,w,last:last==null?-1:last}; });
   withKey.sort((a,b)=> b.last-a.last || (a.s.name||'').localeCompare(b.s.name||'','ko'));
-  const head=`<div class="chead"><span class="cnm">매장</span><span class="csales">매출(만·3개월)</span><span class="cspark">유선비 추이</span><span class="cwsr">유선비(3개월)</span><span class="ctrend">추세</span><span class="cetc">기타(유심·알뜰·렌탈)</span><span class="cact">최근 개통</span></div>`;
+  const head=`<div class="chead"><span class="cnm">매장</span><span class="csales">매출(만·3개월)</span><span class="cspark">유선비 추이</span><span class="cwsr">유선비(3개월)</span><span class="ctrend">추세</span><span class="cetc">기타(유심·알뜰·렌탈)</span><span class="cmg">평균마진(매장)</span><span class="cact">최근 개통</span></div>`;
   const rows=withKey.map(({s,M,w})=>{
     const mx=Math.max(12,...w.map(x=>x==null?0:x));
     const spark=w.map(x=> x==null?'<i style="opacity:.15;background:#c3bcd6"></i>':`<i style="height:${Math.max(15,x/mx*100)}%"></i>`).join('');
@@ -569,6 +570,7 @@ function chan3mSummary(arr){
       <span class="cwsr">${seq}</span>
       <span class="ctrend ${tr[0]}">${tr[1]}</span>
       <span class="cetc">${etcSeq}</span>
+      <span class="cmg">${lp&&lp.mg?Number(lp.mg).toLocaleString()+'원':'-'}</span>
       <span class="cact">개통 <b>${act}</b></span></div>`;
   }).join('');
   return `<div class="c3sum" style="overflow-x:auto">${head}${rows}</div>`;
@@ -1035,9 +1037,9 @@ function renderReport(){
   if(gubunView!=='all') chanScope = gubunView==='직영'?'gu':'ga';
   const warned=AS.filter(isWarned);
   const openIss=AS.reduce((a,s)=>a+(s.issues||[]).filter(i=>i.status!=='완료').length,0);
-  function agg(arr){ let sales=0,act=0,rep=0,mgw=0; const ch={ms:0,ws:0,us:0,al:0,rt:0};
-    arr.forEach(s=>{ const p=ym?pAt(s,ym):null; if(p){ rep++; sales+=Number(p.sales)||0; act+=Number(p.act)||0; mgw+=(Number(p.mg)||0)*(Number(p.act)||0); CHAN.forEach(c=>ch[c.k]+=Number(p[c.k])||0);} });
-    return {sales,act,rep,ch,mgw}; }
+  function agg(arr){ let sales=0,act=0,rep=0; const ch={ms:0,ws:0,us:0,al:0,rt:0};
+    arr.forEach(s=>{ const p=ym?pAt(s,ym):null; if(p){ rep++; sales+=Number(p.sales)||0; act+=Number(p.act)||0; CHAN.forEach(c=>ch[c.k]+=Number(p[c.k])||0);} });
+    return {sales,act,rep,ch}; }
   const A=agg(AS), G=agg(guArr), Ga=agg(gaArr);
   document.getElementById('stat-row').innerHTML=`
     <div class="stat"><div class="n">${n}</div><div class="l">${excluded>0?'영업 매장':'총 매장'}</div></div>
@@ -1052,7 +1054,6 @@ function renderReport(){
      <div>매출<b>${a.sales.toLocaleString()}만</b></div>
      <div>개통<b>${a.act.toLocaleString()}건</b></div>
      <div>매장당 매출<b>${a.rep?Math.round(a.sales/a.rep).toLocaleString():'-'}만</b></div>
-     <div>평균마진<b>${a.act&&a.mgw?Math.round(a.mgw/a.act).toLocaleString()+'원':'-'}</b></div>
      <div>실적매장<b>${a.rep}곳</b></div></div>`; }
   document.getElementById('gubun-split').innerHTML=`<div class="gsplit">
       <div class="gcard gu"><div class="gt">🏢 직영 <span class="cnt">${guArr.length}개 매장</span></div>${gkpi(G)}</div>
