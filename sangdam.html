@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>창업상담 대시보드 · 대구지사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pri:#6B3FA8; --pri-d:#4A2685; --pri-soft:#f2ecfb;
+  --ink:#1f2430; --sub:#6b7280; --line:#e9ebef; --bg:#f6f7f9; --card:#ffffff;
+  --shadow:0 1px 2px rgba(20,20,40,.04), 0 6px 20px -12px rgba(74,38,133,.22);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%}
+body{background:var(--bg);color:var(--ink);
+  font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1000px;width:100%;margin:0 auto;padding:0 20px}
+
+.topbar{display:flex;align-items:center;gap:12px;padding:18px 0 12px;flex-wrap:wrap}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--pri);
+  background:var(--pri-soft);padding:7px 13px;border-radius:20px;transition:gap .14s ease}
+.back:hover{gap:10px}
+.ttl{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.tag{font-size:11px;font-weight:800;color:var(--pri-d);background:var(--pri-soft);
+  padding:3px 10px;border-radius:20px}
+.open{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--sub)}
+.open:hover{color:var(--pri)}
+
+.frame-wrap{flex:1;min-height:0;padding:0 20px 18px;max-width:1000px;width:100%;margin:0 auto;display:flex}
+.frame-card{flex:1;background:var(--card);border:1px solid var(--line);border-radius:18px;
+  box-shadow:var(--shadow);overflow:hidden;display:flex;min-height:560px}
+iframe{flex:1;width:100%;border:0;display:block}
+
+.note{max-width:1000px;margin:0 auto 22px;padding:0 20px;font-size:12px;color:var(--sub);
+  font-weight:500;line-height:1.6}
+.note b{color:var(--pri-d);font-weight:700}
+@media(max-width:620px){ .ttl{font-size:15px} .open{display:none} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="./">← 업무 통합</a>
+    <span class="ttl">창업상담 대시보드</span>
+    <span class="tag">본사 창업DB 자동 연동</span>
+    <a class="open" href="https://script.google.com/macros/s/AKfycbwagWZJS_nWsj6jrr68pGnZUATqGRU8REe3MjhiRo6SjzT1K63AyHIuHF5uHTqfOSwMqQ/exec" target="_blank" rel="noopener">새 창에서 열기 ↗</a>
+  </div>
+</div>
+
+<div class="frame-wrap">
+  <div class="frame-card">
+    <iframe
+      src="https://script.google.com/macros/s/AKfycbwagWZJS_nWsj6jrr68pGnZUATqGRU8REe3MjhiRo6SjzT1K63AyHIuHF5uHTqfOSwMqQ/exec"
+      title="창업상담 대시보드"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+</div>
+
+<div class="note">
+  화면이 비어 있으면 <b>ahzzzzzz96@gmail.com</b> 으로 로그인되어 있는지 확인하세요.
+  이 대시보드는 본인 계정에서만 열립니다 · 본사 창업DB 시트는 <b>읽기만</b> 합니다.
+</div>
+
+</body>
+</html>
