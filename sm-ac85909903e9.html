@@ -373,6 +373,16 @@
 #agg-wrap td.agg-n{text-align:right;font-variant-numeric:tabular-nums}
 #agg-wrap td.agg-c{text-align:right;font-variant-numeric:tabular-nums}
 #agg-wrap td.agg-ws{background:#F3EFFC}
+#agg-wrap.zon td.agg-z{background:#FBE4E8}
+#agg-wrap.zon td.agg-z, #agg-wrap.zon td.agg-z i{color:#A62A41;font-weight:800}
+#agg-wrap.zon td.agg-z5{background:#F6C6CE}
+#agg-wrap.zon td.agg-z5::after{content:'5개월';font-size:9px;margin-left:4px;opacity:.8}
+#agg-wrap .agg-gap{background:#FDF1F3;border:2px solid #F3C9D1;border-radius:14px;
+  padding:11px 15px;margin-bottom:13px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#agg-wrap .agg-gap b{font-size:15px;color:#A62A41}
+#agg-wrap .agg-gap span{font-size:12.5px;color:#8A2333}
+#agg-wrap .agg-gap em{font-style:normal;background:#fff;border:1px solid #F3C9D1;border-radius:8px;
+  padding:3px 9px;font-size:12px;font-weight:800;color:#A62A41}
 #agg-wrap tr.agg-s td.agg-ws{background:var(--agg-sub)}
 #agg-wrap tr.agg-s td.agg-ws i{color:#8a3d10}
 #agg-wrap tr.agg-t td.agg-ws{background:var(--agg-tot);color:#fff}
@@ -520,6 +530,12 @@
       <option value="1">수도권</option><option value="2">기타지역</option>
     </select>
     <input class="agg-q" id="agg-q" placeholder="지점명 검색" style="width:120px">
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--agg-mut)">
+      <input type="checkbox" id="agg-zero" checked> 빈칸 강조
+    </label>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--agg-mut)">
+      <input type="checkbox" id="agg-only0"> 미판매 매장만
+    </label>
     <div class="agg-seg" id="agg-unit">
       <button data-v="won" class="on">원</button><button data-v="man">만원</button>
     </div>
@@ -531,6 +547,7 @@
   </div>
 
   <div class="agg-kpis" id="agg-kpis"></div>
+  <div class="agg-gap" id="agg-gap" style="display:none"></div>
   <div class="agg-tbox" id="agg-tbox"></div>
 
   <div class="agg-legend">
@@ -539,6 +556,7 @@
     · <b>건당 매출</b> = 총매출 ÷ 총개통 (원)<br>
     · 매출은 [세후] 기준이며, 세후 값이 없는 달은 세전/총매출 값을 사용합니다.<br>
     · <b>담당</b>은 매장 카드에 저장된 SV 배정(라인·개별지정)을 매장명으로 연결해 표시합니다.<br>
+    · <b>빈칸 강조</b>: 웨어러블·알뜰·렌탈이 0인 칸을 붉게 표시합니다. 진한 색 + ‘5개월’ 표시는 최근 5개월 내내 0인 항목입니다.<br>
     · 헤더를 클릭하면 정렬됩니다. KPI의 증감은 <b>전월 동일 조건</b> 대비입니다.
   </div>
 </div>
@@ -1580,7 +1598,17 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
   // [월, 구분(0직영1가맹), 지사(0대구경북1수도권2기타), 지점명, 무선, 유심, 웨어러블, 유선, 알뜰, 렌탈, 총개통, 매출]
   var RN = ['대구/경북','수도권','기타지역'];
   var CH = [{i:4,t:'무선'},{i:5,t:'유심'},{i:6,t:'웨어러블'},{i:7,t:'유선'},{i:8,t:'알뜰'},{i:9,t:'렌탈'}];
-  var st = {m:0, g:'0', r:'', sv:'', q:'', unit:'won', sk:11, sd:-1};
+  var st = {m:0, g:'0', r:'', sv:'', q:'', unit:'won', sk:11, sd:-1, zon:true, only0:false};
+  var SUBK = [6, 8, 9];                    // 웨어러블 · 알뜰 · 렌탈 (열 인덱스)
+  var SUBN = { 6:'웨어러블', 8:'알뜰', 9:'렌탈' };
+  // 해당 매장이 최근 5개월 내내 0인 유형인지
+  function zero5(name, ci){
+    var ms = D_months.filter(function(m){ return m < st.m && m >= st.m-4 });
+    if (ms.length < 2) return false;
+    var all = D.filter(function(r){ return r[3] === name && ms.indexOf(r[0]) >= 0 });
+    if (all.length < ms.length) return false;
+    return all.every(function(r){ return r[ci] === 0 });
+  }
 
   var $ = function(id){return document.getElementById(id)};
 
@@ -1623,6 +1651,7 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
     return hit;
   }
   var months = D.map(function(r){return r[0]}).filter(function(v,i,a){return a.indexOf(v)===i}).sort(function(a,b){return a-b});
+  var D_months = months;
   st.m = months[months.length-1];
   $('agg-m').innerHTML = months.map(function(m){return '<option value="'+m+'">2026년 '+m+'월</option>'}).join('');
   $('agg-m').value = st.m;
@@ -1638,6 +1667,7 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
       if(st.g!=='' && String(r[1])!==st.g) return false;
       if(st.r!=='' && String(r[2])!==st.r) return false;
       if(st.sv!==''){ var v=svFor(r[3]); if(st.sv==='__none'? !!v : v!==st.sv) return false; }
+      if(useFilters && st.only0 && !SUBK.some(function(k){ return r[k]===0 })) return false;
       if(useFilters && st.q && r[3].indexOf(st.q)<0) return false;
       return true;
     });
@@ -1683,7 +1713,9 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
           + CH.map(function(c){
               if(c.i===7) return '<td class="agg-c agg-ws">'+comma(r[7])+'<i>('+wsr(r[7],r[4],r[5])+')</i></td>';
               var p = r[10]? Math.round(r[c.i]/r[10]*100) : 0;
-              return '<td class="agg-c">'+comma(r[c.i])+'<i>('+p+'%)</i></td>';
+              var cl = 'agg-c';
+              if(SUBK.indexOf(c.i)>=0 && r[c.i]===0) cl += zero5(r[3], c.i) ? ' agg-z agg-z5' : ' agg-z';
+              return '<td class="'+cl+'">'+comma(r[c.i])+'<i>('+p+'%)</i></td>';
             }).join('')
           + '<td class="agg-n">'+comma(r[10])+'</td><td class="agg-n">'+money(r[11])+'</td>'
           + '<td class="agg-n">'+per(r[11],r[10])+'</td></tr>';
@@ -1713,6 +1745,30 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
       th.onclick=function(){ var k=Number(th.dataset.k); if(k<0||k===0) return;
         if(st.sk===k) st.sd*=-1; else { st.sk=k; st.sd = (k===3)?1:-1; } render(); };
     });
+
+    // 빈칸(부가유형 미판매) 요약
+    (function(){
+      var el = $('agg-gap');
+      var live = cur.filter(function(r){ return r[10] > 0 });
+      if(!live.length){ el.style.display='none'; return; }
+      var cnt = {}, tot = 0;
+      SUBK.forEach(function(k){
+        cnt[k] = live.filter(function(r){ return r[k]===0 }).length;
+        tot += cnt[k];
+      });
+      var cells = live.length * SUBK.length;
+      var subSum = live.reduce(function(a,r){ return a + r[6] + r[8] + r[9] }, 0);
+      var openSum = live.reduce(function(a,r){ return a + r[10] }, 0);
+      if(!tot){ el.style.display='none'; return; }
+      el.style.display = 'flex';
+      el.innerHTML = '<b>빈칸 ' + tot + '개 / ' + cells + '칸</b>'
+        + '<span>웨어러블·알뜰·렌탈 ' + live.length + '개 매장 기준 · '
+        + Math.round(tot/cells*100) + '%가 미판매</span>'
+        + SUBK.map(function(k){ return '<em>' + SUBN[k] + ' ' + cnt[k] + '개</em>' }).join('')
+        + '<span style="margin-left:auto">부가유형 ' + comma(subSum) + '건 / 총개통 '
+        + comma(openSum) + '건 = <b style="font-size:13px">'
+        + (openSum ? (subSum/openSum*100).toFixed(1) : 0) + '%</b></span>';
+    })();
 
     // KPI (전월 대비)
     var prev = sum(pick(st.m-1, false)), now = sum(pick(st.m, false));
@@ -1768,6 +1824,10 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
   $('agg-m').onchange=function(e){st.m=Number(e.target.value);render()};
   $('agg-r').onchange=function(e){st.r=e.target.value;render()};
   $('agg-sv').onchange=function(e){st.sv=e.target.value;render()};
+  $('agg-zero').onchange=function(e){
+    st.zon=e.target.checked; $('agg-wrap').classList.toggle('zon', st.zon);
+  };
+  $('agg-only0').onchange=function(e){st.only0=e.target.checked;render()};
   $('agg-fs').onclick=function(){
     var el=$('agg-wrap');
     var fs=document.fullscreenElement||document.webkitFullscreenElement;
@@ -1788,6 +1848,7 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
     b.onclick=function(){Array.prototype.forEach.call(document.querySelectorAll('#agg-unit button'),
       function(x){x.classList.remove('on')}); b.classList.add('on'); st.unit=b.dataset.v; render();};
   });
+  $('agg-wrap').classList.add('zon');
   render();
   window.aggRender = function(){ buildSvIdx(); render(); };
   // 허브(클라우드) 매장 데이터는 비동기로 도착 → 도착하면 담당 배정 다시 계산
