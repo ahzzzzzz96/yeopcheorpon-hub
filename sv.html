@@ -18,6 +18,7 @@
 body{margin:0;background:#eceef2;color:var(--ink);font-size:13px;
  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1420px;margin:0 auto;padding:0 14px 14px}
+body>.wrap{padding-top:9px}
 header{background:#101318;color:#fff;padding:11px 0 0;position:sticky;top:0;z-index:40}
 .h-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 h1{font-size:15.5px;margin:0;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
@@ -37,7 +38,9 @@ h1 .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
  font-weight:700;padding:8px 12px;cursor:pointer;font-family:inherit}
 .tabs button.on{color:#fff;border-bottom-color:var(--accent)}
 
-.chips{display:flex;flex-wrap:wrap;gap:4px;margin:9px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0 0;padding-bottom:9px}
+#chipbar .chip.on{background:#fff;border-color:#fff;color:#14171c}
+#chipbar .chip{box-shadow:0 1px 2px rgba(0,0,0,.25)}
 .chip{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 9px;cursor:pointer;
  font-size:11.5px;font-weight:800;color:var(--ink2);display:flex;align-items:center;gap:4px;font-family:inherit;
  white-space:nowrap;flex-shrink:0}
@@ -175,6 +178,7 @@ table.big td.nm{font-weight:800;text-align:left;padding-left:11px}
     <button data-t="issue">전체 이슈</button>
     <button data-t="table">전체 표</button>
   </div>
+  <div id="chipbar"></div>
 </div></header>
 <div class="wrap"><div id="body"></div></div>
 
@@ -1201,20 +1205,20 @@ function storeView(){
     [B("주요 경쟁사",ed(si,"rival",s.rival,"-")),B("목표 / 직원수",ed(si,"goalStaff",s.goalStaff,"-"))],
     [B("개선 포인트",ed(si,"improve",s.improve,"-")),B("SV 진단",ed(si,"diag",s.diag,"-"))],
   ];
-  return chips()+`
+  return `
   <div class="hero">
     <div><div class="hn">${LEADER[s.name]?`<span style="font-size:20px">👑</span>`:""}${esc(s.name)}
         <span class="linepill" style="background:${LN(s).c};color:#fff">${LN(s).n}</span>
         ${g?`<span class="hg" style="background:${gcol(g)}26;color:${gcol(g)}">${g}</span>`:""}</div>
       <div class="hm">${esc(s.region)} · ${esc(s.manager)} 점장 · ${s.staff}인 매장</div></div>
-    <div class="hs">
+    ${s.group==="공통"?"":`<div class="hs">
       <div><div class="l">${mLabel(dataMonth)} 매출</div><div class="v" id="q-sales">${man(p.sales)}<small>원</small></div></div>
       <div><div class="l">달성률</div><div class="v" id="q-rate">${rate==null?`<span style="font-size:13px;color:#8b94a3">목표 미확정</span>`:`<span style="color:${gcol(g)}">${pctv(rate)}</span>`}</div></div>
       <div><div class="l">판매건수</div><div class="v" id="q-cnt">${n0(p.cnt)}<small>건</small></div></div>
       <div><div class="l">건당단가</div><div class="v" id="q-unit">${man(unit)}<small>원</small></div></div>
       <div><div class="l">네이버 순위</div><div class="v">${c.rank??"-"}<small>위</small></div></div>
       <div><div class="l">광고비/매출</div><div class="v">${ar==null?"-":pctv(ar)}</div></div>
-    </div>
+    </div>`}
   </div>
 
   <div class="cols">
@@ -1229,17 +1233,17 @@ function storeView(){
         :`<div class="empty">체크하면 이쪽으로 넘어옵니다.</div>`}</div></div>
   </div>
 
-  <div class="panel" style="margin-top:9px"><div class="ph dk">${mLabel(dataMonth)} 실적 · 온라인 · 광고 점검${dataMonth!==month?` <span class="cnt">전월 기준</span>`:""}</div>
+  ${s.group==="공통"?"":`<div class="panel" style="margin-top:9px"><div class="ph dk">${mLabel(dataMonth)} 실적 · 온라인 · 광고 점검${dataMonth!==month?` <span class="cnt">전월 기준</span>`:""}</div>
     <table class="gt"><tbody>${rowHTML}</tbody></table></div>
 
   <div class="panel" style="margin-top:9px"><div class="ph gy">매장 기본 정보</div>
-    <table class="gt gt2"><tbody>${brows.map(r=>`<tr>${r.join("")}</tr>`).join("")}</tbody></table></div>`;
+    <table class="gt gt2"><tbody>${brows.map(r=>`<tr>${r.join("")}</tr>`).join("")}</tbody></table></div>`}`;
 }
 function issueView(){
   const rows=[];
   STORES.forEach((s,si)=>{ const m=s.months[month]; if(!m)return;
     m.live.forEach((x,i)=>rows.push([s,si,i,x])); });
-  if(!rows.length) return chips()+`<div class="panel"><div class="empty">${mLabel(month)}에 등록된 할 일이 없습니다.</div></div>`;
+  if(!rows.length) return `<div class="panel"><div class="empty">${mLabel(month)}에 등록된 할 일이 없습니다.</div></div>`;
   const open=rows.filter(r=>r[3].status!=="완료"), done=rows.filter(r=>r[3].status==="완료");
   const item=([s,si,i,x],d)=>`<div class="li ${d?"done":""}">
     <button class="ck ${d?"on":""}" onclick="toggle(${si},${i})"></button>
@@ -1248,7 +1252,7 @@ function issueView(){
     <span class="tx" contenteditable oninput="setF(${si},'live',${i},'problem',this)">${esc(x.problem||"")}</span>
     ${d?`<span class="dt">${esc(x.doneAt||"")}</span>`:""}
     <button class="del" onclick="delRow(${si},'live',${i})">✕</button></div>`;
-  return chips()+`<div class="cols">
+  return `<div class="cols">
     <div class="panel"><div class="ph bl">할 일 · 진행중<span class="cnt">${open.length}</span></div>
       <div class="pb">${open.length?open.map(r=>item(r,false)).join(""):`<div class="empty">없음</div>`}</div></div>
     <div class="panel"><div class="ph gn">완료<span class="cnt">${done.length}</span></div>
@@ -1281,7 +1285,7 @@ function tableView(){
       <td>${tv(c.place)}</td><td>${tv(c.power)}</td><td>${n0(c.bizmoney)}</td>
       <td>${n0(c.review)}</td><td>${n0(c.blog)}</td><td>${n0(c.plusfriend)}</td>
       <td>${open?`<b style="color:var(--accent)">${open}</b>`:"-"}</td></tr>`; }).join("");
-  return chips()+`<div class="tablewrap"><table class="big"><thead><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr></thead>
+  return `<div class="tablewrap"><table class="big"><thead><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr></thead>
     <tbody>${body}<tr style="background:#fafbfc;font-weight:800"><td class="nm">합계</td><td colspan="3"></td>
     <td>${man(T.goal)}</td><td>${n0(T.sales)}</td><td>${T.goal?pctv(T.gsales/T.goal):"-"}</td><td>${n0(T.cnt)}</td>
     <td>${T.cnt?n0(T.sales/T.cnt):"-"}</td><td colspan="2"></td><td>${n0(T.ad)}</td>
@@ -1305,7 +1309,7 @@ function renderMsel(){ document.getElementById("msel").innerHTML=
 document.getElementById("tabs").onclick=e=>{const t=e.target.dataset.t; if(t){tab=t;
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t)); render()}};
 function render(){ renderMsel(); syncDataMonth();
-
+  document.getElementById("chipbar").innerHTML = chips();
   document.getElementById("body").innerHTML = tab==="store"?storeView():tab==="issue"?issueView():tableView(); }
 render();
 (function(){
