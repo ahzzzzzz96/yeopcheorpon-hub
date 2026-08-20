@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>백지현 SV · 직영매장 관리</title>
+<style>
+:root{
+  --line:#dfe3e8; --line2:#eef0f3;
+  --ink:#14171c; --ink2:#4f5663; --ink3:#8f97a4;
+  --accent:#f2530f; --accent-soft:#fff1e9;
+  --blue:#2354d8; --blue-soft:#e9f0ff;
+  --green:#0f9d58; --green-soft:#e6f7ee;
+  --red:#e0342b; --red-soft:#fdecea;
+  --amber:#c17f00; --amber-soft:#fff5e0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#eceef2;color:var(--ink);font-size:13px;
+ font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1420px;margin:0 auto;padding:0 14px 14px}
+header{background:#101318;color:#fff;padding:11px 0 0;position:sticky;top:0;z-index:40}
+.h-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{font-size:15.5px;margin:0;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+h1 .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.h-btns{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.hbtn{background:#20242c;border:1px solid #2d323c;color:#d5d9e0;font-size:11.5px;padding:6px 11px;
+ border-radius:7px;cursor:pointer;font-weight:600;font-family:inherit}
+.hbtn:hover{background:#2b3039;color:#fff}
+.hbtn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.hbtn.gr{background:#12603a;border-color:#12603a;color:#c8f5dd}
+.msel{background:#20242c;border:1px solid #2d323c;color:#fff;font-size:12.5px;font-weight:800;
+ padding:6px 9px;border-radius:7px;font-family:inherit;cursor:pointer}
+.sv{font-size:11px;color:#7d8593;font-weight:700}
+.sv.on{color:#5fd39b} .sv.warn{color:#ffb787}
+.tabs{display:flex;gap:2px;margin-top:8px}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:#8d939f;font-size:12.5px;
+ font-weight:700;padding:8px 12px;cursor:pointer;font-family:inherit}
+.tabs button.on{color:#fff;border-bottom-color:var(--accent)}
+
+.chips{display:flex;flex-wrap:nowrap;gap:3px;margin:9px 0 8px;overflow-x:auto;padding-bottom:2px}
+.chips::-webkit-scrollbar{height:5px}
+.chips::-webkit-scrollbar-thumb{background:#c9cfd9;border-radius:3px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 9px;cursor:pointer;
+ font-size:11.5px;font-weight:800;color:var(--ink2);display:flex;align-items:center;gap:4px;font-family:inherit;
+ white-space:nowrap;flex-shrink:0}
+.chip:hover{border-color:#b9c0cb}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip .b{font-size:9px;background:var(--accent);color:#fff;border-radius:20px;padding:1px 4px;font-weight:800}
+.chip{border-left-width:3px}
+@media(max-width:1240px){.chip{font-size:11px;padding:6px 7px}}
+.chip .cw{font-size:11px;margin-right:-2px}
+.lnlab{font-size:10.5px;font-weight:800;border-radius:6px;padding:0 9px;display:flex;align-items:center;
+ letter-spacing:-.2px;white-space:nowrap}
+.brk{flex-basis:100%;height:0}
+.linepill{font-size:10.5px;font-weight:800;border-radius:20px;padding:3px 9px;letter-spacing:-.1px}
+.crown{font-size:10.5px;font-weight:800;border-radius:20px;padding:3px 9px;background:#ffd66b;color:#6b4a00}
+.ldot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+td .lp{font-size:10px;font-weight:800;border-radius:20px;padding:2px 7px}
+
+.hero{background:linear-gradient(120deg,#191d26,#262d3a);color:#fff;border-radius:11px;
+ padding:10px 16px;margin-bottom:8px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.hero .hn{font-size:19px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:7px}
+.hero .hg{width:20px;height:20px;border-radius:6px;font-size:11px;font-weight:800;display:flex;
+ align-items:center;justify-content:center}
+.hero .hm{font-size:11px;color:#98a0ae;font-weight:600;margin-top:2px}
+.hero .hs{display:flex;gap:22px;flex-wrap:wrap;flex:1}
+.hero .hs .l{font-size:10px;color:#8b94a3;font-weight:700}
+.hero .hs .v{font-size:17px;font-weight:800;letter-spacing:-.4px;margin-top:1px}
+.hero .hs .v small{font-size:10px;color:#98a0ae;font-weight:600;margin-left:1px}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:9px;align-items:start}
+.panel{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.panel+.panel{margin-top:9px}
+.ph{padding:8px 13px;font-size:12.5px;font-weight:800;display:flex;justify-content:space-between;
+ align-items:center;gap:8px;color:#fff;letter-spacing:-.2px}
+.ph .cnt{font-size:10.5px;font-weight:800;background:rgba(255,255,255,.24);border-radius:20px;padding:1px 8px;margin-left:5px}
+.ph .add{background:rgba(255,255,255,.22);color:#fff;border:0;border-radius:6px;font-size:11px;
+ font-weight:800;padding:4px 10px;cursor:pointer;font-family:inherit}
+.ph .add:hover{background:rgba(255,255,255,.36)}
+.ph.or{background:#f2530f} .ph.bl{background:#2354d8} .ph.gn{background:#0f9d58} .ph.dk{background:#2b3140} .ph.gy{background:#606775}
+.pb{padding:4px 13px 9px}
+
+/* 체크리스트형 항목 */
+.li{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--line2)}
+.li:last-child{border-bottom:0}
+.li .tx{flex:1;font-size:13px;line-height:1.55;font-weight:600;color:var(--ink)}
+.li.done .tx{color:#a8aeb9;text-decoration:line-through}
+.li .n{font-size:10.5px;font-weight:800;color:#c2c8d2;width:13px;text-align:right;padding-top:3px;flex-shrink:0}
+.del{background:none;border:0;color:#ccd1d9;cursor:pointer;font-size:12.5px;padding:0 1px;line-height:1.4}
+.del:hover{color:var(--red)}
+select.st{border:0;border-radius:20px;font-size:10.5px;font-weight:800;padding:3px 9px;cursor:pointer;
+ font-family:inherit;appearance:none;text-align:center;flex-shrink:0;margin-top:1px}
+.s완료{background:var(--green-soft);color:var(--green)}
+.s진행중{background:var(--blue-soft);color:var(--blue)}
+.s미착수{background:#eef0f3;color:#7b8290}
+.s보류{background:var(--amber-soft);color:var(--amber)}
+.empty{font-size:12px;color:var(--ink3);padding:14px 0;text-align:center}
+.ck{width:17px;height:17px;border:2px solid #c9cfd9;border-radius:5px;background:#fff;cursor:pointer;
+ flex-shrink:0;margin-top:2px;padding:0;position:relative;transition:.12s}
+.ck:hover{border-color:var(--green)}
+.ck.on{background:var(--green);border-color:var(--green)}
+.ck.on:after{content:"";position:absolute;left:4.5px;top:1px;width:4px;height:9px;border:solid #fff;
+ border-width:0 2px 2px 0;transform:rotate(43deg)}
+.li .dt{font-size:10px;color:#a9b0bb;font-weight:700;flex-shrink:0;margin-top:3px}
+.undo{background:none;border:0;color:#b6bcc6;cursor:pointer;font-size:13px;padding:0 2px;line-height:1.4}
+.undo:hover{color:var(--blue)}
+.note{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;
+ font-family:inherit;line-height:1.65;resize:vertical;min-height:62px;outline:none;color:var(--ink2);background:#fcfcfd}
+.note:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+
+[contenteditable]{outline:none;border-radius:4px;padding:0 3px;margin:0 -2px;transition:.1s;min-width:20px;
+ display:inline-block}
+[contenteditable]:hover{background:#f2f4f7}
+[contenteditable]:focus{background:#fff;box-shadow:0 0 0 2px var(--accent-soft),0 0 0 1px var(--accent)}
+[contenteditable]:empty:before{content:attr(data-ph);color:#c4cad3;font-weight:500}
+
+/* 정보 표 */
+.gt{width:100%;border-collapse:collapse;table-layout:fixed}
+.gt td{border:1px solid var(--line);padding:0;height:33px;font-size:12.5px}
+.gt td.k{background:#f7f8fa;color:#5b6270;font-weight:700;padding:0 10px;width:11.5%;white-space:nowrap}
+.gt td.v{padding:0 10px;font-weight:800;text-align:right;width:21.8%}
+.gt td.v .sub{font-size:9.5px;font-weight:700;color:var(--ink3);margin-right:6px}
+.gt td.v .kwv{font-size:10px;font-weight:700;color:var(--blue);background:var(--blue-soft);
+ border-radius:4px;padding:1px 5px;margin-right:5px}
+.gt2 td.k{width:13%} .gt2 td.v{width:37%;text-align:left;font-weight:700;color:var(--ink2);font-size:12px}
+select.tri{border:0;border-radius:20px;font-size:11px;font-weight:800;padding:3px 11px;cursor:pointer;
+ font-family:inherit;appearance:none;text-align:center;background:#eef0f3;color:#8f97a4}
+.tri.t-O{background:var(--green-soft);color:var(--green)}
+.tri.t-X{background:var(--red-soft);color:var(--red)}
+.warnv{color:var(--red)}
+.gt td{height:28px}
+.gt tr.gh td{height:22px;padding:0 10px;font-size:10.5px;font-weight:800;letter-spacing:.4px;
+ border-left:0;border-right:0;text-align:left}
+.gh.g1 td{background:#eef1f6;color:#3f4a5c;border-left:3px solid #4a5566}
+.gh.g2 td{background:#fff0e7;color:#b3400c;border-left:3px solid #f2530f}
+.gh.g3 td{background:#eaf1ff;color:#1c46b8;border-left:3px solid #2354d8}
+tr.g1 td.k{background:#f6f7f9}
+tr.g2 td.k{background:#fff7f2;color:#8a5031}
+tr.g3 td.k{background:#f4f8ff;color:#39518a}
+.tablewrap{background:#fff;border:1px solid var(--line);border-radius:11px;overflow-x:auto}
+table.big{border-collapse:collapse;width:100%;font-size:12px;min-width:1120px}
+table.big th{background:var(--accent-soft);color:#9a3412;font-weight:800;padding:8px 6px;
+ border-bottom:1px solid var(--line);white-space:nowrap;font-size:10.5px}
+table.big td{padding:7px 6px;border-bottom:1px solid var(--line2);text-align:center;white-space:nowrap}
+table.big tbody tr:hover{background:#fafbfc;cursor:pointer}
+table.big td.nm{font-weight:800;text-align:left;padding-left:11px}
+.mut{color:var(--ink3);font-weight:600}
+.modal{position:fixed;inset:0;background:rgba(10,12,16,.55);display:none;z-index:70;padding:40px 16px;overflow:auto}
+.modal.on{display:block}
+.mbox{max-width:700px;margin:0 auto;background:#fff;border-radius:14px;padding:20px 22px}
+.mbox h3{margin:0 0 6px;font-size:16px}
+.mbox p{margin:0 0 11px;font-size:12.5px;color:var(--ink2);line-height:1.7}
+.mbox textarea{width:100%;height:210px;border:1px solid var(--line);border-radius:9px;padding:10px;
+ font-size:12.5px;font-family:ui-monospace,Menlo,monospace;outline:none}
+.mbox .row{display:flex;gap:8px;justify-content:flex-end;margin-top:11px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink2);font-size:13px;font-weight:700;
+ padding:8px 15px;border-radius:8px;cursor:pointer;font-family:inherit}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+@media(max-width:900px){.cols{grid-template-columns:1fr}
+  .gt td.k{width:22%}.gt td.v{width:28%}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="h-top">
+    <h1><span class="dot"></span>백지현 SV · 직영매장 관리</h1>
+    <div class="h-btns">
+      <select class="msel" id="msel" onchange="onMonth(this)"></select>
+      <span class="sv" id="sv"></span>
+      <button class="hbtn" onclick="pasteOpen()">실적 붙여넣기</button>
+      <button class="hbtn" onclick="download()">백업 내려받기</button>
+      <button class="hbtn" onclick="openFile()">백업 불러오기</button>
+    </div>
+  </div>
+  <div class="tabs" id="tabs">
+    <button data-t="store" class="on">매장별</button>
+    <button data-t="issue">전체 이슈</button>
+    <button data-t="table">전체 표</button>
+  </div>
+</div></header>
+<div class="wrap"><div id="body"></div></div>
+
+<div class="modal on" id="lm" style="background:#12151b"><div class="mbox" style="max-width:380px;text-align:center">
+  <div style="font-size:34px">🔒</div>
+  <h3 style="margin:8px 0 4px">백지현 SV · 직영매장 관리</h3>
+  <p style="text-align:center;margin-bottom:14px">비밀번호를 입력하면 저장된 내용을 불러옵니다.</p>
+  <input id="pwin" type="password" placeholder="비밀번호" autocomplete="current-password"
+    style="width:100%;border:1px solid var(--line);border-radius:9px;padding:11px 12px;font-size:14px;
+    font-family:inherit;outline:none;text-align:center" onkeydown="if(event.key==='Enter')doLogin()">
+  <div id="lmsg" style="font-size:12px;color:var(--red);font-weight:700;height:16px;margin-top:7px"></div>
+  <button class="btn pri" style="width:100%;margin-top:4px" onclick="doLogin()">열기</button>
+</div></div>
+
+<div class="modal" id="pm"><div class="mbox">
+  <h3>실적 붙여넣기</h3>
+  <p>엑셀에서 <b>매장명 · 월목표 · 판매건수 · 매출</b> 순서로 복사해 붙여넣으세요.<br>
+  선택한 달 <b id="pmMonth"></b> 의 <b>실적만</b> 덮어씁니다.</p>
+  <textarea id="pmText" placeholder="유천점&#9;30000000&#9;79&#9;19616740"></textarea>
+  <div class="row"><button class="btn" onclick="pm.classList.remove('on')">취소</button>
+    <button class="btn pri" onclick="pasteApply()">적용</button></div>
+</div></div>
+
+<script>
+let STORES = [
+ {
+  "name": "용인동백점",
+  "region": "서울·경기",
+  "manager": "류동균",
+  "group": "망포",
+  "staff": 1,
+  "address": "",
+  "keywords": "용인휴대폰 · 동백휴대폰 · 용인인터넷 · 용인핸드폰 · 사전예약",
+  "direction": "",
+  "market": "",
+  "rival": "",
+  "goalStaff": "",
+  "improve": "",
+  "diag": "매출·건당단가 모두 최하위. 블로그 4건으로 온라인 사실상 미운영.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 10000000,
+     "goalConfirmed": false,
+     "sales": 4617300,
+     "cnt": 37
+    },
+    "check": {
+     "adNaver": 0,
+     "adDanggeun": 0,
+     "adTotal": 0,
+     "rank": 6,
+     "rankKw": "",
+     "place": "X",
+     "power": "X",
+     "bizmoney": 100000,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": "",
+     "approval": "O",
+     "review": 181,
+     "blog": 4,
+     "rbAt": "",
+     "quick": "삼촌퀵"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "① 월 목표부터 확정(1,500만원 제안) ② 블로그 주 2회 발행 요일 고정 ③ 개통 시 워치·인터넷 결합 제안 스크립트 도입",
+      "status": "진행중",
+      "doneAt": ""
+     },
+     {
+      "problem": "네이버 광고계정 개설 + 월 목표 확정 후 관리시트 등재",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "화성점",
+  "region": "서울·경기",
+  "manager": "정기창",
+  "group": "망포",
+  "staff": 1,
+  "address": "",
+  "keywords": "화성옆커폰 · 화성휴대폰 · 동탄휴대폰 · 경기옆커폰 · 옆커폰",
+  "direction": "공시,플친1700/디비만명/1년조금",
+  "market": "30~50 골고루/s시리즈",
+  "rival": "펭귄모바밀 (동탄성지) / 도매폰",
+  "goalStaff": "2000만원 /1인매장 (일)",
+  "improve": "리뷰이벤트만원쿠폰 / 네이버 아이디 비번 / 내방고객늘리기 유입수문제  / 네이버 재세팅 / 리뷰달라주기",
+  "diag": "리뷰 1,009건 자산 대비 매출 최하위권. 플레이스 24위(4페이지) 노출 붕괴",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 20000000,
+     "goalConfirmed": true,
+     "sales": 6312500,
+     "cnt": 38
+    },
+    "check": {
+     "adNaver": 100000,
+     "adDanggeun": 0,
+     "adTotal": 100000,
+     "rank": 24,
+     "rankKw": "",
+     "place": "off",
+     "power": "off",
+     "bizmoney": 4300,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": "X",
+     "plusfriend": 1700,
+     "approval": "O",
+     "review": 1009,
+     "blog": 105,
+     "rbAt": "",
+     "quick": "삼촌퀵"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "블로그 글 발행 (08/11) 완료 / 리뷰 (08/11) 완료 · 리뷰 최신화",
+      "status": "진행중",
+      "doneAt": ""
+     },
+     {
+      "problem": "10만원 비즈머니 충전 / 키워드 재세팅 (진행중)",
+      "status": "진행중",
+      "doneAt": ""
+     },
+     {
+      "problem": "① 플친 1,700명 대상 시세·이벤트 발송 주 1회 고정 ② 리뷰 이벤트(만원 쿠폰) 재가동 ③ 당근 비즈프로필 개설(현재 미개설)",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "수원망포점",
+  "region": "서울·경기",
+  "manager": "윤창규",
+  "group": "망포",
+  "staff": 2,
+  "address": "",
+  "keywords": "수원휴대폰 · 망포역핸드폰매장 · 아이폰17 · 갤럭시26 · 알뜰폰",
+  "direction": "",
+  "market": "",
+  "rival": "",
+  "goalStaff": "",
+  "improve": "",
+  "diag": "건수 1위(123건).  노출만 올리면 추가 상승 여력 가장 큼.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 3000000,
+     "goalConfirmed": false,
+     "sales": 20018000,
+     "cnt": 123
+    },
+    "check": {
+     "adNaver": 100000,
+     "adDanggeun": 1000000,
+     "adTotal": 1100000,
+     "rank": 12,
+     "rankKw": "",
+     "place": 0,
+     "power": 0,
+     "bizmoney": 117710,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": "",
+     "approval": "O",
+     "review": 774,
+     "blog": 154,
+     "rbAt": "",
+     "quick": "삼촌퀵"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "① 네이버 광고계정 개설 + 비즈머니 10만원 시범 집행 ② 키워드 재세팅(망포역·수원 지역명 강화) ③ 월 목표 확정(2,500만원 제안)",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "용인죽전점",
+  "region": "서울·경기",
+  "manager": "이제령",
+  "group": "망포",
+  "staff": 1,
+  "address": "",
+  "keywords": "용인옆커폰 · 죽전휴대폰 · 용인휴대폰 · 용인인터넷 · 휴대폰",
+  "direction": "",
+  "market": "",
+  "rival": "",
+  "goalStaff": "",
+  "improve": "",
+  "diag": "블로그 600건 최다인데 순위 6위.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 2000000,
+     "goalConfirmed": false,
+     "sales": 14500520,
+     "cnt": 81
+    },
+    "check": {
+     "adNaver": 100000,
+     "adDanggeun": 0,
+     "adTotal": 100000,
+     "rank": 6,
+     "rankKw": "",
+     "place": ".",
+     "power": ".",
+     "bizmoney": ".",
+     "bizmoneyAt": "",
+     "sme": ".",
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": "",
+     "approval": "O",
+     "review": 435,
+     "blog": 600,
+     "rbAt": "",
+     "quick": "삼촌퀵"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "① 상위 노출 키워드 확인 후 기존 글 제목 리뉴얼 ② 알뜰 상담 시 유선 결합 동시 제안 ③ 월 목표 확정(2,000만원 제안)",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "강남약국점",
+  "region": "대구·경북",
+  "manager": "이도건",
+  "group": "강남",
+  "staff": 2,
+  "address": "",
+  "keywords": "대구휴대폰 · 아이폰 · 갤럭시 · 키즈폰 · 핸드폰",
+  "direction": "공시,선약/플친2300명/ 8~9년",
+  "market": "다양하다(20~60)",
+  "rival": "휴파총 / 따르릉",
+  "goalStaff": "3000만원 / 2인매장",
+  "improve": "마진을극대화할수있는선약 / 코칭매니저 필요할것같아 / 으쌰으쌰하는 분위기. 너무경쟁",
+  "diag": "",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 30000000,
+     "goalConfirmed": true,
+     "sales": 16503757,
+     "cnt": 74
+    },
+    "check": {
+     "adNaver": 100000,
+     "adDanggeun": 1000000,
+     "adTotal": 1100000,
+     "rank": 1,
+     "rankKw": "",
+     "place": 0,
+     "power": 0,
+     "bizmoney": -2000,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": 2300,
+     "approval": "O",
+     "review": 317,
+     "blog": 269,
+     "rbAt": "",
+     "quick": "코리아 바이크"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "① 당근 유입 문의 건수 8월 한 달 직접 집계 ② 요청하신 코칭매니저 건 본사 협의 ③ 인스타 계정 개설",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "다사점",
+  "region": "대구·경북",
+  "manager": "이지훈",
+  "group": "강남",
+  "staff": 1,
+  "address": "",
+  "keywords": "대구휴대폰 · 대실역핸드폰 · 아이폰 · 갤럭시 · 휴대폰파는총각다사점",
+  "direction": "공시/선약/사람따라/ 플친530 / 2년",
+  "market": "고객층이다양(50~60)",
+  "rival": "휴파총다사점 / 따르릉 / 블루스카이",
+  "goalStaff": "2000만원 / 1인매장",
+  "improve": "구인 직원필요하고 / 경쟁사 분석 /  시세표 / 현금상품",
+  "diag": "당근 100만원 대비 성과 미확인. 중고MNP 17.6%로 단가 하락.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 20000000,
+     "goalConfirmed": true,
+     "sales": 9047999,
+     "cnt": 51
+    },
+    "check": {
+     "adNaver": 200000,
+     "adDanggeun": 1000000,
+     "adTotal": 1200000,
+     "rank": 3,
+     "rankKw": "",
+     "place": 0,
+     "power": 0,
+     "bizmoney": -800,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": 530,
+     "approval": "O",
+     "review": 200,
+     "blog": 91,
+     "rbAt": "",
+     "quick": "코리아 바이크"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "① 당근 100만원 → 8월 효과 미검증 시 9월 중단 검토 ② 중고 MNP 응대 시 유선·웨어러블 결합 제안 ③ 구인 진행(1인매장 한계)",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "대구은행역점",
+  "region": "대구·경북",
+  "manager": "안민혁",
+  "group": "강남",
+  "staff": 1,
+  "address": "",
+  "keywords": "대구휴대폰 · 수성구휴대폰 · 범어동휴대폰 · 휴대폰",
+  "direction": "공시 / 10년경력/ 플친200 / 5월 /디비800개",
+  "market": "30~40대/ 아파트상권",
+  "rival": "옆커폰( 수성/범어/수성1가 ) / 바이폰",
+  "goalStaff": "2000만원 / 1인매장",
+  "improve": "코칭매니저 필요",
+  "diag": "건당단가 15.7만원으로 박리다매형. 리뷰·블로그 하위권.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 20000000,
+     "goalConfirmed": true,
+     "sales": 15204410,
+     "cnt": 97
+    },
+    "check": {
+     "adNaver": 100000,
+     "adDanggeun": 1000000,
+     "adTotal": 1100000,
+     "rank": 8,
+     "rankKw": "",
+     "place": "제한중/소명중",
+     "power": "제한중",
+     "bizmoney": 6000,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": 200,
+     "approval": "O",
+     "review": 168,
+     "blog": 91,
+     "rbAt": "",
+     "quick": "코리아 바이크"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "① 선약 비중 확대로 건당 마진 개선 ② 개통 직후 리뷰 요청 QR 도입(건수가 많아 효과 가장 큼) ③ 요청하신 코칭매니저 건 본사 협의",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "영주점",
+  "region": "대구·경북",
+  "manager": "이상민",
+  "group": "강남",
+  "staff": 1,
+  "address": "",
+  "keywords": "영주휴대폰 · 핸드폰 · 갤럭시 · 효도폰 · 아이폰",
+  "direction": "공시/ 선약/ 플친10 / 5월 / 강남약국직원으로있다가",
+  "market": "영주거주 / 어르신X / 30~40대",
+  "rival": "7~8개매장 / 개인판매점",
+  "goalStaff": "1500만원/1인매장",
+  "improve": "오프라인광고 집행하고싶음",
+  "diag": "건당단가 28.3만원 1위. 건수 33건이 한계. 온라인 유입 자체가 적은 상권 → 오프라인 전환 타당.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 15000000,
+     "goalConfirmed": true,
+     "sales": 9334600,
+     "cnt": 33
+    },
+    "check": {
+     "adNaver": 100000,
+     "adDanggeun": 300000,
+     "adTotal": 400000,
+     "rank": 1,
+     "rankKw": "",
+     "place": 0,
+     "power": 0,
+     "bizmoney": 30000,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": 10,
+     "approval": "O",
+     "review": 125,
+     "blog": 20,
+     "rbAt": "",
+     "quick": ""
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "오프라인 광고 진행 / 전단지, 옥외광고 (견적 받는 중)",
+      "status": "진행중",
+      "doneAt": ""
+     },
+     {
+      "problem": "① 전단지 배포 후 내방 건수 별도 집계 ② 개통 고객 100% 플친 등록 유도 ③ 블로그 주 1회로 최소 발행 유지",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "유천점",
+  "region": "대구·경북",
+  "manager": "허진영",
+  "group": "강남",
+  "staff": 3,
+  "address": "",
+  "keywords": "대구휴대폰 · 대구휴대폰성지 · 휴대폰성지 · 진천동휴대폰 · 옆커폰",
+  "direction": "공시 / 선약 / 사람따라/플친300/ 2년",
+  "market": "가족단위 /아파트단지",
+  "rival": "휴파총진천점/ 당근폰 / 전국에서2번째로싼집",
+  "goalStaff": "3000만원 / 3인매장",
+  "improve": "고정지출(월세/직원급여 등)줄이기",
+  "diag": "매출 2위. 3인매장 1인당 26건으로 생산성은 중위",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 30000000,
+     "goalConfirmed": true,
+     "sales": 19616740,
+     "cnt": 79
+    },
+    "check": {
+     "adNaver": 1000000,
+     "adDanggeun": 500000,
+     "adTotal": 1500000,
+     "rank": 1,
+     "rankKw": "",
+     "place": 0,
+     "power": 0,
+     "bizmoney": 81080,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": 300,
+     "approval": "O",
+     "review": 685,
+     "blog": 575,
+     "rbAt": "",
+     "quick": "코리아 바이크"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "① 인당 목표 건수 설정(월 35건 제안) ② 광고비 150만원 중 네이버 100만원 성과 점검 ③ 고정비 항목별 정리 후 본사 협의",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "구미상모점",
+  "region": "대구·경북",
+  "manager": "강상욱",
+  "group": "범어",
+  "staff": 1,
+  "address": "",
+  "keywords": "구미휴대폰 · 상모핸드폰 · 갤럭시S26 · 아이폰17 · 알뜰폰",
+  "direction": "2년/ 공시",
+  "market": "나이대가있는편 / 30대~60대",
+  "rival": "폰프라자 (20년정도) / 풀빵매장 *기존고객이 많음",
+  "goalStaff": "평균1500만원 / 1인매장",
+  "improve": "타매장의판매방식 / 친절,상세 하게상담하는편 / 범어점장님  인수자:박지훈점장님 코칭 받게해주고싶다",
+  "diag": "건당단가 12.1만원 최하위. 인수인계 진행 중으로 온라인 자산 리셋 상태.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 15000000,
+     "goalConfirmed": true,
+     "sales": 9404700,
+     "cnt": 78
+    },
+    "check": {
+     "adNaver": 200000,
+     "adDanggeun": 0,
+     "adTotal": 200000,
+     "rank": 12,
+     "rankKw": "",
+     "place": 0,
+     "power": 0,
+     "bizmoney": 1300,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": "",
+     "approval": "O",
+     "review": 341,
+     "blog": 246,
+     "rbAt": "",
+     "quick": "구미퀵"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "블로그 글 발행 (08/11) 완료 / 매일 2개씩 업로드",
+      "status": "진행중",
+      "doneAt": ""
+     },
+     {
+      "problem": "당근마켓 소식 글 7만 원에 월 150건 배포 진행",
+      "status": "진행중",
+      "doneAt": ""
+     },
+     {
+      "problem": "사전승낙서 등록 완료 / 대리점 등록 대기중",
+      "status": "진행중",
+      "doneAt": ""
+     },
+     {
+      "problem": "① 인수자 박지훈 점장 대상 범어점장 코칭 연결(요청사항) ② 유선·웨어러블 결합 제안 필수화 ③ 시세·응대 스크립트 인수인계 문서화",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "김천혁신도시점",
+  "region": "대구·경북",
+  "manager": "이승엽",
+  "group": "범어",
+  "staff": 1,
+  "address": "",
+  "keywords": "김천율곡동휴대폰 · 김천옆커폰 · 김천휴대폰대리점 · 김천플립8 · 김천폴드8",
+  "direction": "공시 / 선약 / 사람따라/플친500 / 2년정도",
+  "market": "일가족몰살작전 / 다양함",
+  "rival": "최고통신(신고X) / 최싸폰",
+  "goalStaff": "2500만원 / 1인매장",
+  "improve": "교육같은거 의미없다 / 동기부여 부족 / 피드백이없음 / 본사체계 / 상장도좋음 / 반사유리(영업중인표시가능원함)",
+  "diag": "1인 80건·건당 19.5만원으로 균형 우수. 교육·피드백 체계에 대한 불만 존재.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 25000000,
+     "goalConfirmed": true,
+     "sales": 15591350,
+     "cnt": 80
+    },
+    "check": {
+     "adNaver": 100000,
+     "adDanggeun": 300000,
+     "adTotal": 400000,
+     "rank": 2,
+     "rankKw": "",
+     "place": 0,
+     "power": 0,
+     "bizmoney": 3300,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": 500,
+     "approval": "O",
+     "review": 982,
+     "blog": 204,
+     "rbAt": "",
+     "quick": ""
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "① 월 1회 실적 피드백 면담 정례화 ② 상위 매장 사례 공유(포항양덕·수원망포) ③ 반사유리(영업중 표시) 요청건 본사 전달 ④ 우수매장 상장 건의",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "범어점",
+  "region": "대구·경북",
+  "manager": "제성현",
+  "group": "범어",
+  "staff": 3,
+  "address": "",
+  "keywords": "대구휴대폰 · 범어역핸드폰 · 갤럭시폴더블8 · 아이폰 · 인터넷TV",
+  "direction": "박리다매/플친2300/ 7년",
+  "market": "다양하다",
+  "rival": "옆커폰수성점.대구은행/ 최싸폰 /성지매장",
+  "goalStaff": "5000만원 목표 / 3인매장",
+  "improve": "단가 불만 / 거래처확보 / 직원급여는올라가는데,점장의수익금은 줄어든느느낌 / 잘되는매장 꿀팁모으기 / 투자금회수부분빨리체크",
+  "diag": "목표 5,000만원 대비 16%. 3인매장 1인당 17.7건으로 생산성 최저. 마진율 문제 본인도 인지.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 50000000,
+     "goalConfirmed": true,
+     "sales": 8000800,
+     "cnt": 53
+    },
+    "check": {
+     "adNaver": 200000,
+     "adDanggeun": 300000,
+     "adTotal": 500000,
+     "rank": 11,
+     "rankKw": "",
+     "place": 0,
+     "power": 0,
+     "bizmoney": 200000,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": 2300,
+     "approval": "O",
+     "review": 193,
+     "blog": 57,
+     "rbAt": "",
+     "quick": "코리아바이크"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "(초안) ① 박리다매 → 선약·부가 결합 병행으로 전환 ② 거래처 추가 확보로 매입단가 개선 ③ 상위 매장 마진 구조 벤치마킹 ④ 투자금 회수 현황 본사와 별도 점검",
+      "status": "진행중",
+      "doneAt": ""
+     },
+     {
+      "problem": "플친 2,300명은 전 매장 최다 수준인데 활용이 안 되고 있음",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ },
+ {
+  "name": "포항양덕점",
+  "region": "대구·경북",
+  "manager": "차상우",
+  "group": "범어",
+  "staff": 2,
+  "address": "",
+  "keywords": "포항옆커폰 · 양덕옆커폰 · 포항핸드폰 · 양덕핸드폰 · 포항휴대폰",
+  "direction": "공시/ 플친/박리다매/ 24년5월",
+  "market": "가족단위 /아파트단지",
+  "rival": "에코모바일(하부 핫폰) / 휴파총/ 직폰// 휴대폰맛집/ 포프리카",
+  "goalStaff": "2500만원 목표 / 2인매장",
+  "improve": "단가불만/ LG(태성,골드스타) / 에코 맘카페 / 150만원 / 포항맘놀이터 / 알아보기/ 플친 / 금이벤트 하고싶음",
+  "diag": "1인당 48건 생산성 1위, 매출 3위. 리뷰 187·블로그 43으로 온라인만 비어 있음.",
+  "months": {
+   "2026-07": {
+    "perf": {
+     "goal": 25000000,
+     "goalConfirmed": true,
+     "sales": 18478870,
+     "cnt": 96
+    },
+    "check": {
+     "adNaver": 500000,
+     "adDanggeun": 0,
+     "adTotal": 500000,
+     "rank": 1,
+     "rankKw": "",
+     "place": 0,
+     "power": 0,
+     "bizmoney": 3442,
+     "bizmoneyAt": "",
+     "sme": 0,
+     "tmap": 0,
+     "danggeun": 0,
+     "plusfriend": "",
+     "approval": "O",
+     "review": 187,
+     "blog": 43,
+     "rbAt": "",
+     "quick": "포항 터미널 퀵"
+    },
+    "issues": [],
+    "live": [
+     {
+      "problem": "① 블로그 주 2회 발행 요일 고정 ② 개통 후 리뷰 요청 QR 도입 ③ 요청하신 맘카페(에코·포항맘놀이터) 광고 150만원 건 효과 검토 후 결정",
+      "status": "진행중",
+      "doneAt": ""
+     }
+    ],
+    "memo": "",
+    "tasks": []
+   }
+  }
+ }
+];
+let month = "2026-07";
+let tab="store", cur=0, fh=null, dirty=false, saveTimer=null;
+const pm=document.getElementById("pm");
+const n0=v=>{const x=Number(v);return (v===null||v===undefined||v===""||!isFinite(x))?"":Math.round(x).toLocaleString("ko-KR")};
+const man=v=>(v==null||v===""||!isFinite(Number(v))?"-":Math.round(v/10000).toLocaleString("ko-KR")+"만");
+const pctv=v=>(v==null?"-":(v*100).toFixed(1)+"%");
+const esc=s=>String(s??"").replace(/[<>&]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]));
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+const mLabel=m=>m.slice(0,4)+"년 "+Number(m.slice(5))+"월";
+const gradeOf=r=>r>=.8?"A":r>=.6?"B":r>=.4?"C":"D";
+const gcol=g=>({A:"#0f9d58",B:"#4d8bff",C:"#e0a400",D:"#ff5b52"}[g]||"#8f97a4");
+const LINE={"망포":{c:"#2354d8",bg:"#eaf0ff",n:"수원망포라인"},
+            "강남":{c:"#0f9d58",bg:"#e6f7ee",n:"강남약국라인"},
+            "범어":{c:"#8b3dd6",bg:"#f3ebff",n:"범어라인"}};
+const LEADER={"수원망포점":1,"강남약국점":1,"범어점":1};
+const LN=s=>LINE[s.group]||{c:"#8f97a4",bg:"#f0f1f4",n:(s.group||"기타")+"라인"};
+function blank(){return{perf:{goal:null,goalConfirmed:true,sales:null,cnt:null},
+  check:{adNaver:null,adDanggeun:null,rank:null,rankKw:"",place:"",power:"",bizmoney:"",bizmoneyAt:"",
+    sme:"",tmap:"",danggeun:"",plusfriend:"",approval:"",review:null,blog:null,rbAt:"",quick:""},
+  issues:[],live:[],memo:"",tasks:[]}}
+function M(s){ if(!s.months[month]) s.months[month]=blank(); return s.months[month]; }
+function months(){ const set=new Set(); STORES.forEach(s=>Object.keys(s.months).forEach(m=>set.add(m))); return [...set].sort(); }
+
+/* 클라우드 저장 */
+const SB_URL="https://skhbcizzqgmlnwiwlaxt.supabase.co";
+const SB_KEY="sb_publishable_ZJxHaQ8PwdiY8ZWYqXCReg_E5RqrV62";
+const DOC="jihyun";
+let PW=null, cloudTimer=null, saving=false;
+async function rpc(fn,body){
+  const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",
+    headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY},
+    body:JSON.stringify(body)});
+  if(!r.ok){ const t=await r.text(); throw new Error(t.includes("bad_password")?"bad_password":t); }
+  return r.json();
+}
+async function doLogin(){
+  const el=document.getElementById("pwin"), msg=document.getElementById("lmsg");
+  const pw=(el.value||"").trim(); if(!pw){msg.textContent="비밀번호를 입력하세요";return}
+  msg.style.color="var(--ink3)"; msg.textContent="불러오는 중…";
+  try{
+    const data=await rpc("sv_load",{p_id:DOC,p_pass:pw});
+    PW=pw; location.hash="k="+encodeURIComponent(pw);
+    if(data && Array.isArray(data.stores) && data.stores.length){
+      STORES=data.stores; if(data.month) month=data.month;
+    } else { setTimeout(cloudSave,300); }
+    document.getElementById("lm").classList.remove("on");
+    cur=0; render(); svmsg("클라우드 연결됨","on");
+  }catch(e){ msg.style.color="var(--red)";
+    msg.textContent = e.message==="bad_password" ? "비밀번호가 맞지 않습니다" : "연결 실패 — 인터넷을 확인하세요"; }
+}
+async function cloudSave(){
+  if(!PW||saving) return; saving=true;
+  try{ await rpc("sv_save",{p_id:DOC,p_pass:PW,p_payload:{month,stores:STORES}});
+    dirty=false; const d=new Date();
+    svmsg("저장됨 "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"),"on");
+  }catch(e){ svmsg("● 저장 실패 — 인터넷 확인","warn"); }
+  finally{ saving=false; }
+}
+/* 저장 */
+const canFS = (()=>{ try{ return !!window.showSaveFilePicker && window.self===window.top; }catch(e){ return false } })();
+function svmsg(t,c){ const e=document.getElementById("sv"); e.textContent=t; e.className="sv"+(c?" "+c:""); }
+function mark(){ dirty=true;
+  if(PW){ svmsg("저장 중…","warn"); clearTimeout(cloudTimer); cloudTimer=setTimeout(cloudSave,1000); return; }
+  if(fh){ svmsg("자동저장 대기…","warn"); clearTimeout(saveTimer); saveTimer=setTimeout(autoSave,900); }
+  else svmsg("● 저장 안 됨","warn"); }
+const payload=()=>JSON.stringify({month,stores:STORES},null,1);
+function download(){
+  const b=new Blob([payload()],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(b);
+  a.download="직영매장_데이터.json"; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  dirty=false; svmsg("내려받음 ✓","on");
+}
+async function autoSave(){ try{ const w=await fh.createWritable(); await w.write(payload()); await w.close();
+    dirty=false; svmsg("자동저장됨 · "+fh.name,"on");
+  }catch(err){ fh=null;
+    svmsg("자동저장 꺼짐 — [저장(내려받기)] 사용","warn"); } }
+async function linkFile(){
+  try{ const h=await window.showSaveFilePicker({suggestedName:"직영매장_데이터.json",
+      types:[{description:"JSON",accept:{"application/json":[".json"]}}]});
+    const w=await h.createWritable(); await w.write(payload()); await w.close();
+    fh=h; dirty=false; svmsg("자동저장 켜짐 · "+h.name,"on");
+  }catch(e){ if(e && e.name==="AbortError") return;
+    alert("이 창에서는 자동저장을 쓸 수 없어요.\n파일을 컴퓨터에 내려받아 크롬에서 직접 열면 됩니다.\n지금은 [저장(내려받기)]를 쓰세요."); } }
+async function openFile(){
+  if(canFS){ try{ const [h]=await window.showOpenFilePicker({types:[{description:"JSON",accept:{"application/json":[".json"]}}]});
+      const f=await h.getFile(); const t=await f.text(); if(!loadJSON(t))return;
+      try{ const w=await h.createWritable(); await w.write(payload()); await w.close(); fh=h;
+        svmsg("자동저장 켜짐 · "+h.name,"on"); }catch(e){ svmsg("불러옴 (자동저장 불가)","on"); }
+      return; }catch(e){ if(e && e.name==="AbortError") return; } }
+  const i=document.createElement("input"); i.type="file"; i.accept=".json,application/json";
+  i.onchange=()=>{ const f=i.files[0]; if(!f)return; const r=new FileReader();
+    r.onload=()=>{ if(loadJSON(r.result)){ svmsg("불러옴 ✓","on"); if(PW) cloudSave(); } }; r.readAsText(f) };
+  i.click();
+}
+function loadJSON(txt){
+  if(!txt || !txt.trim()){ alert("파일이 비어 있어요. 다른 파일을 골라주세요."); return false; }
+  try{ const d=JSON.parse(txt); const arr=Array.isArray(d)?d:d.stores;
+    if(!Array.isArray(arr)||!arr.length) throw 0;
+    STORES=arr; if(d.month && months().includes(d.month)) month=d.month; cur=0; dirty=false; render(); return true;
+  }catch(e){ alert("이 파일은 읽을 수 없어요. 직영매장_데이터.json 파일이 맞는지 확인해주세요."); return false; } }
+window.onbeforeunload=()=>dirty?"저장하지 않은 수정이 있습니다.":null;
+
+/* 실적 붙여넣기 */
+function pasteOpen(){ document.getElementById("pmMonth").textContent=mLabel(month);
+  document.getElementById("pmText").value=""; pm.classList.add("on"); }
+function pasteApply(){
+  const num=t=>{const v=String(t||"").replace(/[^0-9.-]/g,""); return v===""?null:Number(v)};
+  let ok=0,miss=[];
+  document.getElementById("pmText").value.split(/\r?\n/).forEach(line=>{
+    const c=(line.includes("\t")?line.split("\t"):line.split(",")).map(x=>x.trim().replace(/^"|"$/g,""));
+    if(c.length<2) return;
+    const s=STORES.find(x=>x.name===c[0]||c[0].includes(x.name)||x.name.includes(c[0]));
+    if(!s){ if(c[0]&&!/매장/.test(c[0])) miss.push(c[0]); return; }
+    const m=M(s), g=num(c[1]), n=num(c[2]), sa=num(c[3]);
+    if(g!=null){m.perf.goal=g;m.perf.goalConfirmed=g>0}
+    if(n!=null)m.perf.cnt=n; if(sa!=null)m.perf.sales=sa; ok++; });
+  pm.classList.remove("on"); mark(); render();
+  alert(`${ok}개 매장 실적을 ${mLabel(month)}에 반영했습니다.`+(miss.length?`\n못 찾은 이름: ${miss.join(", ")}`:""));
+}
+
+/* 편집 */
+function setP(o,p,v){ const k=p.split("."), l=k.pop(); k.reduce((a,x)=>a[x],o)[l]=v }
+function ed(si,path,val,ph,isNum){
+  return `<span contenteditable data-ph="${ph||"-"}" data-si="${si}" data-p="${path}"
+    data-n="${isNum?1:0}" oninput="onEdit(this)" onblur="onBlur(this)">${isNum?n0(val):esc(val||"")}</span>`; }
+function onBlur(el){ if(+el.dataset.n){ const t=el.innerText.replace(/[^0-9.-]/g,"");
+  el.innerText = t===""?"":n0(Number(t)); } }
+function onEdit(el){
+  const si=+el.dataset.si, s=STORES[si], p=el.dataset.p, t=el.innerText.trim();
+  const root = p.startsWith("m.") ? M(s) : s, path = p.replace(/^m\./,"");
+  if(+el.dataset.n){ const v=t.replace(/[^0-9.-]/g,""); setP(root,path,v===""?null:Number(v)); }
+  else setP(root,path,t);
+  if(path==="check.bizmoney"){ M(s).check.bizmoneyAt=today(); const a=document.getElementById("at-biz"); if(a)a.textContent="수정 "+today(); }
+  if(path==="check.review"||path==="check.blog"){ M(s).check.rbAt=today(); const a=document.getElementById("at-rb"); if(a)a.textContent="수정 "+today(); }
+  recalc(si); mark();
+}
+function tri(si,path,val){
+  const v=(val===0||val==="0")?"O":(val==null||val===""||val==="."||val==="-"?"":String(val));
+  const opts=["O","X","진행중","제한중","해당없음",""]; const list=opts.includes(v)?opts:[v,...opts];
+  return `<select class="tri t-${v==="O"?"O":v==="X"?"X":""}" data-si="${si}" data-p="${path}" onchange="onTri(this)">
+    ${list.map(o=>`<option value="${esc(o)}" ${o===v?"selected":""}>${o||"미확인"}</option>`).join("")}</select>`; }
+function onTri(el){ setP(M(STORES[+el.dataset.si]),el.dataset.p.replace(/^m\./,""),el.value);
+  el.className="tri t-"+(el.value==="O"?"O":el.value==="X"?"X":""); mark(); }
+function recalc(si){
+  const m=M(STORES[si]), p=m.perf, c=m.check;
+  const set=(id,v)=>{const e=document.getElementById(id); if(e)e.innerHTML=v};
+  const rate=(p.goal>0&&p.sales!=null)?p.sales/p.goal:null;
+  const unit=(p.cnt&&p.sales!=null)?p.sales/p.cnt:null;
+  const adt=(c.adNaver||0)+(c.adDanggeun||0), ar=p.sales?adt/p.sales:null;
+  set("v-rate",rate==null?"–":`<span style="color:${gcol(gradeOf(rate))}">${pctv(rate)}</span>`);
+  set("v-unit",unit==null?"-":n0(unit)+"원");
+  set("v-adtot",n0(adt)+"원");
+  set("v-adratio",ar==null?"-":`<span class="${ar>0.1?"warnv":""}">${pctv(ar)}</span>`);
+  set("q-sales",man(p.sales)+"<small>원</small>");
+  set("q-rate",rate==null?`<span style="font-size:13px;color:#8b94a3">목표 미확정</span>`:`<span style="color:${gcol(gradeOf(rate))}">${pctv(rate)}</span>`);
+  set("q-cnt",n0(p.cnt)+"<small>건</small>");
+  set("q-unit",man(unit)+"<small>원</small>");
+}
+/* 체크리스트 */
+function sel(si,key,i,v){ const o=["미착수","진행중","완료","보류"];
+  return `<select class="st s${esc(v||"미착수")}" onchange="setStatus(${si},'${key}',${i},this)">
+    ${o.map(x=>`<option ${x===(v||"미착수")?"selected":""}>${x}</option>`).join("")}</select>`; }
+function setStatus(si,key,i,el){ M(STORES[si])[key][i].status=el.value; mark(); render(); }
+function setF(si,key,i,f,el){ M(STORES[si])[key][i][f]=el.innerText.trim(); mark(); }
+function addIssue(si){ M(STORES[si]).live.push({problem:"",status:"진행중",doneAt:""});
+  mark(); render(); setTimeout(()=>{const l=document.querySelectorAll(".pb .tx");
+    if(l.length)l[l.length-1].focus()},30); }
+function delRow(si,key,i){ M(STORES[si])[key].splice(i,1); mark(); render(); }
+function liHTML(x,si,i,done){
+  return `<div class="li ${done?"done":""}">
+    <button class="ck ${done?"on":""}" onclick="toggle(${si},${i})" title="${done?"되돌리기":"완료 처리"}"></button>
+    <span class="tx" contenteditable data-ph="이 매장에서 할 일 / 이슈를 적으세요"
+      oninput="setF(${si},'live',${i},'problem',this)">${esc(x.problem||"")}</span>
+    ${done?`<span class="dt">${esc(x.doneAt||"")}</span>`:""}
+    <button class="del" onclick="delRow(${si},'live',${i})">✕</button></div>`;
+}
+function toggle(si,i){ const it=M(STORES[si]).live[i];
+  if(it.status==="완료"){ it.status="진행중"; it.doneAt=""; }
+  else { it.status="완료"; it.doneAt=today(); }
+  mark(); render(); }
+/* 화면 */
+function chips(){ const ord=["강남","망포","범어"];
+  const gi=g=>{const i=ord.indexOf(g); return i<0?99:i};
+  const list=STORES.map((s,i)=>[s,i]).sort((a,b)=>
+    (gi(a[0].group)-gi(b[0].group)) || ((LEADER[b[0].name]?1:0)-(LEADER[a[0].name]?1:0)));
+  return `<div class="chips">${list.map(([s,i])=>{
+    const m=s.months[month], o=m?m.live.filter(x=>x.status!=="완료").length:0, L=LN(s), on=i===cur&&tab==="store";
+    return `<button class="chip ${on?"on":""}" onclick="cur=${i};render()"
+      style="${on?"":`border-left-color:${L.c};background:${L.bg}`}">
+      ${LEADER[s.name]?`<span class="cw">👑</span>`:`<span class="ldot" style="background:${on?"#fff":L.c}"></span>`}
+      ${esc(s.name)}${o?`<span class="b">${o}</span>`:""}</button>`}).join("")}</div>`; }
+
+function storeView(){
+  const si=cur, s=STORES[si], m=M(s), p=m.perf, c=m.check;
+  const rate=(p.goal>0&&p.sales!=null)?p.sales/p.goal:null;
+  const unit=(p.cnt&&p.sales!=null)?p.sales/p.cnt:null;
+  const adt=(c.adNaver||0)+(c.adDanggeun||0), ar=p.sales?adt/p.sales:null;
+  const g=rate==null?"":gradeOf(rate);
+  const open=m.live.map((x,i)=>[x,i]).filter(([x])=>x.status!=="완료");
+  const done=m.live.map((x,i)=>[x,i]).filter(([x])=>x.status==="완료");
+  const C=(k,v)=>`<td class="k">${k}</td><td class="v">${v}</td>`;
+  const rows=[
+    ["실적", [C("매출",ed(si,"m.perf.sales",p.sales,"0",1)+"원"),
+      C("목표",ed(si,"m.perf.goal",p.goal,"미확정",1)+"원"),
+      C("달성률",`<span id="v-rate">${rate==null?"–":`<span style="color:${gcol(g)}">${pctv(rate)}</span>`}</span>`)]],
+    ["실적", [C("판매건수",ed(si,"m.perf.cnt",p.cnt,"0",1)+"건"),
+      C("건당단가",`<span id="v-unit">${unit==null?"-":n0(unit)+"원"}</span>`),
+      C("","")]],
+    ["광고", [C("네이버 광고비",ed(si,"m.check.adNaver",c.adNaver,"0",1)+"원"),
+      C("당근 광고비",ed(si,"m.check.adDanggeun",c.adDanggeun,"0",1)+"원"),
+      C("광고비 합계",`<span id="v-adtot">${n0(adt)}원</span>`)]],
+    ["광고", [C("광고비 / 매출",`<span id="v-adratio">${ar==null?"-":`<span class="${ar>0.1?"warnv":""}">${pctv(ar)}</span>`}</span>`),
+      C("비즈머니",`<span class="sub" id="at-biz">${c.bizmoneyAt?"수정 "+c.bizmoneyAt:""}</span>${ed(si,"m.check.bizmoney",c.bizmoney,"0",1)}원`),
+      C("","")]],
+    ["온라인", [C("네이버 순위",`<span class="kwv">${ed(si,"m.check.rankKw",c.rankKw,"검색어")}</span>${ed(si,"m.check.rank",c.rank,"-",1)}위`),
+      C("리뷰 / 블로그",`<span class="sub" id="at-rb">${c.rbAt?"수정 "+c.rbAt:""}</span>${ed(si,"m.check.review",c.review,"0",1)} / ${ed(si,"m.check.blog",c.blog,"0",1)}`),
+      C("카톡 플친",ed(si,"m.check.plusfriend",c.plusfriend,"0",1)+"명")]],
+    ["온라인", [C("플레이스",tri(si,"m.check.place",c.place)),
+      C("파워링크",tri(si,"m.check.power",c.power)),
+      C("소상공인 광고",tri(si,"m.check.sme",c.sme))]],
+    ["온라인", [C("티맵 세팅",tri(si,"m.check.tmap",c.tmap)),
+      C("당근 비즈프로필",tri(si,"m.check.danggeun",c.danggeun)),
+      C("사전승낙서",tri(si,"m.check.approval",c.approval))]],
+    ["온라인", [C("퀵 업체",ed(si,"m.check.quick",c.quick,"-")),C("",""),C("","")]],
+  ];
+  const GC={"실적":"g1","광고":"g2","온라인":"g3"};
+  const GL={"실적":"매출 · 실적","광고":"광고비","온라인":"온라인 채널 점검"};
+  let last=null;
+  const rowHTML=rows.map(([grp,cells])=>{
+    let head=""; if(grp!==last){ last=grp;
+      head=`<tr class="gh ${GC[grp]}"><td colspan="6">${GL[grp]}</td></tr>`; }
+    return head+`<tr class="${GC[grp]}">${cells.join("")}</tr>`; }).join("");
+  const B=(k,v)=>`<td class="k">${k}</td><td class="v">${v}</td>`;
+  const brows=[
+    [B("주소",ed(si,"address",s.address,"주소를 입력하세요")),B("대표 키워드",ed(si,"keywords",s.keywords,"-"))],
+    [B("운영 방향성",ed(si,"direction",s.direction,"-")),B("상권 유형",ed(si,"market",s.market,"-"))],
+    [B("주요 경쟁사",ed(si,"rival",s.rival,"-")),B("목표 / 직원수",ed(si,"goalStaff",s.goalStaff,"-"))],
+    [B("개선 포인트",ed(si,"improve",s.improve,"-")),B("SV 진단",ed(si,"diag",s.diag,"-"))],
+  ];
+  return chips()+`
+  <div class="hero">
+    <div><div class="hn">${LEADER[s.name]?`<span style="font-size:20px">👑</span>`:""}${esc(s.name)}
+        <span class="linepill" style="background:${LN(s).c};color:#fff">${LN(s).n}</span>
+        ${g?`<span class="hg" style="background:${gcol(g)}26;color:${gcol(g)}">${g}</span>`:""}</div>
+      <div class="hm">${esc(s.region)} · ${esc(s.manager)} 점장 · ${s.staff}인 매장</div></div>
+    <div class="hs">
+      <div><div class="l">${mLabel(month)} 매출</div><div class="v" id="q-sales">${man(p.sales)}<small>원</small></div></div>
+      <div><div class="l">달성률</div><div class="v" id="q-rate">${rate==null?`<span style="font-size:13px;color:#8b94a3">목표 미확정</span>`:`<span style="color:${gcol(g)}">${pctv(rate)}</span>`}</div></div>
+      <div><div class="l">판매건수</div><div class="v" id="q-cnt">${n0(p.cnt)}<small>건</small></div></div>
+      <div><div class="l">건당단가</div><div class="v" id="q-unit">${man(unit)}<small>원</small></div></div>
+      <div><div class="l">네이버 순위</div><div class="v">${c.rank??"-"}<small>위</small></div></div>
+      <div><div class="l">광고비/매출</div><div class="v">${ar==null?"-":pctv(ar)}</div></div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="panel"><div class="ph bl"><span>할 일 · 진행중 이슈<span class="cnt">${open.length}</span></span>
+      <button class="add" onclick="addIssue(${si})">+ 추가</button></div>
+      <div class="pb">${open.length?open.map(([x,i])=>liHTML(x,si,i,false)).join("")
+        :`<div class="empty">[+ 추가]로 이 매장에서 할 일을 적어주세요.</div>`}
+        <textarea class="note" style="margin-top:7px" placeholder="메모 — 점장 통화 내용, 요청사항"
+          oninput="M(STORES[${si}]).memo=this.value;mark()">${esc(m.memo||"")}</textarea></div></div>
+    <div class="panel"><div class="ph gn"><span>완료<span class="cnt">${done.length}</span></span></div>
+      <div class="pb">${done.length?done.map(([x,i])=>liHTML(x,si,i,true)).join("")
+        :`<div class="empty">체크하면 이쪽으로 넘어옵니다.</div>`}</div></div>
+  </div>
+
+  <div class="panel" style="margin-top:9px"><div class="ph dk">${mLabel(month)} 실적 · 온라인 · 광고 점검</div>
+    <table class="gt"><tbody>${rowHTML}</tbody></table></div>
+
+  <div class="panel" style="margin-top:9px"><div class="ph gy">매장 기본 정보</div>
+    <table class="gt gt2"><tbody>${brows.map(r=>`<tr>${r.join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+function issueView(){
+  const rows=[];
+  STORES.forEach((s,si)=>{ const m=s.months[month]; if(!m)return;
+    m.live.forEach((x,i)=>rows.push([s,si,i,x])); });
+  if(!rows.length) return chips()+`<div class="panel"><div class="empty">${mLabel(month)}에 등록된 할 일이 없습니다.</div></div>`;
+  const open=rows.filter(r=>r[3].status!=="완료"), done=rows.filter(r=>r[3].status==="완료");
+  const item=([s,si,i,x],d)=>`<div class="li ${d?"done":""}">
+    <button class="ck ${d?"on":""}" onclick="toggle(${si},${i})"></button>
+    <span class="n" style="width:auto;color:${LN(s).c};font-weight:800;cursor:pointer"
+      onclick="tab='store';document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==='store'));cur=${si};render()">${esc(s.name)}</span>
+    <span class="tx" contenteditable oninput="setF(${si},'live',${i},'problem',this)">${esc(x.problem||"")}</span>
+    ${d?`<span class="dt">${esc(x.doneAt||"")}</span>`:""}
+    <button class="del" onclick="delRow(${si},'live',${i})">✕</button></div>`;
+  return chips()+`<div class="cols">
+    <div class="panel"><div class="ph bl">할 일 · 진행중<span class="cnt">${open.length}</span></div>
+      <div class="pb">${open.length?open.map(r=>item(r,false)).join(""):`<div class="empty">없음</div>`}</div></div>
+    <div class="panel"><div class="ph gn">완료<span class="cnt">${done.length}</span></div>
+      <div class="pb">${done.length?done.map(r=>item(r,true)).join(""):`<div class="empty">없음</div>`}</div></div>
+  </div>`;
+}
+function tableView(){
+  const h=["매장명","라인","점장","인원","목표","매출","달성률","건수","건당단가","네이버광고","당근광고","광고비합계","광고비/매출","순위","플레이스","파워링크","비즈머니","리뷰","블로그","플친","할일"];
+  let T={sales:0,cnt:0,ad:0,goal:0,gsales:0};
+  const go=i=>`onclick="tab='store';document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==='store'));cur=${i};render()"`;
+  const ord={"강남":0,"망포":1,"범어":2};
+  const body=STORES.map((s,i)=>[s,i]).sort((a,b)=>((ord[a[0].group]??9)-(ord[b[0].group]??9))||((LEADER[b[0].name]?1:0)-(LEADER[a[0].name]?1:0)))
+    .map(([s,i])=>{ const m=s.months[month];
+    if(!m) return `<tr ${go(i)}><td class="nm">${LEADER[s.name]?"👑 ":""}${esc(s.name)}</td>
+      <td><span class="lp" style="background:${LN(s).bg};color:${LN(s).c}">${LN(s).n.replace("라인","")}</span></td>
+      <td>${esc(s.manager)}</td><td>${s.staff}</td><td colspan="17" class="mut">${mLabel(month)} 데이터 없음</td></tr>`;
+    const p=m.perf,c=m.check, adt=(c.adNaver||0)+(c.adDanggeun||0);
+    const rate=(p.goal>0&&p.sales!=null)?p.sales/p.goal:null;
+    const unit=(p.cnt&&p.sales!=null)?p.sales/p.cnt:null, ar=p.sales?adt/p.sales:null;
+    T.sales+=p.sales||0; T.cnt+=p.cnt||0; T.ad+=adt; if(p.goal>0){T.goal+=p.goal;T.gsales+=p.sales||0}
+    const open=m.live.filter(x=>x.status!=="완료").length;
+    const tv=v=>(v===0||v==="0")?"O":(v==null||v===""||v==="."?"-":v);
+    return `<tr ${go(i)}><td class="nm">${LEADER[s.name]?"👑 ":""}${esc(s.name)}</td>
+      <td><span class="lp" style="background:${LN(s).bg};color:${LN(s).c}">${LN(s).n.replace("라인","")}</span></td>
+      <td>${esc(s.manager)}</td><td>${s.staff}</td>
+      <td>${p.goal>0?man(p.goal):`<span class="mut">미확정</span>`}</td><td><b>${n0(p.sales)}</b></td>
+      <td style="color:${gcol(rate?gradeOf(rate):"")};font-weight:800">${rate==null?"–":pctv(rate)}</td>
+      <td>${n0(p.cnt)}</td><td>${n0(unit)}</td><td>${n0(c.adNaver)}</td><td>${n0(c.adDanggeun)}</td>
+      <td><b>${n0(adt)}</b></td><td>${ar==null?"-":pctv(ar)}</td><td>${c.rank??"-"}</td>
+      <td>${tv(c.place)}</td><td>${tv(c.power)}</td><td>${n0(c.bizmoney)}</td>
+      <td>${n0(c.review)}</td><td>${n0(c.blog)}</td><td>${n0(c.plusfriend)}</td>
+      <td>${open?`<b style="color:var(--accent)">${open}</b>`:"-"}</td></tr>`; }).join("");
+  return chips()+`<div class="tablewrap"><table class="big"><thead><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr></thead>
+    <tbody>${body}<tr style="background:#fafbfc;font-weight:800"><td class="nm">합계</td><td colspan="3"></td>
+    <td>${man(T.goal)}</td><td>${n0(T.sales)}</td><td>${T.goal?pctv(T.gsales/T.goal):"-"}</td><td>${n0(T.cnt)}</td>
+    <td>${T.cnt?n0(T.sales/T.cnt):"-"}</td><td colspan="2"></td><td>${n0(T.ad)}</td>
+    <td>${T.sales?pctv(T.ad/T.sales):"-"}</td><td colspan="8"></td></tr></tbody></table></div>`;
+}
+function onMonth(el){
+  if(el.value==="__new"){ const ms=months(), last=ms[ms.length-1];
+    let y=+last.slice(0,4), mo=+last.slice(5)+1; if(mo>12){mo=1;y++}
+    const nm=`${y}-${String(mo).padStart(2,"0")}`;
+    const inp=prompt("새로 추가할 달 (YYYY-MM)",nm); if(!inp||!/^\d{4}-\d{2}$/.test(inp)){renderMsel();return}
+    STORES.forEach(s=>{ if(s.months[inp])return; const b=blank(), prev=s.months[last];
+      if(prev){ b.check={...prev.check,adNaver:null,adDanggeun:null};
+        b.live=prev.live.filter(x=>x.status!=="완료").map(x=>({...x})); }
+      s.months[inp]=b; });
+    month=inp; mark(); render(); return; }
+  month=el.value; render();
+}
+function renderMsel(){ document.getElementById("msel").innerHTML=
+  months().map(m=>`<option value="${m}" ${m===month?"selected":""}>${mLabel(m)}</option>`).join("")
+  +`<option value="__new">+ 새 달 추가…</option>`; }
+document.getElementById("tabs").onclick=e=>{const t=e.target.dataset.t; if(t){tab=t;
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t)); render()}};
+function render(){ renderMsel();
+
+  document.getElementById("body").innerHTML = tab==="store"?storeView():tab==="issue"?issueView():tableView(); }
+render();
+(function(){
+  const m=/[#&]k=([^&]+)/.exec(location.hash||"");
+  if(m){ const el=document.getElementById("pwin"); el.value=decodeURIComponent(m[1]); doLogin(); }
+  else setTimeout(()=>document.getElementById("pwin").focus(),100);
+})();
+</script>
+</body>
+</html>
