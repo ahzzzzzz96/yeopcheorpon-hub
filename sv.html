@@ -979,6 +979,10 @@ function blank(){return{perf:{goal:null,goalConfirmed:true,sales:null,cnt:null},
     sme:"",tmap:"",danggeun:"",plusfriend:"",approval:"",review:null,blog:null,rbAt:"",quick:""},
   issues:[],live:[],memo:"",tasks:[]}}
 function M(s){ if(!s.months[month]) s.months[month]=blank(); return s.months[month]; }
+const prevMonth=m=>{let y=+m.slice(0,4),mo=+m.slice(5)-1; if(mo<1){mo=12;y--} return y+"-"+String(mo).padStart(2,"0")};
+let dataMonth=month;
+function syncDataMonth(){ const pv=prevMonth(month); dataMonth = months().includes(pv)? pv : month; }
+function D(s){ if(!s.months[dataMonth]) s.months[dataMonth]=blank(); return s.months[dataMonth]; }
 function months(){ const set=new Set(); STORES.forEach(s=>Object.keys(s.months).forEach(m=>set.add(m))); return [...set].sort(); }
 
 /* 클라우드 저장 */
@@ -1062,7 +1066,7 @@ function loadJSON(txt){
 window.onbeforeunload=()=>dirty?"저장하지 않은 수정이 있습니다.":null;
 
 /* 실적 붙여넣기 */
-function pasteOpen(){ document.getElementById("pmMonth").textContent=mLabel(month);
+function pasteOpen(){ syncDataMonth(); document.getElementById("pmMonth").textContent=mLabel(dataMonth);
   document.getElementById("pmText").value=""; pm.classList.add("on"); }
 function pasteApply(){
   const num=t=>{const v=String(t||"").replace(/[^0-9.-]/g,""); return v===""?null:Number(v)};
@@ -1072,11 +1076,11 @@ function pasteApply(){
     if(c.length<2) return;
     const s=STORES.find(x=>x.name===c[0]||c[0].includes(x.name)||x.name.includes(c[0]));
     if(!s){ if(c[0]&&!/매장/.test(c[0])) miss.push(c[0]); return; }
-    const m=M(s), g=num(c[1]), n=num(c[2]), sa=num(c[3]);
+    const m=D(s), g=num(c[1]), n=num(c[2]), sa=num(c[3]);
     if(g!=null){m.perf.goal=g;m.perf.goalConfirmed=g>0}
     if(n!=null)m.perf.cnt=n; if(sa!=null)m.perf.sales=sa; ok++; });
   pm.classList.remove("on"); mark(); render();
-  alert(`${ok}개 매장 실적을 ${mLabel(month)}에 반영했습니다.`+(miss.length?`\n못 찾은 이름: ${miss.join(", ")}`:""));
+  alert(`${ok}개 매장 실적을 ${mLabel(dataMonth)}에 반영했습니다.`+(miss.length?`\n못 찾은 이름: ${miss.join(", ")}`:""));
 }
 
 /* 편집 */
@@ -1088,11 +1092,12 @@ function onBlur(el){ if(+el.dataset.n){ const t=el.innerText.replace(/[^0-9.-]/g
   el.innerText = t===""?"":n0(Number(t)); } }
 function onEdit(el){
   const si=+el.dataset.si, s=STORES[si], p=el.dataset.p, t=el.innerText.trim();
-  const root = p.startsWith("m.") ? M(s) : s, path = p.replace(/^m\./,"");
+  const root = p.startsWith("m.") ? M(s) : p.startsWith("d.") ? D(s) : s;
+  const path = p.replace(/^[md]\./,"");
   if(+el.dataset.n){ const v=t.replace(/[^0-9.-]/g,""); setP(root,path,v===""?null:Number(v)); }
   else setP(root,path,t);
-  if(path==="check.bizmoney"){ M(s).check.bizmoneyAt=today(); const a=document.getElementById("at-biz"); if(a)a.textContent="수정 "+today(); }
-  if(path==="check.review"||path==="check.blog"){ M(s).check.rbAt=today(); const a=document.getElementById("at-rb"); if(a)a.textContent="수정 "+today(); }
+  if(path==="check.bizmoney"){ D(s).check.bizmoneyAt=today(); const a=document.getElementById("at-biz"); if(a)a.textContent="수정 "+today(); }
+  if(path==="check.review"||path==="check.blog"){ D(s).check.rbAt=today(); const a=document.getElementById("at-rb"); if(a)a.textContent="수정 "+today(); }
   recalc(si); mark();
 }
 function tri(si,path,val){
@@ -1100,10 +1105,10 @@ function tri(si,path,val){
   const opts=["O","X","진행중","제한중","해당없음",""]; const list=opts.includes(v)?opts:[v,...opts];
   return `<select class="tri t-${v==="O"?"O":v==="X"?"X":""}" data-si="${si}" data-p="${path}" onchange="onTri(this)">
     ${list.map(o=>`<option value="${esc(o)}" ${o===v?"selected":""}>${o||"미확인"}</option>`).join("")}</select>`; }
-function onTri(el){ setP(M(STORES[+el.dataset.si]),el.dataset.p.replace(/^m\./,""),el.value);
+function onTri(el){ setP(D(STORES[+el.dataset.si]),el.dataset.p.replace(/^[md]\./,""),el.value);
   el.className="tri t-"+(el.value==="O"?"O":el.value==="X"?"X":""); mark(); }
 function recalc(si){
-  const m=M(STORES[si]), p=m.perf, c=m.check;
+  const m=D(STORES[si]), p=m.perf, c=m.check;
   const set=(id,v)=>{const e=document.getElementById(id); if(e)e.innerHTML=v};
   const rate=(p.goal>0&&p.sales!=null)?p.sales/p.goal:null;
   const unit=(p.cnt&&p.sales!=null)?p.sales/p.cnt:null;
@@ -1152,7 +1157,7 @@ function chips(){ const ord=["공통","강남","망포","범어"];
       ${esc(s.name)}${o?`<span class="b">${o}</span>`:""}</button>`}).join("")}</div>`; }
 
 function storeView(){
-  const si=cur, s=STORES[si], m=M(s), p=m.perf, c=m.check;
+  const si=cur, s=STORES[si], m=M(s), dm=D(s), p=dm.perf, c=dm.check;
   const rate=(p.goal>0&&p.sales!=null)?p.sales/p.goal:null;
   const unit=(p.cnt&&p.sales!=null)?p.sales/p.cnt:null;
   const adt=(c.adNaver||0)+(c.adDanggeun||0), ar=p.sales?adt/p.sales:null;
@@ -1161,28 +1166,28 @@ function storeView(){
   const done=m.live.map((x,i)=>[x,i]).filter(([x])=>x.status==="완료");
   const C=(k,v)=>`<td class="k">${k}</td><td class="v">${v}</td>`;
   const rows=[
-    ["실적", [C("매출",ed(si,"m.perf.sales",p.sales,"0",1)+"원"),
-      C("목표",ed(si,"m.perf.goal",p.goal,"미확정",1)+"원"),
+    ["실적", [C("매출",ed(si,"d.perf.sales",p.sales,"0",1)+"원"),
+      C("목표",ed(si,"d.perf.goal",p.goal,"미확정",1)+"원"),
       C("달성률",`<span id="v-rate">${rate==null?"–":`<span style="color:${gcol(g)}">${pctv(rate)}</span>`}</span>`)]],
-    ["실적", [C("판매건수",ed(si,"m.perf.cnt",p.cnt,"0",1)+"건"),
+    ["실적", [C("판매건수",ed(si,"d.perf.cnt",p.cnt,"0",1)+"건"),
       C("건당단가",`<span id="v-unit">${unit==null?"-":n0(unit)+"원"}</span>`),
       C("","")]],
-    ["광고", [C("네이버 광고비",ed(si,"m.check.adNaver",c.adNaver,"0",1)+"원"),
-      C("당근 광고비",ed(si,"m.check.adDanggeun",c.adDanggeun,"0",1)+"원"),
+    ["광고", [C("네이버 광고비",ed(si,"d.check.adNaver",c.adNaver,"0",1)+"원"),
+      C("당근 광고비",ed(si,"d.check.adDanggeun",c.adDanggeun,"0",1)+"원"),
       C("광고비 합계",`<span id="v-adtot">${n0(adt)}원</span>`)]],
     ["광고", [C("광고비 / 매출",`<span id="v-adratio">${ar==null?"-":`<span class="${ar>0.1?"warnv":""}">${pctv(ar)}</span>`}</span>`),
-      C("비즈머니",`<span class="sub" id="at-biz">${c.bizmoneyAt?"수정 "+c.bizmoneyAt:""}</span>${ed(si,"m.check.bizmoney",c.bizmoney,"0",1)}원`),
+      C("비즈머니",`<span class="sub" id="at-biz">${c.bizmoneyAt?"수정 "+c.bizmoneyAt:""}</span>${ed(si,"d.check.bizmoney",c.bizmoney,"0",1)}원`),
       C("","")]],
-    ["온라인", [C("네이버 순위",`<span class="kwv">${ed(si,"m.check.rankKw",c.rankKw,"검색어")}</span>${ed(si,"m.check.rank",c.rank,"-",1)}위`),
-      C("리뷰 / 블로그",`<span class="sub" id="at-rb">${c.rbAt?"수정 "+c.rbAt:""}</span>${ed(si,"m.check.review",c.review,"0",1)} / ${ed(si,"m.check.blog",c.blog,"0",1)}`),
-      C("카톡 플친",ed(si,"m.check.plusfriend",c.plusfriend,"0",1)+"명")]],
-    ["온라인", [C("플레이스",tri(si,"m.check.place",c.place)),
-      C("파워링크",tri(si,"m.check.power",c.power)),
-      C("소상공인 광고",tri(si,"m.check.sme",c.sme))]],
-    ["온라인", [C("티맵 세팅",tri(si,"m.check.tmap",c.tmap)),
-      C("당근 비즈프로필",tri(si,"m.check.danggeun",c.danggeun)),
-      C("사전승낙서",tri(si,"m.check.approval",c.approval))]],
-    ["온라인", [C("퀵 업체",ed(si,"m.check.quick",c.quick,"-")),C("",""),C("","")]],
+    ["온라인", [C("네이버 순위",`<span class="kwv">${ed(si,"d.check.rankKw",c.rankKw,"검색어")}</span>${ed(si,"d.check.rank",c.rank,"-",1)}위`),
+      C("리뷰 / 블로그",`<span class="sub" id="at-rb">${c.rbAt?"수정 "+c.rbAt:""}</span>${ed(si,"d.check.review",c.review,"0",1)} / ${ed(si,"d.check.blog",c.blog,"0",1)}`),
+      C("카톡 플친",ed(si,"d.check.plusfriend",c.plusfriend,"0",1)+"명")]],
+    ["온라인", [C("플레이스",tri(si,"d.check.place",c.place)),
+      C("파워링크",tri(si,"d.check.power",c.power)),
+      C("소상공인 광고",tri(si,"d.check.sme",c.sme))]],
+    ["온라인", [C("티맵 세팅",tri(si,"d.check.tmap",c.tmap)),
+      C("당근 비즈프로필",tri(si,"d.check.danggeun",c.danggeun)),
+      C("사전승낙서",tri(si,"d.check.approval",c.approval))]],
+    ["온라인", [C("퀵 업체",ed(si,"d.check.quick",c.quick,"-")),C("",""),C("","")]],
   ];
   const GC={"실적":"g1","광고":"g2","온라인":"g3"};
   const GL={"실적":"매출 · 실적","광고":"광고비","온라인":"온라인 채널 점검"};
@@ -1205,7 +1210,7 @@ function storeView(){
         ${g?`<span class="hg" style="background:${gcol(g)}26;color:${gcol(g)}">${g}</span>`:""}</div>
       <div class="hm">${esc(s.region)} · ${esc(s.manager)} 점장 · ${s.staff}인 매장</div></div>
     <div class="hs">
-      <div><div class="l">${mLabel(month)} 매출</div><div class="v" id="q-sales">${man(p.sales)}<small>원</small></div></div>
+      <div><div class="l">${mLabel(dataMonth)} 매출</div><div class="v" id="q-sales">${man(p.sales)}<small>원</small></div></div>
       <div><div class="l">달성률</div><div class="v" id="q-rate">${rate==null?`<span style="font-size:13px;color:#8b94a3">목표 미확정</span>`:`<span style="color:${gcol(g)}">${pctv(rate)}</span>`}</div></div>
       <div><div class="l">판매건수</div><div class="v" id="q-cnt">${n0(p.cnt)}<small>건</small></div></div>
       <div><div class="l">건당단가</div><div class="v" id="q-unit">${man(unit)}<small>원</small></div></div>
@@ -1226,7 +1231,7 @@ function storeView(){
         :`<div class="empty">체크하면 이쪽으로 넘어옵니다.</div>`}</div></div>
   </div>
 
-  <div class="panel" style="margin-top:9px"><div class="ph dk">${mLabel(month)} 실적 · 온라인 · 광고 점검</div>
+  <div class="panel" style="margin-top:9px"><div class="ph dk">${mLabel(dataMonth)} 실적 · 온라인 · 광고 점검${dataMonth!==month?` <span class="cnt">전월 기준</span>`:""}</div>
     <table class="gt"><tbody>${rowHTML}</tbody></table></div>
 
   <div class="panel" style="margin-top:9px"><div class="ph gy">매장 기본 정보</div>
@@ -1258,15 +1263,15 @@ function tableView(){
   const go=i=>`onclick="tab='store';document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==='store'));cur=${i};render()"`;
   const ord={"공통":-1,"강남":0,"망포":1,"범어":2};
   const body=STORES.map((s,i)=>[s,i]).sort((a,b)=>((ord[a[0].group]??9)-(ord[b[0].group]??9))||((LEADER[b[0].name]?1:0)-(LEADER[a[0].name]?1:0)))
-    .map(([s,i])=>{ const m=s.months[month];
+    .map(([s,i])=>{ const m=s.months[dataMonth], mm=s.months[month];
     if(!m) return `<tr ${go(i)}><td class="nm">${LEADER[s.name]?"👑 ":""}${esc(s.name)}</td>
       <td><span class="lp" style="background:${LN(s).bg};color:${LN(s).c}">${LN(s).n.replace("라인","")}</span></td>
-      <td>${esc(s.manager)}</td><td>${s.staff}</td><td colspan="17" class="mut">${mLabel(month)} 데이터 없음</td></tr>`;
+      <td>${esc(s.manager)}</td><td>${s.staff}</td><td colspan="17" class="mut">${mLabel(dataMonth)} 데이터 없음</td></tr>`;
     const p=m.perf,c=m.check, adt=(c.adNaver||0)+(c.adDanggeun||0);
     const rate=(p.goal>0&&p.sales!=null)?p.sales/p.goal:null;
     const unit=(p.cnt&&p.sales!=null)?p.sales/p.cnt:null, ar=p.sales?adt/p.sales:null;
     T.sales+=p.sales||0; T.cnt+=p.cnt||0; T.ad+=adt; if(p.goal>0){T.goal+=p.goal;T.gsales+=p.sales||0}
-    const open=m.live.filter(x=>x.status!=="완료").length;
+    const open=(mm?mm.live:[]).filter(x=>x.status!=="완료").length;
     const tv=v=>(v===0||v==="0")?"O":(v==null||v===""||v==="."?"-":v);
     return `<tr ${go(i)}><td class="nm">${LEADER[s.name]?"👑 ":""}${esc(s.name)}</td>
       <td><span class="lp" style="background:${LN(s).bg};color:${LN(s).c}">${LN(s).n.replace("라인","")}</span></td>
@@ -1301,7 +1306,7 @@ function renderMsel(){ document.getElementById("msel").innerHTML=
   +`<option value="__new">+ 새 달 추가…</option>`; }
 document.getElementById("tabs").onclick=e=>{const t=e.target.dataset.t; if(t){tab=t;
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t)); render()}};
-function render(){ renderMsel();
+function render(){ renderMsel(); syncDataMonth();
 
   document.getElementById("body").innerHTML = tab==="store"?storeView():tab==="issue"?issueView():tableView(); }
 render();
