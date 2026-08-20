@@ -1140,7 +1140,7 @@ function toggle(si,i){ const it=M(STORES[si]).live[i];
   else { it.status="완료"; it.doneAt=today(); }
   mark(); render(); }
 /* 화면 */
-function chips(){ const ord=["강남","망포","범어"];
+function chips(){ const ord=["공통","강남","망포","범어"];
   const gi=g=>{const i=ord.indexOf(g); return i<0?99:i};
   const list=STORES.map((s,i)=>[s,i]).sort((a,b)=>
     (gi(a[0].group)-gi(b[0].group)) || ((LEADER[b[0].name]?1:0)-(LEADER[a[0].name]?1:0)));
@@ -1256,7 +1256,7 @@ function tableView(){
   const h=["매장명","라인","점장","인원","목표","매출","달성률","건수","건당단가","네이버광고","당근광고","광고비합계","광고비/매출","순위","플레이스","파워링크","비즈머니","리뷰","블로그","플친","할일"];
   let T={sales:0,cnt:0,ad:0,goal:0,gsales:0};
   const go=i=>`onclick="tab='store';document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==='store'));cur=${i};render()"`;
-  const ord={"강남":0,"망포":1,"범어":2};
+  const ord={"공통":-1,"강남":0,"망포":1,"범어":2};
   const body=STORES.map((s,i)=>[s,i]).sort((a,b)=>((ord[a[0].group]??9)-(ord[b[0].group]??9))||((LEADER[b[0].name]?1:0)-(LEADER[a[0].name]?1:0)))
     .map(([s,i])=>{ const m=s.months[month];
     if(!m) return `<tr ${go(i)}><td class="nm">${LEADER[s.name]?"👑 ":""}${esc(s.name)}</td>
