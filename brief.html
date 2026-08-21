@@ -3,239 +3,368 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>오늘 브리핑 · 옆커폰 대구지사</title>
+<title>오늘 한 일 정리 · 옆커폰 대구지사</title>
 <style>
   :root{
-    --bg:#f4f5f7; --card:#ffffff; --ink:#1c2430; --muted:#5b6875;
+    --bg:#f4f5f7; --card:#fff; --ink:#1c2430; --muted:#5b6875;
     --line:#e4e7ec; --red:#c0392b; --redbg:#fdecea; --amber:#b7791f;
     --amberbg:#fdf3e2; --green:#2e7d52; --greenbg:#e8f5ee; --blue:#2f6db3;
-    --purple:#6B3FA8;
+    --bluebg:#e8f0f9; --purple:#6B3FA8; --purplebg:#f1ebfa;
   }
-  *{box-sizing:border-box;}
+  *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",sans-serif;
-    line-height:1.55;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:680px;margin:0 auto;padding:20px 16px 40px;}
-  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-  .back{font-size:13px;color:var(--purple);text-decoration:none;font-weight:700;}
-  .refresh{font-size:13px;border:1px solid var(--line);background:#fff;border-radius:20px;padding:6px 14px;cursor:pointer;color:var(--ink);}
-  .refresh:active{background:#eef1f4;}
-  .head{margin-bottom:14px;}
-  .kicker{font-size:13px;color:var(--muted);}
-  .title{font-size:24px;font-weight:800;margin:2px 0 4px;}
-  .date{font-size:14px;color:var(--muted);}
-  .summary{background:var(--ink);color:#fff;border-radius:14px;padding:16px 18px;margin:12px 0 18px;}
-  .summary b{font-size:17px;}
-  .summary p{margin:6px 0 0;font-size:14px;color:#d3dae2;}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;}
-  .card h2{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px;}
-  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
-  .item{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line);align-items:flex-start;}
-  .item:first-of-type{border-top:none;}
-  .tag{flex:none;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;margin-top:1px;}
-  .tag.red{background:var(--redbg);color:var(--red);}
-  .tag.amber{background:var(--amberbg);color:var(--amber);}
-  .tag.green{background:var(--greenbg);color:var(--green);}
-  .tag.blue{background:#e8f0f9;color:var(--blue);}
-  .itxt{font-size:14px;}
-  .itxt .sub{color:var(--muted);font-size:12.5px;margin-top:1px;}
-  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;}
-  th,td{text-align:center;padding:8px 4px;border-bottom:1px solid var(--line);}
-  th{color:var(--muted);font-weight:600;font-size:12px;}
-  td.store{text-align:left;font-weight:700;}
-  .ok{color:var(--green);font-weight:700;}
-  .no{color:var(--red);font-weight:700;}
-  .warn{color:var(--amber);font-weight:700;}
-  .mut{color:var(--muted);}
-  .meter{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0 2px;}
-  .meter > span{display:block;height:100%;background:var(--blue);transition:width .4s;}
-  .foot{font-size:12px;color:var(--muted);text-align:center;margin-top:18px;line-height:1.7;}
-  .state{text-align:center;color:var(--muted);padding:40px 0;font-size:14px;}
-  .allgood{background:var(--greenbg);color:var(--green);border-radius:14px;padding:18px;text-align:center;font-weight:700;}
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;margin:0 auto;padding:18px 14px 48px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+  .back{font-size:13px;color:var(--purple);text-decoration:none;font-weight:700}
+  .btn{font-size:12.5px;border:1px solid var(--line);background:#fff;border-radius:20px;
+    padding:7px 14px;cursor:pointer;color:var(--ink);font-weight:600}
+  .btn:active{background:#eef1f4}
+  .btn[disabled]{opacity:.55}
+  .head{margin-bottom:12px}
+  .kicker{font-size:12.5px;color:var(--muted);font-weight:600}
+  .title{font-size:23px;font-weight:800;margin:2px 0 5px}
+  .stamp{font-size:12.5px;color:var(--muted)}
+  .stamp b{color:var(--ink)}
+
+  .make{display:flex;gap:8px;margin:14px 0 16px}
+  .make button{flex:1;font-size:15px;font-weight:800;border:none;border-radius:14px;
+    padding:15px 12px;cursor:pointer;background:var(--purple);color:#fff;
+    box-shadow:0 3px 10px rgba(107,63,168,.25)}
+  .make button:active{transform:translateY(1px)}
+  .make button.sec{flex:0 0 40%;background:#fff;color:var(--ink);
+    border:1px solid var(--line);box-shadow:none;font-size:13.5px}
+  .make button[disabled]{opacity:.6;cursor:default}
+
+  .summary{background:var(--ink);color:#fff;border-radius:14px;padding:15px 16px;margin:0 0 16px}
+  .srow{display:flex;gap:8px}
+  .sbox{flex:1;text-align:center;padding:4px 2px}
+  .sbox b{display:block;font-size:22px;font-weight:800;line-height:1.2}
+  .sbox span{font-size:11.5px;color:#c2ccd6}
+  .sbox.hot b{color:#ff9a8f}
+  .sbox.ok b{color:#8fe0b4}
+  .sline{margin:10px 0 0;font-size:13px;color:#d3dae2;border-top:1px solid #38424e;padding-top:9px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:13px}
+  .card.hi{border-color:#cdb6ee;box-shadow:0 0 0 3px var(--purplebg)}
+  .card h2{font-size:14.5px;margin:0 0 10px;display:flex;align-items:center;gap:7px;font-weight:800}
+  .card h2 .n{font-size:12px;color:var(--muted);font-weight:600}
+  .item{display:flex;gap:9px;padding:9px 0;border-top:1px solid var(--line);align-items:flex-start}
+  .item:first-of-type{border-top:none}
+  .tag{flex:none;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:20px;white-space:nowrap;margin-top:2px}
+  .tag.red{background:var(--redbg);color:var(--red)}
+  .tag.amber{background:var(--amberbg);color:var(--amber)}
+  .tag.green{background:var(--greenbg);color:var(--green)}
+  .tag.blue{background:var(--bluebg);color:var(--blue)}
+  .tag.gray{background:#eef1f4;color:var(--muted)}
+  .itxt{font-size:13.5px;min-width:0;flex:1}
+  .itxt .st{font-weight:800}
+  .itxt .sub{color:var(--muted);font-size:12px;margin-top:1px}
+  .due{font-size:11px;font-weight:800;padding:2px 7px;border-radius:6px;margin-left:5px;white-space:nowrap}
+  .due.over{background:var(--redbg);color:var(--red)}
+  .due.today{background:var(--amberbg);color:var(--amber)}
+  .due.soon{background:var(--bluebg);color:var(--blue)}
+
+  details.card > summary{list-style:none;cursor:pointer;font-size:14.5px;font-weight:800;
+    display:flex;align-items:center;gap:7px}
+  details.card > summary::-webkit-details-marker{display:none}
+  details.card > summary .n{font-size:12px;color:var(--muted);font-weight:600}
+  details.card > summary::after{content:"펼치기 ▾";margin-left:auto;font-size:11.5px;color:var(--purple);font-weight:700}
+  details.card[open] > summary::after{content:"접기 ▴"}
+  details.card[open] > summary{margin-bottom:8px}
+
+  .tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:520px}
+  th,td{text-align:center;padding:7px 5px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{color:var(--muted);font-weight:700;font-size:11.5px;background:#fafbfc}
+  td.store{text-align:left;font-weight:800}
+  td.store small{display:block;font-weight:500;color:var(--muted);font-size:10.5px}
+  .no{color:var(--red);font-weight:800}
+  .warn{color:var(--amber);font-weight:800}
+  .ok{color:var(--green);font-weight:800}
+  .mut{color:var(--muted)}
+  .memo{white-space:pre-wrap;font-size:13.5px;background:#fafbfc;border:1px solid var(--line);
+    border-radius:10px;padding:11px 13px;margin:0}
+  .empty{font-size:13px;color:var(--muted);padding:6px 0}
+  .hint{background:var(--purplebg);border:1px solid #ddd0f2;border-radius:12px;
+    padding:11px 13px;font-size:12.5px;color:#4a2c76;margin-bottom:13px;line-height:1.65}
+  .hint b{color:var(--purple)}
+  .foot{font-size:11.5px;color:var(--muted);text-align:center;margin-top:18px;line-height:1.7}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);
+    color:#fff;font-size:13px;padding:10px 18px;border-radius:24px;opacity:0;
+    transition:opacity .25s;pointer-events:none;z-index:9;max-width:90%;text-align:center}
+  .toast.on{opacity:1}
 </style>
 </head>
 <body>
 <div class="wrap">
+
   <div class="topbar">
-    <a class="back" href="index.html">← 홈으로</a>
-    <button class="refresh" onclick="loadBrief()">↻ 새로고침</button>
+    <a class="back" href="index.html">← 홈</a>
+    <a class="back" href="sv.html" style="color:var(--muted)">직영매장 관리 →</a>
   </div>
+
   <div class="head">
-    <div class="kicker">옆커폰 · 대구지사 아침 브리핑</div>
-    <div class="title">오늘 놓치면 안 되는 것</div>
-    <div class="date" id="date">불러오는 중…</div>
+    <div class="kicker">📝 옆커폰 대구지사 · 백지현 SV</div>
+    <div class="title">오늘 한 일 정리</div>
+    <div class="stamp" id="stamp">불러오는 중…</div>
   </div>
-  <div id="content"><div class="state">데이터를 불러오는 중이에요…</div></div>
-  <div class="foot" id="foot">매일 오전 10시 자동으로 갱신돼요</div>
+
+  <div class="make">
+    <button id="btnMake">📝 보고서 만들기</button>
+    <button class="sec" id="btnCopy">복사</button>
+  </div>
+
+  <div id="app"></div>
+
+  <div class="foot">
+    <b>직영매장 관리</b>에 입력·체크한 내용만으로 그 자리에서 정리합니다.<br>
+    일 끝내고 매장 관리에서 <b>완료 체크</b>만 눌러두면, 여기서 그날 한 일이 자동으로 잡힙니다.
+  </div>
 </div>
+<div class="toast" id="toast"></div>
 
 <script>
-// 매출 = 서버가 매일 계산해 저장한 '브리핑 스냅샷'(briefing/sales_latest) 을 읽음
-// 인수인계 = Supabase 실시간
-const SB = "https://skhbcizzqgmlnwiwlaxt.supabase.co/rest/v1/kv";
-const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJjaXp6cWdtbG53aXdsYXh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NjI5NTIsImV4cCI6MjEwMDQzODk1Mn0.Ov_4bLIkkxgRb-UG_qSYl_XNM0BbNESOXJl1dFVLfAo";
-const H = {apikey:KEY, Authorization:'Bearer '+KEY};
+const SB_URL = "https://skhbcizzqgmlnwiwlaxt.supabase.co";
+const SB_KEY = "sb_publishable_ZJxHaQ8PwdiY8ZWYqXCReg_E5RqrV62";
+const H = {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
 
-function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-const looksTest = s => !s || /^(1+|ㅇ+|3+|test|테스트|ㄴ+|ㅁ+)$/i.test(String(s).trim());
-function fmtKST(ts){
-  try{ return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(ts)); }catch(e){ return ''; }
+let B = null;
+
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num = v => (v===null||v===undefined||v==="") ? null : (typeof v==="number"?v:(isNaN(+v)?null:+v));
+const fmt = v => v===null?"—":v.toLocaleString("ko-KR");
+const todayStr = () => {
+  const d = new Date(Date.now() + (new Date().getTimezoneOffset()*60000) + 9*3600000);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+};
+const DOW = ["일","월","화","수","목","금","토"];
+function korDate(s){
+  if(!s) return "";
+  const [y,m,d] = s.split("-").map(Number);
+  return `${y}년 ${m}월 ${d}일 (${DOW[new Date(Date.UTC(y,m-1,d)).getUTCDay()]})`;
 }
-function fmtDateKo(s){ const t=String(s).split('-'); return t.length>=3 ? `${Number(t[1])}월 ${Number(t[2])}일` : String(s); }
+function md(s){ if(!s) return ""; const p=String(s).split("-"); return p.length<3?s:p[1]+"/"+p[2]; }
 
-async function loadBrief(){
-  document.getElementById('content').innerHTML = '<div class="state">데이터를 불러오는 중이에요…</div>';
-  let snap=null, updatedAt=null, handover=[];
-
-  // 매출 스냅샷
-  try{
-    const r = await fetch(SB+'?select=value,updated_at&namespace=eq.briefing&key=eq.sales_latest',{headers:H});
-    const a = await r.json();
-    if(a && a[0]){ snap = JSON.parse(a[0].value); updatedAt = a[0].updated_at; }
-  }catch(e){}
-
-  // 인수인계 실시간
-  try{
-    const r = await fetch(SB+'?select=key,value&namespace=eq.handover&key=like.handover:%25',{headers:H});
-    const arr = await r.json();
-    (arr||[]).filter(x=>!x.key.includes('handover_index')).forEach(x=>{
-      let o; try{o=JSON.parse(x.value);}catch(e){return;}
-      if(!o||!o.meta) return;
-      let all=[],pending=0,total=0,done=0;
-      Object.values(o.simple||{}).forEach(v=>{if(Array.isArray(v))all=all.concat(v);});
-      all.forEach(it=>{total++; if(it.out&&it.in)done++; else if(it.out&&!it.in)pending++;});
-      handover.push({store:o.meta.store||'(무제)',total,done,pending,notStarted:done===0&&pending===0,
-        testish:looksTest(o.meta.store)||looksTest(o.meta.outgoing)||looksTest(o.meta.incoming)});
-    });
-  }catch(e){}
-
-  // 날짜는 항상 '오늘'(한국시간) 기준으로 표시 — 데이터와 무관하게 매일 갱신
-  const todayStr = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date());
-  const [ty,tm,td] = todayStr.split('-').map(Number);
-  const wd = new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',weekday:'short'}).format(new Date());
-  const dt = document.getElementById('date');
-  dt.textContent = `${ty}년 ${tm}월 ${td}일 (${wd})`;
-  const isToday = !!(snap && snap.today === todayStr);
-  document.getElementById('foot').innerHTML = (updatedAt? `가장 최근 매출 보고: ${fmtKST(updatedAt)} · ` : '') + '매장 보고가 들어오면 자동으로 반영돼요';
-
-  render(snap, handover, isToday);
+// 「→ 08/21」 같은 기한 표기와 🔴 표시는 본문에서 떼어내 칩으로 따로 보여준다
+function clean(t){
+  return String(t||"").replace(/🔴/g,"")
+    .replace(/\s*→\s*\d{1,2}\s*\/\s*\d{1,2}\s*$/,"").trim();
+}
+function dueChip(due){
+  if(!due) return "";
+  const t = todayStr();
+  const cls = due < t ? "over" : (due === t ? "today" : "soon");
+  const lbl = due < t ? "기한 지남 "+md(due) : (due===t ? "오늘 "+md(due) : md(due)+" 까지");
+  return `<span class="due ${cls}">${lbl}</span>`;
+}
+function toast(msg){
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("on");
+  clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove("on"), 2200);
 }
 
-function render(snap, handover, isToday){
-  let html='';
-  // 오늘 보고가 없거나(스냅샷이 예전 날짜) 데이터가 없으면 → 옛날 데이터 대신 '특이사항 없음'으로 깔끔 정리
-  if(!snap || !snap.stores || !isToday){
-    let note;
-    if(snap && snap.today && !isToday){
-      note = `오늘은 아직 매장 보고가 들어오지 않았어요.<br><span style="font-size:12.5px;color:var(--muted)">가장 최근 보고: ${fmtDateKo(snap.today)} · 새 보고가 들어오면 자동 반영돼요</span>`;
-    } else {
-      note = `아직 오늘 브리핑 데이터가 없어요.<br><span style="font-size:12.5px;color:var(--muted)">매장이 보고를 입력하면 여기에 표시돼요.</span>`;
-    }
-    html = `<div class="allgood">✅ 특이사항 없음</div><div class="state">${note}</div>`;
-    document.getElementById('content').innerHTML = html + handoverHtml(handover);
-    return;
+async function fetchSnapshot(){
+  const r = await fetch(`${SB_URL}/rest/v1/kv?namespace=eq.briefing&key=eq.sv_today&select=value`,{headers:H});
+  const j = await r.json();
+  if(!j || !j.length) return null;
+  return JSON.parse(j[0].value);
+}
+async function rebuild(){
+  const r = await fetch(`${SB_URL}/rest/v1/rpc/sv_build_brief`,{method:"POST",headers:H,body:"{}"});
+  if(!r.ok) throw new Error(await r.text());
+  return await r.json();
+}
+
+/* ---------- 렌더 ---------- */
+function listCard(title, dot, arr, opt={}){
+  if(!arr || !arr.length){
+    if(opt.hideEmpty) return "";
+    return `<div class="card${opt.hi?" hi":""}"><h2>${dot} ${title}</h2><div class="empty">${opt.emptyText||"없습니다."}</div></div>`;
   }
-  const stores = snap.stores;
-  const unreported = stores.filter(s=>!s.reported).map(s=>s.name);
-  const follow = stores.filter(s=>s.note && s.note.trim());
-  const notAct = stores.filter(s=>(s.notActivated||0)>0);
-  const noPrice = stores.filter(s=>s.reported && s.priceSheet==='미완료').map(s=>s.name);
-  const promoShort = stores.filter(s=>s.reported && (s.promoTarget||0)>0 && (s.promoDone||0)<s.promoTarget).map(s=>`${s.name} ${s.promoDone}/${s.promoTarget}`);
-  const adMiss = snap.weekdayKey? stores.filter(s=>s.reported && s.adToday===false).map(s=>s.name) : [];
-  const reported = stores.filter(s=>s.reported).length;
-  const pct = stores.length? Math.round(reported/stores.length*100):0;
-  const flags = unreported.length + follow.length + notAct.length + noPrice.length + promoShort.length + (adMiss.length?1:0);
+  const rows = arr.map(it=>`<div class="item">
+      <span class="tag ${opt.tag?opt.tag(it):"gray"}">${esc(opt.tagText?opt.tagText(it):(it.group||""))}</span>
+      <div class="itxt">
+        <div><span class="st">${esc(it.store)}</span> · ${esc(clean(it.text))}${opt.noDue?"":dueChip(it.due)}</div>
+        ${opt.sub?`<div class="sub">${esc(opt.sub(it))}</div>`:""}
+      </div></div>`).join("");
+  return `<div class="card${opt.hi?" hi":""}"><h2>${dot} ${title} <span class="n">${arr.length}건</span></h2>${rows}</div>`;
+}
 
-  if(flags===0){
-    html += `<div class="allgood">🎉 오늘은 놓친 항목이 없어요! 전 매장 정상.</div>`;
-  }else{
-    html += `<div class="summary"><b>오늘 꼭 챙길 것 ${flags}가지</b><p>`+
-      (unreported.length?`매출 미보고 ${unreported.length}곳, `:'')+
-      (follow.length?`고객 후속 연락 ${follow.length}건, `:'')+
-      `시세표·프로모션·광고 체크를 확인하세요. 아래 🔴부터 처리하시면 돼요.</p></div>`;
+function render(){
+  const t = todayStr();
+  const s = B.summary||{};
+  const doneT = B.doneToday||[];
+  const doneY = B.doneYesterday||[];
+  const urgent = (B.urgent||[]).slice().sort((a,b)=>{
+    const av=a.due||"9999-99-99", bv=b.due||"9999-99-99";
+    if(av!==bv) return av<bv?-1:1;
+    return (b.red?1:0)-(a.red?1:0);
+  });
+  const soon = B.soon||[];
+  const openAll = B.open||[];
+  const alerts = (B.alerts||[]).slice().sort((a,b)=>(a.level==="red"?0:1)-(b.level==="red"?0:1));
+
+  document.getElementById("stamp").innerHTML =
+    `<b>${korDate(B.date)}</b> · 정리 시각 ${esc((B.generatedAt||"").replace("T"," ").slice(11,16))}` +
+    ` · 매장 데이터 최종 수정 ${esc(B.dataUpdatedAt||"—")}` +
+    (B.date !== t ? ` <span style="color:var(--red);font-weight:800">· 오늘 날짜가 아닙니다</span>` : "");
+
+  let h = "";
+
+  h += `<div class="summary">
+    <div class="srow">
+      <div class="sbox ok"><b>${doneT.length}</b><span>오늘 완료</span></div>
+      <div class="sbox hot"><b>${s.urgent||0}</b><span>아직 남은 것</span></div>
+      <div class="sbox"><b>${s.alerts||0}</b><span>광고 경고</span></div>
+      <div class="sbox"><b>${s.open||0}</b><span>진행중 전체</span></div>
+    </div>
+    <p class="sline">${
+      doneT.length===0
+        ? "오늘 완료로 체크된 건이 아직 없습니다. <b>직영매장 관리</b>에서 끝낸 일을 완료로 바꾸고 다시 눌러주세요."
+        : `오늘 <b>${new Set(doneT.map(x=>x.store)).size}개 매장</b>에서 <b>${doneT.length}건</b>을 처리했습니다.` +
+          ((s.urgent||0)>0 ? ` 기한이 걸린 <b>${s.urgent}건</b>이 아직 남아 있습니다.` : " 기한이 걸린 남은 건은 없습니다.")
+    }</p>
+  </div>`;
+
+  h += `<div class="hint">아래 <b>「오늘 처리한 일」</b>이 보고서 본문이 되고, <b>「아직 남은 것 · 진행중」</b>이 ‘완료 시까지 계속 보고’ 항목이 됩니다.
+    <b>복사</b> 버튼을 누른 뒤 클로드에 붙여넣고 “오늘 보고서” 라고만 하면 됩니다.</div>`;
+
+  h += listCard("오늘 처리한 일 — 보고서 본문", "✅", doneT, {
+    hi:true, noDue:true, tag:()=>"green", tagText:()=>"완료",
+    sub: it => `${it.group||""} · ${it.manager||""}`,
+    emptyText:"오늘 완료로 체크된 건이 없습니다. 직영매장 관리에서 완료 체크 후 다시 눌러주세요."
+  });
+
+  h += listCard("아직 안 끝난 것 — 기한 걸림", "🔴", urgent, {
+    tag: it => (it.due && it.due < t) ? "red" : "amber",
+    tagText: it => it.why || "긴급",
+    sub: it => `${it.group||""} · ${it.manager||""}`,
+    emptyText:"기한이 지났거나 오늘 마감인 건은 없습니다."
+  });
+
+  h += listCard("3일 안에 마감", "🟡", soon, {
+    hideEmpty:true, tag:()=>"blue", tagText: it=>it.group||"",
+    sub: it => it.manager||""
+  });
+
+  if(alerts.length){
+    h += `<div class="card"><h2>📡 광고 · 온라인 경고 <span class="n">${alerts.length}건</span></h2>` +
+      alerts.map(a=>`<div class="item">
+        <span class="tag ${a.level==="red"?"red":"amber"}">${esc(a.type)}</span>
+        <div class="itxt"><div><span class="st">${esc(a.store)}</span> · ${esc(a.text)}</div></div>
+      </div>`).join("") + `</div>`;
   }
 
-  html += `<div class="card"><h2><span class="dot" style="background:var(--blue)"></span>오늘 매출 보고 현황 &nbsp;<span class="mut" style="font-weight:400">${reported} / ${stores.length} 매장</span></h2>
-    <div class="meter"><span style="width:${pct}%"></span></div>
-    <div class="mut" style="font-size:12px">${unreported.length? '미보고: '+unreported.map(esc).join(', ') : '전 매장 보고 완료'}</div></div>`;
+  if(openAll.length){
+    h += `<details class="card"><summary>📌 진행중 전체 — 완료 시까지 계속 보고 <span class="n">${openAll.length}건</span></summary>` +
+      openAll.slice().sort((a,b)=>(a.due||"9999")<(b.due||"9999")?-1:1).map(it=>`<div class="item">
+        <span class="tag gray">${esc(it.group||"")}</span>
+        <div class="itxt"><div><span class="st">${esc(it.store)}</span> · ${esc(clean(it.text))}${dueChip(it.due)}</div>
+        <div class="sub">${esc(it.manager||"")}</div></div>
+      </div>`).join("") + `</details>`;
+  }
 
-  let red='';
-  if(unreported.length) red += `<div class="item"><span class="tag red">미보고</span><div class="itxt"><b>${unreported.map(esc).join(' · ')}</b> 오늘 매출 보고 미제출</div></div>`;
-  follow.forEach(f=>{ red += `<div class="item"><span class="tag red">후속 연락</span><div class="itxt"><b>${esc(f.name)}</b> — ${esc(f.note)}</div></div>`; });
-  if(notAct.length) red += `<div class="item"><span class="tag red">미개통</span><div class="itxt">미개통 후속: <b>${notAct.map(s=>esc(s.name)+' '+s.notActivated+'건').join(' · ')}</b></div></div>`;
-  if(red) html += `<div class="card"><h2><span class="dot" style="background:var(--red)"></span>🔴 지금 바로 챙기기</h2>${red}</div>`;
+  if(doneY.length){
+    h += `<details class="card"><summary>🕘 어제(${md(B.date)===md(todayStr())?"전일":"전일"}) 완료 <span class="n">${doneY.length}건</span></summary>` +
+      doneY.map(it=>`<div class="item">
+        <span class="tag green">${esc(md(it.doneAt))}</span>
+        <div class="itxt"><div><span class="st">${esc(it.store)}</span> · ${esc(clean(it.text))}</div>
+        <div class="sub">${esc(it.group||"")} · ${esc(it.manager||"")}</div></div>
+      </div>`).join("") + `</details>`;
+  }
 
-  let amb='';
-  if(noPrice.length) amb += `<div class="item"><span class="tag amber">시세표</span><div class="itxt"><b>${noPrice.map(esc).join(' · ')}</b> 시세표 미완료</div></div>`;
-  if(promoShort.length) amb += `<div class="item"><span class="tag amber">프로모션</span><div class="itxt"><b>${promoShort.map(esc).join(' · ')}</b> 목표 대비 진행 부족</div></div>`;
-  if(adMiss.length) amb += `<div class="item"><span class="tag amber">광고 체크</span><div class="itxt">오늘 광고 체크 미완료: <b>${adMiss.map(esc).join(' · ')}</b></div></div>`;
-  if(amb) html += `<div class="card"><h2><span class="dot" style="background:var(--amber)"></span>🟡 오늘 중 확인·완료</h2>${amb}</div>`;
+  const st = B.stores||[];
+  h += `<details class="card"><summary>🏪 매장별 지표 <span class="n">${st.length}개 매장</span></summary>
+    <div class="tblwrap"><table>
+      <thead><tr><th style="text-align:left">매장</th><th>순위</th><th>블로그</th><th>리뷰</th>
+      <th>플친</th><th>비즈머니</th><th>광고</th><th>진행중</th></tr></thead><tbody>` +
+    st.map(x=>{
+      const bz = num(x.bizmoney);
+      const bzc = bz===null ? "mut" : (bz<0 ? "no" : (bz<10000 ? "warn" : ""));
+      const pl = String(x.place||"").toLowerCase(), pw = String(x.power||"").toLowerCase();
+      const adOff = (pl==="off"||pl==="x") || (pw==="off"||pw==="x");
+      return `<tr>
+        <td class="store">${esc(x.name)}<small>${esc(x.group||"")} · ${esc(x.manager||"")}</small></td>
+        <td>${x.rank==null?"—":esc(x.rank)+"위"}</td>
+        <td>${fmt(num(x.blog))}</td><td>${fmt(num(x.review))}</td><td>${fmt(num(x.plusfriend))}</td>
+        <td class="${bzc}">${fmt(bz)}</td>
+        <td class="${adOff?"no":"ok"}">${adOff?"OFF":"ON"}</td>
+        <td>${x.open?`<b>${x.open}</b>`:'<span class="mut">0</span>'}</td>
+      </tr>`;
+    }).join("") + `</tbody></table></div></details>`;
 
-  let tr='';
-  stores.forEach(s=>{
-    if(!s.reported){ tr+=`<tr><td class="store">${esc(s.name)}</td><td class="no">미보고</td><td class="mut">–</td><td class="mut">–</td><td class="mut">–</td><td class="mut">–</td></tr>`; return; }
-    const salesCell = (s.sales||0)===0?'<td class="warn">0원</td>':`<td>${(s.sales/10000).toLocaleString()}만원</td>`;
-    tr += `<tr><td class="store">${esc(s.name)}</td><td class="ok">✓</td>${salesCell}`+
-      (s.priceSheet==='미완료'?'<td class="no">미완료</td>':'<td class="ok">완료</td>')+
-      `<td class="${(s.promoDone||0)<(s.promoTarget||0)?'no':'ok'}">${s.promoDone||0}/${s.promoTarget||0}</td>`+
-      (snap.weekdayKey? (s.adToday?'<td class="ok">✓</td>':'<td class="no">✕</td>') : '<td class="mut">–</td>')+`</tr>`;
-  });
-  html += `<div class="card"><h2><span class="dot" style="background:var(--blue)"></span>매장별 한눈에</h2>
-    <table><thead><tr><th style="text-align:left">매장</th><th>보고</th><th>매출</th><th>시세표</th><th>프로모션</th><th>광고</th></tr></thead><tbody>${tr}</tbody></table></div>`;
+  if(B.memo && B.memo.trim()){
+    h += `<div class="card"><h2>🗒 전 매장 공통 메모</h2><p class="memo">${esc(B.memo)}</p></div>`;
+  }
 
-  html += handoverHtml(handover);
-  document.getElementById('content').innerHTML = html;
+  document.getElementById("app").innerHTML = h;
 }
 
-function handoverHtml(handover){
-  if(!handover || !handover.length) return '';
-  let ho='';
-  handover.forEach(h=>{
-    if(h.testish) ho += `<div class="item"><span class="tag green">정리 권장</span><div class="itxt"><b>'${esc(h.store)}'</b> 테스트로 보이는 항목<div class="sub">실제 건이 아니면 삭제 권장</div></div></div>`;
-    else if(h.notStarted) ho += `<div class="item"><span class="tag blue">진행중</span><div class="itxt"><b>${esc(h.store)}</b> 착수 단계 · 항목 미완료</div></div>`;
-    else if(h.pending>0) ho += `<div class="item"><span class="tag amber">인수 대기</span><div class="itxt"><b>${esc(h.store)}</b> 완료 ${h.done}/${h.total} · 인수 확인 대기 ${h.pending}건</div></div>`;
-    else ho += `<div class="item"><span class="tag green">진행</span><div class="itxt"><b>${esc(h.store)}</b> 완료 ${h.done}/${h.total}</div></div>`;
-  });
-  return `<div class="card"><h2><span class="dot" style="background:var(--green)"></span>인수인계 진행 상황</h2>${ho}</div>`;
+/* ---------- 보고서 재료 텍스트 ---------- */
+function reportText(){
+  const L = [];
+  const dt = B.doneToday||[], dy = B.doneYesterday||[];
+  L.push(`[옆커폰 대구지사 · 백지현 SV] ${B.date} (${korDate(B.date).split(" ").pop()}) 일일 업무보고 재료`);
+  L.push(`직영매장 관리 기준 · 정리 ${B.generatedAt||"-"} · 매장 데이터 최종 수정 ${B.dataUpdatedAt||"-"}`);
+  L.push("");
+  L.push(`■ 오늘 처리한 일 (${dt.length}건) — 보고서 본문`);
+  if(!dt.length) L.push("- (없음)");
+  dt.forEach(i=>L.push(`- [${i.store} / ${i.group} / ${i.manager}] ${clean(i.text)}`));
+  L.push("");
+  L.push(`■ 아직 안 끝난 것 · 기한 걸림 (${(B.urgent||[]).length}건)`);
+  (B.urgent||[]).forEach(i=>L.push(`- [${i.store} / ${i.manager}] ${clean(i.text)} / 기한 ${i.due||"미지정"} (${i.why||""})`));
+  L.push("");
+  L.push(`■ 진행 중 전체 (${(B.open||[]).length}건) — 완료 시까지 계속 보고`);
+  (B.open||[]).forEach(i=>L.push(`- [${i.store}] ${clean(i.text)} / 기한 ${i.due||"미지정"}`));
+  L.push("");
+  L.push(`■ 광고·온라인 경고 (${(B.alerts||[]).length}건)`);
+  (B.alerts||[]).forEach(a=>L.push(`- [${a.store}] ${a.type}: ${a.text}`));
+  L.push("");
+  L.push(`■ 전일 완료 (${dy.length}건) — 전일 건 처리 현황용`);
+  dy.forEach(i=>L.push(`- [${i.store}] ${clean(i.text)} (완료 ${i.doneAt})`));
+  L.push("");
+  L.push("■ 매장별 지표 (순위/블로그/리뷰/플친/비즈머니/진행중)");
+  (B.stores||[]).forEach(x=>L.push(
+    `- ${x.name}(${x.group}/${x.manager}) 순위 ${x.rank??"-"} / 블로그 ${x.blog??"-"} / 리뷰 ${x.review??"-"} / 플친 ${x.plusfriend??"-"} / 비즈머니 ${x.bizmoney??"-"} / 진행중 ${x.open}건`));
+  L.push("");
+  L.push("■ 전 매장 공통 메모");
+  L.push(B.memo||"(없음)");
+  return L.join("\n");
 }
 
-loadBrief();
+/* ---------- 동작 ---------- */
+async function make(showToast){
+  const b = document.getElementById("btnMake");
+  b.disabled = true; b.textContent = "정리 중…";
+  try{
+    B = await rebuild();
+    render();
+    if(showToast) toast(`오늘 완료 ${(B.doneToday||[]).length}건으로 정리했습니다`);
+  }catch(e){
+    document.getElementById("stamp").textContent = "불러오지 못했습니다 — 인터넷을 확인하세요";
+    document.getElementById("app").innerHTML =
+      `<div class="card"><div class="empty">${esc(String(e.message||e)).slice(0,200)}</div></div>`;
+  }
+  b.disabled = false; b.textContent = "📝 보고서 만들기";
+}
+
+document.getElementById("btnMake").addEventListener("click", ()=>make(true));
+
+document.getElementById("btnCopy").addEventListener("click", async ()=>{
+  if(!B){ toast("먼저 「보고서 만들기」를 눌러주세요"); return; }
+  const txt = reportText();
+  try{ await navigator.clipboard.writeText(txt); toast("복사 완료 — 클로드에 붙여넣으세요"); }
+  catch(e){
+    const ta=document.createElement("textarea"); ta.value=txt;
+    ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta);
+    ta.select(); document.execCommand("copy"); ta.remove(); toast("복사 완료");
+  }
+});
+
+// 들어오자마자 오늘 기준으로 한 번 정리해서 보여준다
+make(false);
 </script>
-<script>(function(){try{
-var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJjaXp6cWdtbG53aXdsYXh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NjI5NTIsImV4cCI6MjEwMDQzODk1Mn0.Ov_4bLIkkxgRb-UG_qSYl_XNM0BbNESOXJl1dFVLfAo', SB='https://skhbcizzqgmlnwiwlaxt.supabase.co/rest/v1/kv';
-var H={apikey:KEY, Authorization:'Bearer '+KEY};
-var card=document.createElement('section');
-card.id='store-brief';
-card.style.cssText='background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 18px;margin:14px 0;box-shadow:0 1px 2px rgba(20,20,40,.05)';
-card.innerHTML='<div style="font-weight:800;font-size:15px;margin-bottom:9px">🏬 매장분석 특이사항 <span id="sb-ym" style="font-weight:500;color:var(--muted);font-size:12px"></span></div><div id="sb-body" style="font-size:13px;line-height:1.75;color:var(--ink)">불러오는 중…</div><div style="margin-top:10px"><a href="sm-ac85909903e9.html" style="font-size:12px;font-weight:700;color:#6B3FA8;text-decoration:none">매장분석 자세히 보기 →</a></div>';
-function place(){var c=document.getElementById('content'); if(c&&c.parentNode){c.parentNode.insertBefore(card,c.nextSibling);} else {document.body.appendChild(card);}}
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',place);} else {place();}
-function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
-function isActiveAt(s,m){if(!s.status||s.status==='영업중')return true; if(!s.statusDate)return false; return m<String(s.statusDate).slice(0,7);}
-function pAt(s,m){var pf=s.perf||[]; for(var i=0;i<pf.length;i++){if(pf[i].ym===m)return pf[i];} return null;}
-function gtag(s){return s.gubun==='직영'?'<span style="color:#6B3FA8">[직영]</span>':'<span style="color:#2e9e6b">[가맹]</span>';}
-function done(stores){
-var body=document.getElementById('sb-body'); if(!body)return;
-var mset={}; stores.forEach(function(s){(s.perf||[]).forEach(function(p){if(p.ym)mset[p.ym]=1;});});
-var months=Object.keys(mset).sort();
-if(!months.length){body.textContent='아직 매출 데이터가 없어요'; return;}
-var ym=months[months.length-1], prev=months.length>1?months[months.length-2]:null;
-var yl=document.getElementById('sb-ym'); if(yl)yl.textContent='· 기준월 '+ym;
-var active=stores.filter(function(s){return isActiveAt(s,ym);});
-var moves=[]; active.forEach(function(s){var c=pAt(s,ym), p=prev?pAt(s,prev):null; if(c&&p&&p.sales){moves.push({s:s,d:(c.sales-p.sales)/p.sales*100});}});
-var up=moves.filter(function(m){return m.d>=30;}).sort(function(a,b){return b.d-a.d;}).slice(0,4);
-var down=moves.filter(function(m){return m.d<=-25;}).sort(function(a,b){return a.d-b.d;}).slice(0,4);
-var issues=0; active.forEach(function(s){(s.issues||[]).forEach(function(i){if(i.status!=='완료')issues++;});});
-var closed=stores.filter(function(s){return s.status&&s.status!=='영업중';});
-var L=[];
-if(up.length){L.push('<div>📈 <b>급등</b> '+up.map(function(m){return gtag(m.s)+' '+esc(m.s.name)+' <span style="color:#2e9e6b;font-weight:700">+'+Math.round(m.d)+'%</span>';}).join(' · ')+'</div>');}
-if(down.length){L.push('<div>📉 <b>급락 주의</b> '+down.map(function(m){return gtag(m.s)+' '+esc(m.s.name)+' <span style="color:var(--red);font-weight:700">'+Math.round(m.d)+'%</span>';}).join(' · ')+'</div>');}
-if(issues){L.push('<div>⚠️ 미해결 이슈 <b>'+issues+'건</b></div>');}
-if(closed.length){L.push('<div>🚧 휴업·폐업 '+closed.map(function(s){return esc(s.name)+'('+esc(s.status)+')';}).join(', ')+'</div>');}
-if(!L.length){L.push('<div style="color:var(--muted)">특이사항 없음 — 큰 변동 없이 안정적으로 운영 중이에요 👍</div>');}
-body.innerHTML=L.join('');
-}
-fetch(SB+'?select=value&namespace=eq.storemgr&key=eq.data',{headers:H}).then(function(r){return r.json();}).then(function(rows){if(rows&&rows[0]&&rows[0].value){done(JSON.parse(rows[0].value));}else{var b=document.getElementById('sb-body'); if(b)b.textContent='매장 데이터가 비어 있어요';}}).catch(function(e){var b=document.getElementById('sb-body'); if(b)b.textContent='매장분석 자료를 불러오지 못했어요';});
-}catch(e){}})();</script>
 </body>
 </html>
