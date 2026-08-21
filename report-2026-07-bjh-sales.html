@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>백지현 담당 매장 판매실력 분석 · 2026년 5~7월</title>
+<style>
+:root{
+  color-scheme: light;
+  --surface-1:#fcfcfb; --plane:#f4f4f1;
+  --ink-1:#0b0b0b; --ink-2:#52514e; --ink-3:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,0.10);
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+  --good:#0ca30c; --warn:#fab219; --serious:#ec835a; --crit:#d03b3b;
+  --good-ink:#006300;
+  --seq-100:#cde2fb; --seq-250:#86b6ef; --seq-450:#2a78d6; --seq-600:#184f95;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--plane);color:var(--ink-1);
+  font-family:system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 20px 80px}
+header.top{margin-bottom:24px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+h1{font-size:26px;margin:6px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--ink-2);font-size:13px;margin:0}
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:18px}
+.card h2{font-size:16px;margin:0 0 2px;letter-spacing:-.01em}
+.card .cap{font-size:12.5px;color:var(--ink-2);margin:0 0 18px}
+.hero{display:grid;grid-template-columns:minmax(260px,1.05fr) 1fr;gap:26px;align-items:center}
+.hero .figure{font-size:60px;font-weight:650;line-height:1;letter-spacing:-.03em;color:var(--crit)}
+.hero .flabel{font-size:13px;color:var(--ink-2);margin-top:8px}
+.hero .fnote{font-size:12.5px;color:var(--ink-3);margin-top:10px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--plane);border:1px solid var(--border);border-radius:10px;padding:13px 14px}
+.tile .l{font-size:11.5px;color:var(--ink-2);margin-bottom:5px}
+.tile .v{font-size:23px;font-weight:640;letter-spacing:-.02em;line-height:1.1}
+.tile .d{font-size:11.5px;margin-top:4px;color:var(--ink-3)}
+.up{color:var(--good-ink);font-weight:600}.down{color:var(--crit);font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}.hero{grid-template-columns:1fr}}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.gl{stroke:var(--grid);stroke-width:1}
+.ax{stroke:var(--axis);stroke-width:1}
+.tk{font-size:10.5px;fill:var(--ink-3);font-variant-numeric:tabular-nums}
+.lb{font-size:11.5px;fill:var(--ink-2)}
+.vl{font-size:11px;fill:var(--ink-2);font-variant-numeric:tabular-nums}
+.tgt{stroke:var(--crit);stroke-width:2;stroke-linecap:round}
+.tgtx{font-size:11px;fill:var(--crit);font-weight:600}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:0 0 12px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 8px;text-align:right;border-bottom:1px solid var(--grid);white-space:nowrap}
+th{font-size:11px;color:var(--ink-2);font-weight:600;text-align:right;border-bottom:1px solid var(--axis)}
+th:first-child,td:first-child{text-align:left;font-variant-numeric:normal}
+tbody tr:hover{background:var(--plane)}
+tfoot td{font-weight:650;border-top:1px solid var(--axis);border-bottom:none;background:var(--plane)}
+.pill{display:inline-block;padding:1.5px 8px;border-radius:20px;font-size:11px;font-weight:600;line-height:1.5}
+.p-good{background:rgba(12,163,12,.12);color:var(--good-ink)}
+.p-warn{background:rgba(250,178,25,.20);color:#8a5c00}
+.p-crit{background:rgba(208,59,59,.12);color:var(--crit)}
+.p-ser{background:rgba(236,131,90,.18);color:#a8451c}
+.spark{width:62px;height:20px;display:inline-block;vertical-align:-4px}
+ul.acts{margin:0;padding-left:0;list-style:none}
+ul.acts li{padding:11px 0 11px 0;border-bottom:1px solid var(--grid);display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start}
+ul.acts li:last-child{border-bottom:none}
+.num{width:22px;height:22px;border-radius:50%;background:var(--s1);color:#fff;font-size:11.5px;font-weight:650;display:grid;place-items:center;margin-top:1px}
+.num.r{background:var(--crit)}.num.w{background:#c98500}
+ul.acts b{font-size:13px}
+ul.acts p{margin:3px 0 0;font-size:12.5px;color:var(--ink-2)}
+.kpi-in{width:100%;border-collapse:collapse;font-size:12.5px}
+.kpi-in th,.kpi-in td{border:1px solid var(--grid);padding:7px 9px;text-align:center}
+.kpi-in th:first-child,.kpi-in td:first-child{text-align:left}
+.kpi-in thead th{background:var(--plane);font-size:11px}
+.blank{color:var(--ink-3);background:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(11,11,11,.035) 5px,rgba(11,11,11,.035) 10px)}
+.note{font-size:12px;color:var(--ink-3);margin-top:12px;padding-top:12px;border-top:1px solid var(--grid)}
+.kpibar{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px;margin-bottom:4px}
+.kbox{border:1px solid var(--border);border-radius:9px;padding:11px 12px;background:var(--plane)}
+.kbox .t{font-size:11.5px;color:var(--ink-2);margin-bottom:4px}
+.kbox .r{font-size:13px;font-weight:640}
+.kbox.on{background:rgba(12,163,12,.07);border-color:rgba(12,163,12,.3)}
+.kbox.off{background:rgba(208,59,59,.05);border-color:rgba(208,59,59,.25)}
+.kbox.na{opacity:.6}
+.tt{position:fixed;pointer-events:none;background:var(--ink-1);color:#fff;font-size:11.5px;padding:7px 10px;border-radius:7px;opacity:0;transition:opacity .1s;z-index:99;line-height:1.5;white-space:nowrap}
+.hit{fill:transparent;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">옆커폰 · 지점 판매실력 분석</div>
+  <h1>백지현 담당 13개 매장 · 2026년 5~7월</h1>
+  <p class="sub">권도형 지사장 KPI 기준 적용 · 핵심 지표: 무선 대비 MNP 비중</p>
+</header>
+
+<section class="card">
+  <div class="hero">
+    <div>
+      <div class="figure" id="heroFig">36.6%</div>
+      <div class="flabel"><b>7월 MNP 비중</b> (MNP ÷ MNP+기기변경) · 목표 <b>60%</b></div>
+      <div class="fnote">목표까지 <b style="color:var(--crit)">23.4%p</b> 부족 · 13개 매장 중 60% 달성 <b>0곳</b><br>
+      단, 5월 30.8% → 6월 34.3% → 7월 36.6%로 <span class="up">3개월 연속 개선 중</span></div>
+    </div>
+    <div class="tiles" id="heroTiles"></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>담당 전체 KPI 달성 현황 (7월)</h2>
+  <p class="cap">카톡 기준 6개 항목 중 현재 데이터로 계산 가능한 2개만 판정. 나머지 4개는 원천 데이터 확보 필요.</p>
+  <div class="kpibar" id="kpiBar"></div>
+</section>
+
+<section class="grid2">
+  <div class="card">
+    <h2>MNP 비중 3개월 추이 — 담당 전체</h2>
+    <p class="cap">두 기준 모두 상승 추세. 다만 7월 총개통이 925건으로 크게 줄어든 상태에서의 비중 상승이라 해석 주의.</p>
+    <div class="legend">
+      <span><i style="background:var(--s1)"></i>MNP ÷ (MNP+기변) · 카톡 기준</span>
+      <span><i style="background:var(--s2)"></i>MNP ÷ 무선합계</span>
+    </div>
+    <div id="chartTrend"></div>
+  </div>
+  <div class="card">
+    <h2>월별 총개통 — 담당 전체</h2>
+    <p class="cap">7월 개통량 급감(-18.9% MoM). MNP 비중 개선이 실제 MNP 건수 증가가 아니라 기기변경 감소 때문일 수 있음.</p>
+    <div id="chartVol"></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>7월 매장별 MNP 비중 순위</h2>
+  <p class="cap">막대 = MNP ÷ (MNP+기기변경). 빨간 선이 KPI 목표 60%. 넘긴 매장 없음.</p>
+    <div class="legend"><span><i style="background:var(--s1)"></i>30% 이상</span><span><i style="background:var(--crit)"></i>30% 미만 · 즉시 개입</span><span><i style="background:var(--good)"></i>목표 60% 달성</span></div>
+  <div id="chartMnp"></div>
+</section>
+
+<section class="card">
+  <h2>7월 매장별 평균 마진</h2>
+  <p class="cap">KPI 기준 20만원. 달성 3곳(경북영주·대구유천·강남약국). 단 대구유천점은 마진은 최상위인데 매장지출이 매출의 262%로 수익은 최악.</p>
+    <div class="legend"><span><i style="background:var(--good)"></i>목표 20만원 달성</span><span><i style="background:var(--s1)"></i>미달</span></div>
+  <div id="chartMargin"></div>
+</section>
+
+<section class="card">
+  <h2>매장별 종합 지표</h2>
+  <p class="cap">7월 실적 기준 정렬 · 스파크라인은 5→6→7월 MNP 비중 추이 · 3M = 5~7월 누계</p>
+  <div style="overflow-x:auto"><table id="mainTable"></table></div>
+  <p class="note">※ 평균마진은 원본 표 기재값(월 단위). 3M 평균마진은 3개월 단순평균입니다. 수익금액 = 총매출 − 매장지출.</p>
+</section>
+
+<section class="card">
+  <h2 style="color:var(--crit)">즉시 개입 필요 매장</h2>
+  <p class="cap">MNP 비중·수익성 두 축에서 위험 신호가 잡힌 매장</p>
+  <ul class="acts" id="riskList"></ul>
+</section>
+
+<section class="card">
+  <h2>코칭 우선순위 (8월 액션)</h2>
+  <p class="cap">데이터에서 바로 도출되는 실행 항목</p>
+  <ul class="acts" id="actList"></ul>
+</section>
+
+<section class="card">
+  <h2>미확보 KPI 입력란</h2>
+  <p class="cap">아래 4개 항목은 현재 매출표에 없는 데이터입니다. 매장별로 수집되면 이 표를 채워 6개 KPI 완전 판정이 가능합니다.</p>
+  <div style="overflow-x:auto"><table class="kpi-in" id="blankTable"></table></div>
+  <p class="note">① OB콜 일 20건 이상 · ② 어드민 매장방문 = 문의량 대비 방문율 60% 이상 · ④ 할부36 비중 60% 이상 (할부36 vs 현금완납) · ⑤ 동판 20% 이상<br>
+  ③ MNP 60% 이상, ⑥ 평균마진 20만 이상은 위 분석에서 이미 판정되었습니다.</p>
+</section>
+
+<footer style="font-size:11.5px;color:var(--ink-3);text-align:center;padding-top:8px">
+  출처: 5월·6월·7월 지점 매출표 (담당 백지현) · KPI 기준: 권도형 지사장 공지<br>
+  집계 검증 완료 — 무선/MNP/총개통/총매출/수익금액 3개월 모두 원본 담당 합계행과 일치
+</footer>
+
+</div>
+<div class="tt" id="tt"></div>
+<script>
+const D = {"summary": [{"store": "대구다사점", "months": 3, "신규": 10, "기변": 64, "MNP": 60, "무선": 134, "총개통": 182, "매출": 28886798, "지출": -35826578, "수익": -6939780, "mnp_무선": 44.8, "mnp_기변": 48.4, "평균마진": 160580, "추세_mnp무선": [28.9, 53.7, 51.4], "추세_mnp기변": [31.7, 56.9, 56.2], "추세_마진": [157730, 146597, 177412], "추세_매출": [8990600, 10848199, 9047999], "추세_수익": [-4057293, -1889145, -993342], "추세_개통": [57, 74, 51]}, {"store": "용인죽전점", "months": 3, "신규": 6, "기변": 97, "MNP": 80, "무선": 183, "총개통": 255, "매출": 43640949, "지출": -34766243, "수익": 8874706, "mnp_무선": 43.7, "mnp_기변": 45.2, "평균마진": 171260, "추세_mnp무선": [50.0, 36.5, 44.8], "추세_mnp기변": [51.7, 38.3, 45.6], "추세_마진": [171453, 163307, 179019], "추세_매출": [15259329, 13881100, 14500520], "추세_수익": [3870153, 2610796, 2393757], "추세_개통": [89, 85, 81]}, {"store": "용인동백점", "months": 3, "신규": 4, "기변": 55, "MNP": 39, "무선": 98, "총개통": 125, "매출": 21626300, "지출": -14514201, "수익": 7112099, "mnp_무선": 39.8, "mnp_기변": 41.5, "평균마진": 166244, "추세_mnp무선": [48.9, 37.5, 25.9], "추세_mnp기변": [52.3, 37.5, 26.9], "추세_마진": [206814, 167127, 124792], "추세_매출": [11995200, 5013800, 4617300], "추세_수익": [6854927, 211350, 45822], "추세_개통": [58, 30, 37]}, {"store": "경북영주점", "months": 3, "신규": 0, "기변": 72, "MNP": 46, "무선": 118, "총개통": 153, "매출": 42485050, "지출": -21285185, "수익": 21199865, "mnp_무선": 39.0, "mnp_기변": 39.0, "평균마진": 279634, "추세_mnp무선": [38.1, 44.0, 30.8], "추세_mnp기변": [38.1, 44.0, 30.8], "추세_마진": [293142, 262894, 282867], "추세_매출": [15536550, 17613900, 9334600], "추세_수익": [8611136, 10490463, 2098266], "추세_개통": [53, 67, 33]}, {"store": "김천혁신도시점", "months": 3, "신규": 14, "기변": 168, "MNP": 101, "무선": 283, "총개통": 349, "매출": 63241595, "지출": -16023992, "수익": 47217773, "mnp_무선": 35.7, "mnp_기변": 37.5, "평균마진": 182661, "추세_mnp무선": [29.5, 39.1, 39.7], "추세_mnp기변": [30.7, 39.8, 45.5], "추세_마진": [174380, 181118, 192486], "추세_매출": [23018160, 24632085, 15591350], "추세_수익": [18396419, 18377814, 10443540], "추세_개통": [132, 136, 81]}, {"store": "포항양덕점", "months": 3, "신규": 16, "기변": 154, "MNP": 82, "무선": 252, "총개통": 322, "매출": 52596002, "지출": -33585083, "수익": 19010919, "mnp_무선": 32.5, "mnp_기변": 34.7, "평균마진": 163932, "추세_mnp무선": [32.1, 29.9, 36.5], "추세_mnp기변": [32.9, 31.9, 40.9], "추세_마진": [138302, 161007, 192488], "추세_매출": [13830232, 20286900, 18478870], "추세_수익": [4189175, 8582304, 6239440], "추세_개통": [100, 126, 96]}, {"store": "대구유천점", "months": 3, "신규": 10, "기변": 126, "MNP": 59, "무선": 195, "총개통": 248, "매출": 47760240, "지출": -140006684, "수익": -92246444, "mnp_무선": 30.3, "mnp_기변": 31.9, "평균마진": 193773, "추세_mnp무선": [37.1, 31.4, 20.0], "추세_mnp기변": [38.2, 33.3, 21.6], "추세_마진": [161969, 171036, 248313], "추세_매출": [13605400, 14538100, 19616740], "추세_수익": [-26543488, -33853717, -31849239], "추세_개통": [84, 85, 79]}, {"store": "강남약국점", "months": 3, "신규": 4, "기변": 131, "MNP": 61, "무선": 196, "총개통": 247, "매출": 55487808, "지출": -43563909, "수익": 11923899, "mnp_무선": 31.1, "mnp_기변": 31.8, "평균마진": 224696, "추세_mnp무선": [16.9, 42.0, 35.7], "추세_mnp기변": [17.6, 42.6, 35.7], "추세_마진": [232126, 218938, 223024], "추세_매출": [19498551, 19485500, 16503757], "추세_수익": [5081197, 5754099, 1088603], "추세_개통": [84, 89, 74]}, {"store": "경기화성점", "months": 3, "신규": 9, "기변": 71, "MNP": 32, "무선": 112, "총개통": 138, "매출": 21557400, "지출": -19117552, "수익": 2439848, "mnp_무선": 28.6, "mnp_기변": 31.1, "평균마진": 156704, "추세_mnp무선": [24.4, 35.1, 26.5], "추세_mnp기변": [26.3, 36.1, 31.0], "추세_마진": [163300, 140694, 166118], "추세_매출": [8491600, 6753300, 6312500], "추세_수익": [1919465, 505916, 14467], "추세_개통": [52, 48, 38]}, {"store": "수원망포점", "months": 3, "신규": 6, "기변": 192, "MNP": 84, "무선": 282, "총개통": 329, "매출": 46219350, "지출": -73223340, "수익": -27003990, "mnp_무선": 29.8, "mnp_기변": 30.4, "평균마진": 138175, "추세_mnp무선": [28.6, 22.7, 36.3], "추세_mnp기변": [28.8, 23.3, 37.4], "추세_마진": [135469, 116309, 162748], "추세_매출": [15849850, 10351500, 20018000], "추세_수익": [-10877415, -11484015, -4642560], "추세_개통": [117, 89, 123]}, {"store": "구미상모점", "months": 3, "신규": 5, "기변": 148, "MNP": 58, "무선": 211, "총개통": 252, "매출": 32626140, "지출": -7322906, "수익": 25303234, "mnp_무선": 27.5, "mnp_기변": 28.2, "평균마진": 130150, "추세_mnp무선": [27.3, 25.9, 29.7], "추세_mnp기변": [28.1, 26.9, 29.7], "추세_마진": [145683, 124194, 120573], "추세_매출": [10926200, 12295240, 9404700], "추세_수익": [9343193, 9311033, 6649008], "추세_개통": [75, 99, 78]}, {"store": "대구은행역점", "months": 3, "신규": 9, "기변": 137, "MNP": 52, "무선": 198, "총개통": 260, "매출": 39749701, "지출": -17426482, "수익": 22323219, "mnp_무선": 26.3, "mnp_기변": 27.5, "평균마진": 159324, "추세_mnp무선": [33.3, 24.5, 25.4], "추세_mnp기변": [35.5, 25.0, 27.3], "추세_마진": [185008, 136217, 156746], "추세_매출": [8880391, 15664900, 15204410], "추세_수익": [4516094, 9417817, 8389308], "추세_개통": [48, 115, 97]}, {"store": "대구범어점", "months": 3, "신규": 4, "기변": 172, "MNP": 53, "무선": 229, "총개통": 274, "매출": 39496450, "지출": -37406607, "수익": 2089843, "mnp_무선": 23.1, "mnp_기변": 23.6, "평균마진": 145485, "추세_mnp무선": [11.7, 24.7, 44.9], "추세_mnp기변": [11.9, 25.0, 45.8], "추세_마진": [127317, 164941, 144196], "추세_매출": [15278000, 15999250, 8219200], "추세_수익": [3225347, 3119474, -4254978], "추세_개통": [120, 97, 57]}], "stores": {"강남약국점": {"5월": {"신규": 3, "기변": 56, "MNP": 12, "무선": 71, "유심": 2, "유선": 11, "총개통": 84, "마진": 232126, "매출": 19498551, "지출": -14417354, "수익": 5081197, "mnp_무선": 16.9, "mnp_기변": 17.6}, "6월": {"신규": 1, "기변": 39, "MNP": 29, "무선": 69, "유심": 4, "유선": 15, "총개통": 89, "마진": 218938, "매출": 19485500, "지출": -13731401, "수익": 5754099, "mnp_무선": 42.0, "mnp_기변": 42.6}, "7월": {"신규": 0, "기변": 36, "MNP": 20, "무선": 56, "유심": 8, "유선": 6, "총개통": 74, "마진": 223024, "매출": 16503757, "지출": -15415154, "수익": 1088603, "mnp_무선": 35.7, "mnp_기변": 35.7}}, "경기화성점": {"5월": {"신규": 3, "기변": 28, "MNP": 10, "무선": 41, "유심": 4, "유선": 3, "총개통": 52, "마진": 163300, "매출": 8491600, "지출": -6572135, "수익": 1919465, "mnp_무선": 24.4, "mnp_기변": 26.3}, "6월": {"신규": 1, "기변": 23, "MNP": 13, "무선": 37, "유심": 4, "유선": 4, "총개통": 48, "마진": 140694, "매출": 6753300, "지출": -6247384, "수익": 505916, "mnp_무선": 35.1, "mnp_기변": 36.1}, "7월": {"신규": 5, "기변": 20, "MNP": 9, "무선": 34, "유심": 1, "유선": 3, "총개통": 38, "마진": 166118, "매출": 6312500, "지출": -6298033, "수익": 14467, "mnp_무선": 26.5, "mnp_기변": 31.0}}, "경북영주점": {"5월": {"신규": 0, "기변": 26, "MNP": 16, "무선": 42, "유심": 4, "유선": 7, "총개통": 53, "마진": 293142, "매출": 15536550, "지출": -6925414, "수익": 8611136, "mnp_무선": 38.1, "mnp_기변": 38.1}, "6월": {"신규": 0, "기변": 28, "MNP": 22, "무선": 50, "유심": 5, "유선": 9, "총개통": 67, "마진": 262894, "매출": 17613900, "지출": -7123437, "수익": 10490463, "mnp_무선": 44.0, "mnp_기변": 44.0}, "7월": {"신규": 0, "기변": 18, "MNP": 8, "무선": 26, "유심": 2, "유선": 3, "총개통": 33, "마진": 282867, "매출": 9334600, "지출": -7236334, "수익": 2098266, "mnp_무선": 30.8, "mnp_기변": 30.8}}, "구미상모점": {"5월": {"신규": 2, "기변": 46, "MNP": 18, "무선": 66, "유심": 5, "유선": 3, "총개통": 75, "마진": 145683, "매출": 10926200, "지출": -1583007, "수익": 9343193, "mnp_무선": 27.3, "mnp_기변": 28.1}, "6월": {"신규": 3, "기변": 57, "MNP": 21, "무선": 81, "유심": 2, "유선": 12, "총개통": 99, "마진": 124194, "매출": 12295240, "지출": -2984207, "수익": 9311033, "mnp_무선": 25.9, "mnp_기변": 26.9}, "7월": {"신규": 0, "기변": 45, "MNP": 19, "무선": 64, "유심": 1, "유선": 11, "총개통": 78, "마진": 120573, "매출": 9404700, "지출": -2755692, "수익": 6649008, "mnp_무선": 29.7, "mnp_기변": 29.7}}, "김천혁신도시점": {"5월": {"신규": 4, "기변": 70, "MNP": 31, "무선": 105, "유심": 8, "유선": 14, "총개통": 132, "마진": 174380, "매출": 23018160, "지출": -4621911, "수익": 18396419, "mnp_무선": 29.5, "mnp_기변": 30.7}, "6월": {"신규": 2, "기변": 68, "MNP": 45, "무선": 115, "유심": 7, "유선": 11, "총개통": 136, "마진": 181118, "매출": 24632085, "지출": -6254271, "수익": 18377814, "mnp_무선": 39.1, "mnp_기변": 39.8}, "7월": {"신규": 8, "기변": 30, "MNP": 25, "무선": 63, "유심": 0, "유선": 11, "총개통": 81, "마진": 192486, "매출": 15591350, "지출": -5147810, "수익": 10443540, "mnp_무선": 39.7, "mnp_기변": 45.5}}, "대구다사점": {"5월": {"신규": 4, "기변": 28, "MNP": 13, "무선": 45, "유심": 6, "유선": 6, "총개통": 57, "마진": 157730, "매출": 8990600, "지출": -13047893, "수익": -4057293, "mnp_무선": 28.9, "mnp_기변": 31.7}, "6월": {"신규": 3, "기변": 22, "MNP": 29, "무선": 54, "유심": 7, "유선": 11, "총개통": 74, "마진": 146597, "매출": 10848199, "지출": -12737344, "수익": -1889145, "mnp_무선": 53.7, "mnp_기변": 56.9}, "7월": {"신규": 3, "기변": 14, "MNP": 18, "무선": 35, "유심": 9, "유선": 7, "총개통": 51, "마진": 177412, "매출": 9047999, "지출": -10041341, "수익": -993342, "mnp_무선": 51.4, "mnp_기변": 56.2}}, "대구범어점": {"5월": {"신규": 2, "기변": 89, "MNP": 12, "무선": 103, "유심": 5, "유선": 5, "총개통": 120, "마진": 127317, "매출": 15278000, "지출": -12052653, "수익": 3225347, "mnp_무선": 11.7, "mnp_기변": 11.9}, "6월": {"신규": 1, "기변": 57, "MNP": 19, "무선": 77, "유심": 6, "유선": 7, "총개통": 97, "마진": 164941, "매출": 15999250, "지출": -12879776, "수익": 3119474, "mnp_무선": 24.7, "mnp_기변": 25.0}, "7월": {"신규": 1, "기변": 26, "MNP": 22, "무선": 49, "유심": 0, "유선": 4, "총개통": 57, "마진": 144196, "매출": 8219200, "지출": -12474178, "수익": -4254978, "mnp_무선": 44.9, "mnp_기변": 45.8}}, "대구유천점": {"5월": {"신규": 2, "기변": 42, "MNP": 26, "무선": 70, "유심": 2, "유선": 7, "총개통": 84, "마진": 161969, "매출": 13605400, "지출": -40148888, "수익": -26543488, "mnp_무선": 37.1, "mnp_기변": 38.2}, "6월": {"신규": 4, "기변": 44, "MNP": 22, "무선": 70, "유심": 3, "유선": 8, "총개통": 85, "마진": 171036, "매출": 14538100, "지출": -48391817, "수익": -33853717, "mnp_무선": 31.4, "mnp_기변": 33.3}, "7월": {"신규": 4, "기변": 40, "MNP": 11, "무선": 55, "유심": 10, "유선": 10, "총개통": 79, "마진": 248313, "매출": 19616740, "지출": -51465979, "수익": -31849239, "mnp_무선": 20.0, "mnp_기변": 21.6}}, "대구은행역점": {"5월": {"신규": 2, "기변": 20, "MNP": 11, "무선": 33, "유심": 9, "유선": 5, "총개통": 48, "마진": 185008, "매출": 8880391, "지출": -4364297, "수익": 4516094, "mnp_무선": 33.3, "mnp_기변": 35.5}, "6월": {"신규": 2, "기변": 69, "MNP": 23, "무선": 94, "유심": 5, "유선": 15, "총개통": 115, "마진": 136217, "매출": 15664900, "지출": -6247083, "수익": 9417817, "mnp_무선": 24.5, "mnp_기변": 25.0}, "7월": {"신규": 5, "기변": 48, "MNP": 18, "무선": 71, "유심": 9, "유선": 16, "총개통": 97, "마진": 156746, "매출": 15204410, "지출": -6815102, "수익": 8389308, "mnp_무선": 25.4, "mnp_기변": 27.3}}, "수원망포점": {"5월": {"신규": 1, "기변": 74, "MNP": 30, "무선": 105, "유심": 1, "유선": 9, "총개통": 117, "마진": 135469, "매출": 15849850, "지출": -26727265, "수익": -10877415, "mnp_무선": 28.6, "mnp_기변": 28.8}, "6월": {"신규": 2, "기변": 56, "MNP": 17, "무선": 75, "유심": 1, "유선": 7, "총개통": 89, "마진": 116309, "매출": 10351500, "지출": -21835515, "수익": -11484015, "mnp_무선": 22.7, "mnp_기변": 23.3}, "7월": {"신규": 3, "기변": 62, "MNP": 37, "무선": 102, "유심": 4, "유선": 16, "총개통": 123, "마진": 162748, "매출": 20018000, "지출": -24660560, "수익": -4642560, "mnp_무선": 36.3, "mnp_기변": 37.4}}, "용인동백점": {"5월": {"신규": 3, "기변": 21, "MNP": 23, "무선": 47, "유심": 3, "유선": 8, "총개통": 58, "마진": 206814, "매출": 11995200, "지출": -5140273, "수익": 6854927, "mnp_무선": 48.9, "mnp_기변": 52.3}, "6월": {"신규": 0, "기변": 15, "MNP": 9, "무선": 24, "유심": 3, "유선": 3, "총개통": 30, "마진": 167127, "매출": 5013800, "지출": -4802450, "수익": 211350, "mnp_무선": 37.5, "mnp_기변": 37.5}, "7월": {"신규": 1, "기변": 19, "MNP": 7, "무선": 27, "유심": 0, "유선": 5, "총개통": 37, "마진": 124792, "매출": 4617300, "지출": -4571478, "수익": 45822, "mnp_무선": 25.9, "mnp_기변": 26.9}}, "용인죽전점": {"5월": {"신규": 2, "기변": 29, "MNP": 31, "무선": 62, "유심": 11, "유선": 9, "총개통": 89, "마진": 171453, "매출": 15259329, "지출": -11389176, "수익": 3870153, "mnp_무선": 50.0, "mnp_기변": 51.7}, "6월": {"신규": 3, "기변": 37, "MNP": 23, "무선": 63, "유심": 6, "유선": 12, "총개통": 85, "마진": 163307, "매출": 13881100, "지출": -11270304, "수익": 2610796, "mnp_무선": 36.5, "mnp_기변": 38.3}, "7월": {"신규": 1, "기변": 31, "MNP": 26, "무선": 58, "유심": 3, "유선": 14, "총개통": 81, "마진": 179019, "매출": 14500520, "지출": -12106763, "수익": 2393757, "mnp_무선": 44.8, "mnp_기변": 45.6}}, "포항양덕점": {"5월": {"신규": 2, "기변": 53, "MNP": 26, "무선": 81, "유심": 7, "유선": 9, "총개통": 100, "마진": 138302, "매출": 13830232, "지출": -9641057, "수익": 4189175, "mnp_무선": 32.1, "mnp_기변": 32.9}, "6월": {"신규": 6, "기변": 62, "MNP": 29, "무선": 97, "유심": 3, "유선": 12, "총개통": 126, "마진": 161007, "매출": 20286900, "지출": -11704596, "수익": 8582304, "mnp_무선": 29.9, "mnp_기변": 31.9}, "7월": {"신규": 8, "기변": 39, "MNP": 27, "무선": 74, "유심": 4, "유선": 13, "총개통": 96, "마진": 192488, "매출": 18478870, "지출": -12239430, "수익": 6239440, "mnp_무선": 36.5, "mnp_기변": 40.9}}}, "totals": {"5월": {"무선": 871, "MNP": 259, "기변": 582, "총개통": 1069, "매출": 181160063, "지출": -156631153, "수익": 24528910}, "6월": {"무선": 906, "MNP": 301, "기변": 577, "총개통": 1140, "매출": 187363774, "지출": -166209585, "수익": 21154189}, "7월": {"무선": 714, "MNP": 247, "기변": 428, "총개통": 925, "매출": 166849946, "지출": -171227854, "수익": -4377908}}};
+const M = ["5월","6월","7월"];
+const S = D.summary, ST = D.stores, T = D.totals;
+const won = n => (n<0?"-":"") + Math.abs(Math.round(n)).toLocaleString("ko-KR");
+const man = n => { const s=n<0?"-":""; const a=Math.abs(n);
+  if(a>=100000000) return s+(a/100000000).toFixed(2)+"억";
+  return s+Math.round(a/10000).toLocaleString("ko-KR")+"만"; };
+const tt = document.getElementById("tt");
+function hookTip(el, html){
+  el.addEventListener("mousemove", e=>{ tt.innerHTML=html; tt.style.opacity=1;
+    let x=e.clientX+14, y=e.clientY-10;
+    if(x+tt.offsetWidth>innerWidth-8) x=e.clientX-tt.offsetWidth-14;
+    tt.style.left=x+"px"; tt.style.top=y+"px"; });
+  el.addEventListener("mouseleave", ()=>{ tt.style.opacity=0; });
+}
+const NS="http://www.w3.org/2000/svg";
+const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+
+/* ---------- hero tiles ---------- */
+(function(){
+  const t7=T["7월"], t6=T["6월"], t5=T["5월"];
+  const tiles=[
+    {l:"7월 총개통", v:t7.총개통.toLocaleString(), d:`6월 1,140건 <span class="down">−18.9%</span>`},
+    {l:"7월 MNP 건수", v:t7.MNP.toLocaleString(), d:`6월 301건 <span class="down">−17.9%</span>`},
+    {l:"7월 총매출", v:man(t7.매출), d:`6월 1.87억 <span class="down">−10.9%</span>`},
+    {l:"7월 매장 수익금액", v:man(t7.수익), d:`6월 +2,115만 <span class="down">적자 전환</span>`},
+  ];
+  document.getElementById("heroTiles").innerHTML = tiles.map(x=>
+    `<div class="tile"><div class="l">${x.l}</div><div class="v">${x.v}</div><div class="d">${x.d}</div></div>`).join("");
+})();
+
+/* ---------- KPI bar ---------- */
+(function(){
+  const t7=T["7월"];
+  const mnp = t7.MNP/(t7.MNP+t7.기변)*100;
+  const marginOk = S.filter(s=>ST[s.store]["7월"].마진>=200000).length;
+  const k=[
+    {t:"① OB콜 (일 20건↑)", r:"데이터 없음", c:"na"},
+    {t:"② 어드민 방문율 (60%↑)", r:"데이터 없음", c:"na"},
+    {t:"③ MNP 비중 (60%↑)", r:mnp.toFixed(1)+"% · 미달", c:"off"},
+    {t:"④ 할부36 비중 (60%↑)", r:"데이터 없음", c:"na"},
+    {t:"⑤ 동판 (20%↑)", r:"데이터 없음", c:"na"},
+    {t:"⑥ 평균마진 (20만↑)", r:`13곳 중 ${marginOk}곳 달성`, c:"off"},
+  ];
+  document.getElementById("kpiBar").innerHTML=k.map(x=>
+    `<div class="kbox ${x.c}"><div class="t">${x.t}</div><div class="r">${x.r}</div></div>`).join("");
+})();
+
+/* ---------- trend line ---------- */
+(function(){
+  const W=520,H=250,P={t:16,r:52,b:34,l:40};
+  const svg=mk("svg",{viewBox:`0 0 ${W} ${H}`});
+  const iw=W-P.l-P.r, ih=H-P.t-P.b;
+  const yMax=65, y=v=>P.t+ih-(v/yMax)*ih, x=i=>P.l+(iw/(M.length-1))*i;
+  [0,20,40,60].forEach(v=>{
+    svg.appendChild(mk("line",{x1:P.l,x2:P.l+iw,y1:y(v),y2:y(v),class:"gl"}));
+    const tx=mk("text",{x:P.l-8,y:y(v)+3.5,class:"tk","text-anchor":"end"});tx.textContent=v+"%";svg.appendChild(tx);
+  });
+  // target
+  svg.appendChild(mk("line",{x1:P.l,x2:P.l+iw,y1:y(60),y2:y(60),class:"tgt"}));
+  const tg=mk("text",{x:P.l+iw+6,y:y(60)+4,class:"tgtx"});tg.textContent="목표 60%";svg.appendChild(tg);
+  svg.appendChild(mk("line",{x1:P.l,x2:P.l+iw,y1:P.t+ih,y2:P.t+ih,class:"ax"}));
+  M.forEach((m,i)=>{const tx=mk("text",{x:x(i),y:P.t+ih+19,class:"lb","text-anchor":"middle"});tx.textContent=m;svg.appendChild(tx);});
+  const series=[
+    {c:"var(--s1)",primary:true,n:"MNP ÷ (MNP+기변)",v:M.map(m=>T[m].MNP/(T[m].MNP+T[m].기변)*100)},
+    {c:"var(--s2)",n:"MNP ÷ 무선합계",v:M.map(m=>T[m].MNP/T[m].무선*100)},
+  ];
+  series.forEach(s=>{
+    svg.appendChild(mk("path",{d:s.v.map((v,i)=>(i?"L":"M")+x(i)+" "+y(v)).join(" "),
+      fill:"none",stroke:s.c,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"}));
+    s.v.forEach((v,i)=>{
+      svg.appendChild(mk("circle",{cx:x(i),cy:y(v),r:4.5,fill:s.c,stroke:"var(--surface-1)","stroke-width":2}));
+    });
+    if(s.primary){const lab=mk("text",{x:x(2)+9,y:y(s.v[2])+4,class:"vl","font-weight":"600"});lab.textContent=s.v[2].toFixed(1)+"%";svg.appendChild(lab);}
+  });
+  M.forEach((m,i)=>{
+    const h=mk("rect",{x:x(i)-iw/4,y:P.t,width:iw/2,height:ih,class:"hit"});
+    hookTip(h,`<b>${m}</b><br>MNP÷(MNP+기변) ${series[0].v[i].toFixed(1)}%<br>MNP÷무선 ${series[1].v[i].toFixed(1)}%<br>MNP ${T[m].MNP}건 / 무선 ${T[m].무선}건`);
+    svg.appendChild(h);
+  });
+  document.getElementById("chartTrend").appendChild(svg);
+})();
+
+/* ---------- volume columns ---------- */
+(function(){
+  const W=520,H=250,P={t:22,r:16,b:34,l:48};
+  const svg=mk("svg",{viewBox:`0 0 ${W} ${H}`});
+  const iw=W-P.l-P.r, ih=H-P.t-P.b, yMax=1300;
+  const y=v=>P.t+ih-(v/yMax)*ih;
+  [0,400,800,1200].forEach(v=>{
+    svg.appendChild(mk("line",{x1:P.l,x2:P.l+iw,y1:y(v),y2:y(v),class:"gl"}));
+    const tx=mk("text",{x:P.l-8,y:y(v)+3.5,class:"tk","text-anchor":"end"});tx.textContent=v.toLocaleString();svg.appendChild(tx);
+  });
+  svg.appendChild(mk("line",{x1:P.l,x2:P.l+iw,y1:P.t+ih,y2:P.t+ih,class:"ax"}));
+  const band=iw/M.length, bw=Math.min(24,band*0.42);
+  M.forEach((m,i)=>{
+    const v=T[m].총개통, cx=P.l+band*i+band/2, h=ih-(y(v)-P.t);
+    const r=4;
+    const d=`M${cx-bw/2} ${P.t+ih} L${cx-bw/2} ${y(v)+r} Q${cx-bw/2} ${y(v)} ${cx-bw/2+r} ${y(v)} L${cx+bw/2-r} ${y(v)} Q${cx+bw/2} ${y(v)} ${cx+bw/2} ${y(v)+r} L${cx+bw/2} ${P.t+ih} Z`;
+    svg.appendChild(mk("path",{d,fill:i===2?"var(--crit)":"var(--s1)"}));
+    const vl=mk("text",{x:cx,y:y(v)-8,class:"vl","text-anchor":"middle"});vl.textContent=v.toLocaleString();svg.appendChild(vl);
+    const tx=mk("text",{x:cx,y:P.t+ih+19,class:"lb","text-anchor":"middle"});tx.textContent=m;svg.appendChild(tx);
+    const hit=mk("rect",{x:P.l+band*i,y:P.t,width:band,height:ih,class:"hit"});
+    hookTip(hit,`<b>${m}</b><br>총개통 ${v.toLocaleString()}건<br>무선 ${T[m].무선} · MNP ${T[m].MNP}<br>매출 ${man(T[m].매출)} · 수익 ${man(T[m].수익)}`);
+    svg.appendChild(hit);
+  });
+  document.getElementById("chartVol").appendChild(svg);
+})();
+
+/* ---------- horizontal bars helper ---------- */
+function hbars(el, rows, opt){
+  const rowH=27, P={t:8,r:opt.padR||64,b:26,l:96};
+  const W=1080, H=P.t+rows.length*rowH+P.b;
+  const svg=mk("svg",{viewBox:`0 0 ${W} ${H}`});
+  const iw=W-P.l-P.r;
+  const x=v=>P.l+(v/opt.max)*iw;
+  (opt.ticks||[]).forEach(v=>{
+    svg.appendChild(mk("line",{x1:x(v),x2:x(v),y1:P.t,y2:P.t+rows.length*rowH,class:"gl"}));
+    const tx=mk("text",{x:x(v),y:P.t+rows.length*rowH+16,class:"tk","text-anchor":"middle"});
+    tx.textContent=opt.fmtTick(v);svg.appendChild(tx);
+  });
+  svg.appendChild(mk("line",{x1:P.l,x2:P.l,y1:P.t,y2:P.t+rows.length*rowH,class:"ax"}));
+  if(opt.target!=null){
+    svg.appendChild(mk("line",{x1:x(opt.target),x2:x(opt.target),y1:P.t-2,y2:P.t+rows.length*rowH+2,class:"tgt"}));
+    const tg=mk("text",{x:x(opt.target),y:P.t+rows.length*rowH+16,class:"tgtx","text-anchor":"middle"});
+    tg.textContent=opt.targetLabel;svg.appendChild(tg);
+  }
+  const bh=15, r=4;
+  rows.forEach((row,i)=>{
+    const cy=P.t+rowH*i+rowH/2, w=Math.max(x(row.v)-P.l,1);
+    const yTop=cy-bh/2;
+    const d=`M${P.l} ${yTop} L${P.l+Math.max(w-r,0)} ${yTop} Q${P.l+w} ${yTop} ${P.l+w} ${yTop+r} L${P.l+w} ${yTop+bh-r} Q${P.l+w} ${yTop+bh} ${P.l+Math.max(w-r,0)} ${yTop+bh} L${P.l} ${yTop+bh} Z`;
+    svg.appendChild(mk("path",{d,fill:row.color||"var(--s1)"}));
+    const nm=mk("text",{x:P.l-10,y:cy+4,class:"lb","text-anchor":"end"});nm.textContent=row.name;svg.appendChild(nm);
+    const vl=mk("text",{x:P.l+w+8,y:cy+4,class:"vl"});vl.textContent=row.label;svg.appendChild(vl);
+    const hit=mk("rect",{x:0,y:cy-rowH/2,width:W,height:rowH,class:"hit"});
+    hookTip(hit,row.tip); svg.appendChild(hit);
+  });
+  el.appendChild(svg);
+}
+
+/* ---------- MNP ranking ---------- */
+(function(){
+  const rows=S.map(s=>{const j=ST[s.store]["7월"];return{s,j};})
+    .sort((a,b)=>b.j.mnp_기변-a.j.mnp_기변)
+    .map(({s,j})=>({
+      name:s.store, v:j.mnp_기변, label:j.mnp_기변.toFixed(1)+"%",
+      color: j.mnp_기변>=60?"var(--good)": j.mnp_기변<30?"var(--crit)":"var(--s1)",
+      tip:`<b>${s.store}</b> · 7월<br>MNP ÷ (MNP+기변) <b>${j.mnp_기변.toFixed(1)}%</b><br>MNP ÷ 무선합계 ${j.mnp_무선.toFixed(1)}%<br>MNP ${j.MNP}건 · 기변 ${j.기변}건 · 신규 ${j.신규}건<br>추이 ${s.추세_mnp기변.map(v=>v.toFixed(0)+"%").join(" → ")}`
+    }));
+  hbars(document.getElementById("chartMnp"),rows,{max:65,ticks:[0,20,40],target:60,targetLabel:"목표 60%",fmtTick:v=>v+"%"});
+})();
+
+/* ---------- margin ---------- */
+(function(){
+  const rows=S.map(s=>{const j=ST[s.store]["7월"];return{s,j};})
+    .sort((a,b)=>b.j.마진-a.j.마진)
+    .map(({s,j})=>({
+      name:s.store, v:j.마진, label:won(j.마진)+"원",
+      color: j.마진>=200000?"var(--good)":"var(--s1)",
+      tip:`<b>${s.store}</b> · 7월<br>평균마진 <b>${won(j.마진)}원</b><br>총개통 ${j.총개통}건 · 총매출 ${man(j.매출)}<br>매장지출 ${man(j.지출)} · 수익 ${man(j.수익)}`
+    }));
+  hbars(document.getElementById("chartMargin"),rows,{max:300000,ticks:[0,100000,200000,300000],target:200000,targetLabel:"목표 20만",padR:80,fmtTick:v=>(v/10000)+"만"});
+})();
+
+/* ---------- sparkline ---------- */
+function spark(vals){
+  const w=62,h=20,mn=0,mx=60;
+  const x=i=>2+(w-4)/(vals.length-1)*i, y=v=>h-2-((v-mn)/(mx-mn))*(h-4);
+  const p=vals.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join(" ");
+  const last=vals[vals.length-1];
+  const c = last>=vals[0] ? "var(--good)" : "var(--crit)";
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}"><line x1="2" x2="${w-2}" y1="${y(60)}" y2="${y(60)}" stroke="var(--grid)" stroke-width="1"/><path d="${p}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${x(vals.length-1).toFixed(1)}" cy="${y(last).toFixed(1)}" r="2.6" fill="${c}"/></svg>`;
+}
+
+/* ---------- main table ---------- */
+(function(){
+  const rows=[...S].sort((a,b)=>ST[b.store]["7월"].매출-ST[a.store]["7월"].매출);
+  const head=`<thead><tr>
+    <th>매장</th><th>7월 개통</th><th>7월 무선</th><th>7월 MNP</th>
+    <th>MNP÷무선</th><th>MNP÷(MNP+기변)</th><th>추이</th>
+    <th>7월 평균마진</th><th>7월 총매출</th><th>7월 수익금액</th>
+    <th>3M MNP÷무선</th><th>3M 수익금액</th><th>판정</th></tr></thead>`;
+  const body=rows.map(s=>{
+    const j=ST[s.store]["7월"];
+    const ok=(j.mnp_기변>=60?1:0)+(j.마진>=200000?1:0);
+    const pill = ok===2?'<span class="pill p-good">2/2</span>'
+      : ok===1?'<span class="pill p-warn">1/2</span>'
+      : '<span class="pill p-crit">0/2</span>';
+    const prof = v=>`<span class="${v<0?'down':''}">${man(v)}</span>`;
+    return `<tr>
+      <td><b>${s.store}</b></td>
+      <td>${j.총개통}</td><td>${j.무선}</td><td>${j.MNP}</td>
+      <td>${j.mnp_무선.toFixed(1)}%</td>
+      <td><b>${j.mnp_기변.toFixed(1)}%</b></td>
+      <td style="text-align:center">${spark(s.추세_mnp기변)}</td>
+      <td>${won(j.마진)}</td>
+      <td>${man(j.매출)}</td>
+      <td>${prof(j.수익)}</td>
+      <td>${s.mnp_무선.toFixed(1)}%</td>
+      <td>${prof(s.수익)}</td>
+      <td style="text-align:center">${pill}</td></tr>`;
+  }).join("");
+  const t7=T["7월"];
+  const foot=`<tfoot><tr>
+    <td>담당 합계</td><td>${t7.총개통.toLocaleString()}</td><td>${t7.무선.toLocaleString()}</td><td>${t7.MNP}</td>
+    <td>${(t7.MNP/t7.무선*100).toFixed(1)}%</td><td>${(t7.MNP/(t7.MNP+t7.기변)*100).toFixed(1)}%</td>
+    <td></td><td>—</td><td>${man(t7.매출)}</td><td><span class="down">${man(t7.수익)}</span></td>
+    <td>32.4%</td><td>${man(41305191)}</td><td></td></tr></tfoot>`;
+  document.getElementById("mainTable").innerHTML=head+"<tbody>"+body+"</tbody>"+foot;
+})();
+
+/* ---------- risk list ---------- */
+(function(){
+  const items=[
+    {n:1,c:"r",t:"대구유천점 — MNP 비중 꼴찌 + 3개월 누적 −9,225만원",
+     d:"MNP÷(MNP+기변)이 38%→33%→22%로 3개월 연속 하락, 담당 내 최하위. 평균마진은 248,313원으로 1위인데 매장지출이 7월 매출의 262%(5,147만원). 마진은 나오는데 돈이 새는 구조 → 지출 항목부터 전수 확인이 우선."},
+    {n:2,c:"r",t:"수원망포점 — 3개월 누적 −2,700만원",
+     d:"7월 개통 123건으로 담당 1위인데 지출이 매출의 123%. 개통량은 충분하니 마진(162,748원, 목표 대비 −19%)과 지출 구조가 문제. 저마진 정책 판매 비중 점검 필요."},
+    {n:3,c:"w",t:"대구범어점 — 개통량 반토막 (120 → 57건, −52%)",
+     d:"MNP 비중은 12%→25%→46%로 크게 개선됐으나 모수 자체가 붕괴. 비중 개선이 '기변 감소'로 만들어진 착시. OB콜·방문객 유입부터 복구해야 함."},
+    {n:4,c:"w",t:"경북영주점 — 평균마진 282,867원 1위, 그런데 개통 33건",
+     d:"마진 KPI는 유일하게 여유 있게 달성. 단 개통량이 담당 최저(53→67→33건). 고마진 유지하면서 물량을 늘릴 여력이 있는 매장 — 성공사례 추출 후 타 매장 교육자료화 추천."},
+    {n:5,c:"w",t:"용인동백점 — MNP 비중 52%→38%→27% 3개월 연속 하락",
+     d:"5월엔 담당 상위권이었는데 계속 떨어짐. 개통량도 58→30→37건. 담당자 변동이나 상권 이슈 여부 확인 필요."},
+  ];
+  document.getElementById("riskList").innerHTML=items.map(i=>
+    `<li><div class="num ${i.c}">${i.n}</div><div><b>${i.t}</b><p>${i.d}</p></div></li>`).join("");
+})();
+
+/* ---------- action list ---------- */
+(function(){
+  const items=[
+    {n:1,t:"MNP 목표를 60%가 아닌 단계 목표로 재설정",
+     d:"담당 전체 36.6%, 13개 매장 전원 미달. 60%를 한 번에 요구하면 현장이 포기합니다. 8월 45% → 9월 52% → 10월 60% 식의 단계 목표가 현실적. 이미 45% 이상인 대구다사(56.2%)·대구범어(45.8%)·용인죽전(45.6%)·김천혁신도시(45.5%) 4곳을 먼저 60%로 올려 사례를 만드는 방식 권장."},
+    {n:2,t:"대구다사점 성공사례 추출 → 전 매장 교육자료화",
+     d:"MNP 비중 31.7%→56.9%→56.2%로 담당 내 유일하게 급상승 후 유지. 무엇을 바꿨는지(응대 스크립트, 요금제 제안 순서, 번호이동 혜택 설명 방식) 인터뷰해서 8월 교육자료로 제작하는 게 가장 빠른 전사 개선 수단."},
+    {n:3,t:"기기변경 → MNP 전환 스크립트 집중 코칭 (하위 4곳)",
+     d:"대구유천(21.6%)·용인동백(26.9%)·대구은행역(27.3%)·구미상모(29.7%). 이 4곳은 기변 물량은 있는데(합계 152건) MNP로 못 돌리고 있음. 기변 문의 인입 시점의 응대 분기 설계가 핵심."},
+    {n:4,c:"r",t:"매장지출 이상치 3곳 즉시 감사",
+     d:"7월 지출/매출 비율 — 대구유천 262%, 대구범어 152%, 수원망포 123%, 대구다사 111%. 매출보다 지출이 큰 구조는 정책 리베이트 선지급이나 미회수 채권 가능성. 회계 확인 후 원인 구분 필요."},
+    {n:5,t:"미확보 KPI 4종 수집 체계부터 만들기",
+     d:"OB콜·어드민 방문율·할부36 비중·동판 비율은 현재 월별 매출표에 없습니다. 6개 KPI로 평가하려면 이 4개를 매장별 일/주 단위로 남기는 양식이 먼저 필요합니다 — 아래 입력란 표를 그대로 쓰시면 됩니다."},
+  ];
+  document.getElementById("actList").innerHTML=items.map(i=>
+    `<li><div class="num ${i.c||''}">${i.n}</div><div><b>${i.t}</b><p>${i.d}</p></div></li>`).join("");
+})();
+
+/* ---------- blank KPI table ---------- */
+(function(){
+  const rows=[...S].sort((a,b)=>ST[b.store]["7월"].매출-ST[a.store]["7월"].매출);
+  const head=`<thead><tr>
+    <th rowspan="2">매장</th>
+    <th colspan="2">③ MNP 비중 (60%↑)</th><th colspan="2">⑥ 평균마진 (20만↑)</th>
+    <th>① OB콜</th><th>② 어드민 방문율</th><th>④ 할부36 비중</th><th>⑤ 동판 비율</th></tr>
+    <tr><th>7월 실적</th><th>판정</th><th>7월 실적</th><th>판정</th>
+    <th>일 20건↑</th><th>60%↑</th><th>60%↑</th><th>20%↑</th></tr></thead>`;
+  const body=rows.map(s=>{
+    const j=ST[s.store]["7월"];
+    const p=(ok)=>ok?'<span class="pill p-good">달성</span>':'<span class="pill p-crit">미달</span>';
+    return `<tr><td><b>${s.store}</b></td>
+      <td>${j.mnp_기변.toFixed(1)}%</td><td>${p(j.mnp_기변>=60)}</td>
+      <td>${won(j.마진)}</td><td>${p(j.마진>=200000)}</td>
+      <td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>`;
+  }).join("");
+  document.getElementById("blankTable").innerHTML=head+"<tbody>"+body+"</tbody>";
+})();
+</script>
+</body>
+</html>

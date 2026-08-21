@@ -1,0 +1,23 @@
+{
+  "updated": "2026-08-21",
+  "items": [
+    {
+      "id": "2026-07-bjh-sales",
+      "title": "백지현 담당 13개 매장 판매실력 분석",
+      "subtitle": "MNP 비중 중심 · 권도형 지사장 KPI 6개 기준 적용",
+      "file": "report-2026-07-bjh-sales.html",
+      "month": "2026-07",
+      "period": "2026년 5~7월",
+      "date": "2026-08-21",
+      "owner": "백지현",
+      "type": "분석",
+      "tags": ["MNP", "KPI", "매출분석", "코칭"],
+      "stats": [
+        { "label": "7월 MNP 비중", "value": "36.6%", "tone": "bad" },
+        { "label": "목표 60% 달성", "value": "0 / 13곳", "tone": "bad" },
+        { "label": "3M 누적 수익", "value": "+4,131만", "tone": "good" }
+      ],
+      "note": "13개 매장 전원 MNP 목표 미달. 대구다사점이 유일한 급상승 사례 — 교육자료 소스."
+    }
+  ]
+}
