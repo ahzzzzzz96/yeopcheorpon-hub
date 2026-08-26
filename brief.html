@@ -228,29 +228,59 @@ function render(){
     }</p>
   </div>`;
 
-  h += `<div class="hint">아래 <b>「오늘 처리한 일」</b>이 보고서 본문이 되고, <b>「아직 남은 것 · 진행중」</b>이 ‘완료 시까지 계속 보고’ 항목이 됩니다.
-    <b>복사</b> 버튼을 누른 뒤 클로드에 붙여넣고 “오늘 보고서” 라고만 하면 됩니다.</div>`;
+  h += `<div class="hint">지사장님 지시 <b>6항목 기준</b>에 맞춰 정리됩니다 — ① 결과물 ② 성과(숫자) ③ 전일 대비 ④ 발견한 문제 ⑤ 해결·자동화 ⑥ 미처리.
+    <b>복사</b> 버튼을 누른 뒤 클로드에 붙여넣고 “오늘 마감보고” 라고만 하면 됩니다.</div>`;
 
-  h += listCard("오늘 처리한 일 — 보고서 본문", "✅", doneT, {
+  h += listCard("① 오늘 만든 결과물 · 처리한 일", "✅", doneT, {
     hi:true, noDue:true, tag:()=>"green", tagText:()=>"완료",
     sub: it => `${it.group||""} · ${it.manager||""}`,
     emptyText:"오늘 완료로 체크된 건이 없습니다. 직영매장 관리에서 완료 체크 후 다시 눌러주세요."
   });
 
-  h += listCard("아직 안 끝난 것 — 기한 걸림", "🔴", urgent, {
+  // ② 성과 — 숫자
+  const T = B.totals||{};
+  const storeCnt = new Set(doneT.map(x=>x.store)).size;
+  h += `<div class="card"><h2>② 성과 — 숫자</h2>
+    <div class="tblwrap"><table style="min-width:0">
+      <tbody>
+      <tr><td class="store">금일 완료 처리</td><td><b>${doneT.length}건</b> · ${storeCnt}개 매장</td></tr>
+      <tr><td class="store">진행 중 / 기한 걸린 미처리</td><td><b>${s.open||0}건</b> / <b>${s.urgent||0}건</b></td></tr>
+      <tr><td class="store">리뷰 · 블로그 누적 (13개 매장)</td><td>리뷰 <b>${fmt(num(T.review))}</b> · 블로그 <b>${fmt(num(T.blog))}</b></td></tr>
+      <tr><td class="store">카카오 플친 누적</td><td><b>${fmt(num(T.plusfriend))}</b>명</td></tr>
+      <tr><td class="store">비즈머니 마이너스 / 1만원 미만</td><td class="${T.bizNegative?"no":""}"><b>${T.bizNegative||0}개점</b> / ${T.bizLow||0}개점</td></tr>
+      <tr><td class="store">광고 OFF 매장</td><td class="${T.adOff?"no":"ok"}"><b>${T.adOff||0}개점</b></td></tr>
+      </tbody></table></div></div>`;
+
+  // ③ 전일 대비 변화
+  const P = B.prevSummary;
+  if(P){
+    const d = (a,b)=>{ const v=(a||0)-(b||0); return v===0?'<span class="mut">변화 없음</span>'
+      : `<b class="${v>0?"no":"ok"}">${v>0?"+":""}${v}</b>`; };
+    h += `<div class="card"><h2>③ 전일 대비 변화</h2>
+      <div class="tblwrap"><table style="min-width:0">
+        <thead><tr><th style="text-align:left">항목</th><th>전일</th><th>금일</th><th>변화</th></tr></thead>
+        <tbody>
+        <tr><td class="store">완료 처리</td><td>${P.doneToday||0}</td><td><b>${s.doneToday||0}</b></td><td>${d(s.doneToday,P.doneToday)}</td></tr>
+        <tr><td class="store">진행 중</td><td>${P.open||0}</td><td><b>${s.open||0}</b></td><td>${d(s.open,P.open)}</td></tr>
+        <tr><td class="store">기한 걸린 미처리</td><td>${P.urgent||0}</td><td><b>${s.urgent||0}</b></td><td>${d(s.urgent,P.urgent)}</td></tr>
+        <tr><td class="store">광고 · 온라인 경고</td><td>${P.alerts||0}</td><td><b>${s.alerts||0}</b></td><td>${d(s.alerts,P.alerts)}</td></tr>
+        </tbody></table></div></div>`;
+  }
+
+  h += listCard("④ 발견한 문제 — 기한 걸림", "🔴", urgent, {
     tag: it => (it.due && it.due < t) ? "red" : "amber",
     tagText: it => it.why || "긴급",
     sub: it => `${it.group||""} · ${it.manager||""}`,
     emptyText:"기한이 지났거나 오늘 마감인 건은 없습니다."
   });
 
-  h += listCard("3일 안에 마감", "🟡", soon, {
+  h += listCard("⑥ 3일 안에 마감", "🟡", soon, {
     hideEmpty:true, tag:()=>"blue", tagText: it=>it.group||"",
     sub: it => it.manager||""
   });
 
   if(alerts.length){
-    h += `<div class="card"><h2>📡 광고 · 온라인 경고 <span class="n">${alerts.length}건</span></h2>` +
+    h += `<div class="card"><h2>④ 광고 · 온라인 경고 <span class="n">${alerts.length}건</span></h2>` +
       alerts.map(a=>`<div class="item">
         <span class="tag ${a.level==="red"?"red":"amber"}">${esc(a.type)}</span>
         <div class="itxt"><div><span class="st">${esc(a.store)}</span> · ${esc(a.text)}</div></div>
@@ -258,7 +288,7 @@ function render(){
   }
 
   if(openAll.length){
-    h += `<details class="card"><summary>📌 진행중 전체 — 완료 시까지 계속 보고 <span class="n">${openAll.length}건</span></summary>` +
+    h += `<details class="card"><summary>⑥ 우선순위 미처리 — 진행중 전체 <span class="n">${openAll.length}건</span></summary>` +
       openAll.slice().sort((a,b)=>(a.due||"9999")<(b.due||"9999")?-1:1).map(it=>`<div class="item">
         <span class="tag gray">${esc(it.group||"")}</span>
         <div class="itxt"><div><span class="st">${esc(it.store)}</span> · ${esc(clean(it.text))}${dueChip(it.due)}</div>
@@ -304,33 +334,75 @@ function render(){
 
 /* ---------- 보고서 재료 텍스트 ---------- */
 function reportText(){
-  const L = [];
+  const L = [], s = B.summary||{}, T = B.totals||{}, P = B.prevSummary;
   const dt = B.doneToday||[], dy = B.doneYesterday||[];
-  L.push(`[옆커폰 대구지사 · 백지현 SV] ${B.date} (${korDate(B.date).split(" ").pop()}) 일일 업무보고 재료`);
-  L.push(`직영매장 관리 기준 · 정리 ${B.generatedAt||"-"} · 매장 데이터 최종 수정 ${B.dataUpdatedAt||"-"}`);
+  const solved = dt.filter(i=>i.due);          // 기한이 걸려 있던 건을 오늘 끝냄 = 해결
+  const made   = dt.filter(i=>!i.due);         // 기한 없이 새로 만들어낸 건 = 결과물
+  const t = B.date;
+
+  L.push(`[옆커폰 대구지사 · 백지현 SV] ${t} 업무마감보고 재료`);
+  L.push(`직영매장 관리 기준 · 정리 ${(B.generatedAt||"").replace("T"," ")} · 매장 데이터 최종 수정 ${B.dataUpdatedAt||"-"}`);
   L.push("");
-  L.push(`■ 오늘 처리한 일 (${dt.length}건) — 보고서 본문`);
-  if(!dt.length) L.push("- (없음)");
-  dt.forEach(i=>L.push(`- [${i.store} / ${i.group} / ${i.manager}] ${clean(i.text)}`));
+
+  L.push(`① 오늘 만든 결과물 (${dt.length}건)`);
+  if(!dt.length) L.push("- (완료 체크된 건 없음 — 직영매장 관리에서 완료 처리 필요)");
+  (made.length?made:dt).forEach(i=>L.push(`- [${i.store} / ${i.group} / ${i.manager}] ${clean(i.text)}`));
+  if(made.length && solved.length){
+    L.push("  (아래 ⑤ 해결 항목도 오늘 처리한 결과물입니다)");
+  }
   L.push("");
-  L.push(`■ 아직 안 끝난 것 · 기한 걸림 (${(B.urgent||[]).length}건)`);
+
+  L.push("② 성과 → 숫자");
+  L.push(`- 금일 완료 처리 : ${dt.length}건 / ${new Set(dt.map(x=>x.store)).size}개 매장`);
+  L.push(`- 진행 중 : ${s.open||0}건 · 기한 걸린 미처리 : ${s.urgent||0}건`);
+  L.push(`- 리뷰 누적 ${T.review||0}건 / 블로그 누적 ${T.blog||0}건 (13개 매장)`);
+  L.push(`- 카카오 플친 누적 ${T.plusfriend||0}명`);
+  L.push(`- 비즈머니 마이너스 ${T.bizNegative||0}개점 · 1만원 미만 ${T.bizLow||0}개점 · 광고 OFF ${T.adOff||0}개점`);
+  L.push("  ※ 금액·건수 등 추가 수치는 아래 「보완 필요」 참고");
+  L.push("");
+
+  L.push("③ 전일 대비 변화");
+  if(P){
+    const d = (a,b)=>{ const v=(a||0)-(b||0); return v===0?"변화 없음":(v>0?`+${v}`:`${v}`); };
+    L.push(`- 완료 처리 : ${P.doneToday||0}건 → ${s.doneToday||0}건 (${d(s.doneToday,P.doneToday)})`);
+    L.push(`- 진행 중 : ${P.open||0}건 → ${s.open||0}건 (${d(s.open,P.open)})`);
+    L.push(`- 기한 걸린 미처리 : ${P.urgent||0}건 → ${s.urgent||0}건 (${d(s.urgent,P.urgent)})`);
+    L.push(`- 광고·온라인 경고 : ${P.alerts||0}건 → ${s.alerts||0}건 (${d(s.alerts,P.alerts)})`);
+  } else {
+    L.push("- 전일 스냅샷 없음 (내일부터 자동 비교됨)");
+  }
+  L.push("");
+
+  L.push(`④ 발견한 문제 (기한 걸림 ${(B.urgent||[]).length}건 · 광고 경고 ${(B.alerts||[]).length}건)`);
   (B.urgent||[]).forEach(i=>L.push(`- [${i.store} / ${i.manager}] ${clean(i.text)} / 기한 ${i.due||"미지정"} (${i.why||""})`));
+  (B.alerts||[]).forEach(a=>L.push(`- [${a.store}] ${a.type} : ${a.text}`));
   L.push("");
-  L.push(`■ 진행 중 전체 (${(B.open||[]).length}건) — 완료 시까지 계속 보고`);
-  (B.open||[]).forEach(i=>L.push(`- [${i.store}] ${clean(i.text)} / 기한 ${i.due||"미지정"}`));
+
+  L.push(`⑤ 해결 · 자동화한 문제 (${solved.length}건)`);
+  if(!solved.length) L.push("- (기한이 걸려 있던 건 중 오늘 종결된 건 없음)");
+  solved.forEach(i=>L.push(`- [${i.store}] ${clean(i.text)} — 기한 ${i.due} 건 종결`));
   L.push("");
-  L.push(`■ 광고·온라인 경고 (${(B.alerts||[]).length}건)`);
-  (B.alerts||[]).forEach(a=>L.push(`- [${a.store}] ${a.type}: ${a.text}`));
+
+  L.push(`⑥ 우선순위가 높은 미처리 업무 (전체 ${(B.open||[]).length}건)`);
+  const rank = (B.open||[]).slice().sort((a,b)=>{
+    const av=a.due||"9999-99-99", bv=b.due||"9999-99-99";
+    if(av!==bv) return av<bv?-1:1;
+    return (b.red?1:0)-(a.red?1:0);
+  });
+  rank.forEach((i,n)=>L.push(`${n+1}. [${i.store} / ${i.manager}] ${clean(i.text)} / 기한 ${i.due||"미지정"}`));
   L.push("");
-  L.push(`■ 전일 완료 (${dy.length}건) — 전일 건 처리 현황용`);
-  dy.forEach(i=>L.push(`- [${i.store}] ${clean(i.text)} (완료 ${i.doneAt})`));
+
+  L.push("■ 전 매장 공통 메모");
+  L.push(B.memo||"(없음)");
   L.push("");
   L.push("■ 매장별 지표 (순위/블로그/리뷰/플친/비즈머니/진행중)");
   (B.stores||[]).forEach(x=>L.push(
     `- ${x.name}(${x.group}/${x.manager}) 순위 ${x.rank??"-"} / 블로그 ${x.blog??"-"} / 리뷰 ${x.review??"-"} / 플친 ${x.plusfriend??"-"} / 비즈머니 ${x.bizmoney??"-"} / 진행중 ${x.open}건`));
   L.push("");
-  L.push("■ 전 매장 공통 메모");
-  L.push(B.memo||"(없음)");
+  L.push("■ 보완 필요 (직영매장 관리에 없는 내용 — 있으면 아래에 직접 적어서 같이 붙여넣기)");
+  L.push("- 금액 / 계약 조건 / 협의 결과 :");
+  L.push("- 회의·통화 내용 :");
+  L.push("- 제재·공문 등 외부 수신 건 :");
   return L.join("\n");
 }
 
