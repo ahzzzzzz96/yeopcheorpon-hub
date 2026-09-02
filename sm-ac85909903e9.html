@@ -638,10 +638,10 @@
   <!-- ===== 네이버 광고 ===== -->
   <section id="panel-naver" class="panel">
     <div class="nv-bar">
-      <span class="nv-lb">📅 주차</span>
-      <select id="nv-week"></select>
-      <button class="btn ghost sm" id="nv-addweek">+ 새 주차</button>
-      <button class="btn ghost sm" id="nv-copyprev" title="전주 플레이스순위·블로그수·리뷰수를 이번 주로 복사">↩ 전주값 채우기</button>
+      <span class="nv-lb">📅 기준월</span>
+      <select id="nv-month"></select>
+      <button class="btn ghost sm" id="nv-addmonth">+ 새 달</button>
+      <button class="btn ghost sm" id="nv-copyprev" title="전월 플레이스순위·블로그수·리뷰수를 이번 달로 복사">↩ 전월값 채우기</button>
       <span class="nv-sep"></span>
       <div class="viewtog"><button class="vt active" data-nvv="view">📊 진단</button><button class="vt" data-nvv="edit">✏ 입력</button></div>
       <div class="spacer"></div>
@@ -660,11 +660,11 @@
     <div class="nv-legend">
       · <b>CTR</b> = 클릭 ÷ 노출　· <b>CPC</b> = 광고비 ÷ 클릭　· <b>문의</b> = 톡톡 + 전화<br>
       · <b>문의당 비용</b> = 광고비 ÷ 문의　· <b>개통률</b> = 개통 ÷ 문의　· <b>개통당 비용</b> = 광고비 ÷ 개통　· <b>ROAS</b> = 네이버수익 ÷ 광고비<br>
-      · <b>순위·리뷰 증감</b>은 <b>전 주차 입력값과 자동 비교</b>됩니다. (플레이스 순위는 숫자가 작아질수록 좋아진 것 → ▲로 표시)<br>
+      · <b>순위·리뷰 증감</b>은 <b>전월 입력값과 자동 비교</b>됩니다. (플레이스 순위는 숫자가 작아질수록 좋아진 것 → ▲로 표시)<br>
       · <b>자동판정</b>은 아래 규칙을 순서대로 적용합니다 — 기준값은 <b>⚙ 진단기준</b>에서 언제든 바꿀 수 있어요.<br>
-      &nbsp;&nbsp;🟢 <b>증액 추천</b>: 광고비 ≥ 최소집행액 &amp; 문의 ≥ 증액기준 &amp; 개통률 ≥ 증액개통률 &amp; 개통당비용 ≤ 상한<br>
-      &nbsp;&nbsp;🟡 <b>문의는 양호·개통 개선</b>: 문의 ≥ 최소문의 &amp; 문의당비용 ≤ 상한 인데 개통률이 기준 미달 → 응대·상담 문제<br>
-      &nbsp;&nbsp;🔴 <b>비효율</b>: 문의가 최소 미달이거나, 문의당비용·개통당비용이 상한 초과 → 예산·키워드 정리<br>
+      &nbsp;&nbsp;🟢 <b>증액 추천</b>: 월 광고비 ≥ 최소집행액 &amp; 월 문의 ≥ 증액기준 &amp; 개통률 ≥ 증액개통률 &amp; 개통당비용 ≤ 상한<br>
+      &nbsp;&nbsp;🟡 <b>문의는 양호·개통 개선</b>: 월 문의 ≥ 최소문의 &amp; 문의당비용 ≤ 상한 인데 개통률이 기준 미달 → 응대·상담 문제<br>
+      &nbsp;&nbsp;🔴 <b>비효율</b>: 월 문의가 최소 미달이거나, 문의당비용·개통당비용이 상한 초과 → 예산·키워드 정리<br>
       &nbsp;&nbsp;🔵 <b>유지/관찰</b> · ⚪ <b>미집행</b>: 광고비 0 또는 미입력<br>
       · 입력한 값은 <b>클라우드에 자동 저장</b>되어 다른 PC·폰에서도 같이 보여요. 담당·직영/가맹 필터는 상단 바를 따릅니다.
     </div>
@@ -709,16 +709,16 @@
       <input type="file" id="file-json" accept=".json" style="display:none">
 
       <h3>📣 네이버 광고 대시보드 쓰는 법</h3>
-      상단 <b>📣 네이버광고</b> 탭이 매주 광고 성과를 진단해 줍니다. 매장·담당(백지현·김진석·임병호)·직영/가맹 필터를 그대로 씁니다.
+      상단 <b>📣 네이버광고</b> 탭이 <b>월별</b> 광고 성과를 진단해 줍니다. 매장·담당(백지현·김진석·임병호)·직영/가맹 필터를 그대로 씁니다.
       <ol>
-        <li><b>+ 새 주차</b>를 눌러 이번 주(월요일 기준)를 만듭니다.</li>
-        <li><b>↩ 전주값 채우기</b>로 플레이스순위·블로그수·리뷰수를 지난주 값으로 미리 채운 뒤, 바뀐 숫자만 고칩니다.</li>
-        <li><b>✏ 입력</b>에서 매장별로 광고비·노출·클릭·톡톡/전화문의·개통·네이버수익을 칩니다. (Enter = 아래 칸으로 이동, 자동 저장)</li>
+        <li><b>+ 새 달</b>을 눌러 이번 달(예: 2026-09)을 만듭니다.</li>
+        <li><b>↩ 전월값 채우기</b>로 플레이스순위·블로그수·리뷰수를 지난달 값으로 미리 채운 뒤, 바뀐 숫자만 고칩니다.</li>
+        <li><b>✏ 입력</b>에서 매장별로 <b>그 달 합계</b>(광고비·노출·클릭·톡톡/전화문의·개통·네이버수익)를 칩니다. 플레이스순위·리뷰수·블로그수는 <b>월말 시점 현황</b>을 넣습니다. (Enter = 아래 칸으로 이동, 자동 저장)</li>
         <li>많을 땐 <b>📄 양식 받기</b>로 매장명이 들어간 엑셀을 받아 채운 뒤 <b>📥 엑셀 올리기</b>로 한 번에 반영하세요.</li>
         <li><b>📊 진단</b>에서 자동판정(🟢증액 / 🟡개통개선 / 🔴비효율 / 🔵유지 / ⚪미집행)과 우선조치를 확인합니다. 판정 카드를 누르면 그 그룹만 걸러집니다.</li>
       </ol>
       <div class="note">💡 <b>이 대시보드로 코칭하는 법</b> — 🟡가 뜬 매장은 <b>광고 문제가 아니라 응대 문제</b>입니다(문의는 오는데 개통이 안 됨). 통화 녹취·부재중 콜백률부터 보세요.
-      🔴는 예산을 줄이고 플레이스 순위·리뷰부터 올린 뒤 재집행, 🟢는 다음 주 예산 10~20% 증액 테스트가 기본 액션입니다.</div>
+      🔴는 예산을 줄이고 플레이스 순위·리뷰부터 올린 뒤 재집행, 🟢는 다음 달 예산 10~20% 증액이 기본 액션입니다.</div>
 
       <h3>매장 등급 기준 (제안)</h3>
       <ul>
@@ -2047,8 +2047,8 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
 })();
 
 /* ==========================================================================
-   📣 네이버 광고 진단 대시보드 (add-on)
-   저장구조 : s.nv    = [{wk:'YYYY-MM-DD'(그 주 월요일), pl,bl,rv,cost,imp,clk,talk,call,act,rev}]
+   📣 네이버 광고 진단 대시보드 (add-on) — 월별
+   저장구조 : s.nv    = [{ym:'YYYY-MM', pl,bl,rv,cost,imp,clk,talk,call,act,rev}]
              s.nvops = {pl:운영, pw:파워링크, sb:소상공인}
    저장경로 : 기존 save() → localStorage + 클라우드(동일 payload) 자동 동기화
    ========================================================================== */
@@ -2066,21 +2066,40 @@ async function nvStdLoad(){
   }catch(e){}
 }
 
-/* ---------- 주차 ---------- */
-function nvYmd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function nvMonday(base){ const d=base?new Date(base):new Date(); const w=(d.getDay()+6)%7; d.setDate(d.getDate()-w); d.setHours(12,0,0,0); return nvYmd(d); }
-function nvShift(wk,n){ const d=new Date(wk+'T12:00:00'); d.setDate(d.getDate()+n*7); return nvYmd(d); }
-function nvLabel(wk){ const d=new Date(wk+'T12:00:00'); const e=new Date(d); e.setDate(e.getDate()+6);
-  const mm=n=>String(n.getMonth()+1)+'/'+String(n.getDate());
-  return wk.slice(0,4)+'.'+mm(d)+'~'+mm(e)+' 주';
+/* ---------- 월 ---------- */
+function nvThisMonth(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function nvNorm(v){ const m=String(v||'').match(/(\d{4})\D*(\d{1,2})/); if(!m)return null;
+  const mo=+m[2]; if(mo<1||mo>12)return null; return m[1]+'-'+String(mo).padStart(2,'0'); }
+function nvShift(ym,n){ const p=ym.split('-'); let y=+p[0], m=+p[1]-1+n;
+  y+=Math.floor(m/12); m=((m%12)+12)%12; return y+'-'+String(m+1).padStart(2,'0'); }
+function nvLabel(ym){ const p=ym.split('-'); return p[0]+'년 '+(+p[1])+'월'; }
+function nvMonths(){ return [...new Set(stores.flatMap(s=>(s.nv||[]).map(r=>r.ym)))].filter(Boolean).sort(); }
+let nvMo=null, nvMode='view', nvFilter='', nvSort={k:'cost',d:-1};
+function nvCurMo(){ const w=nvMonths(); if(nvMo && (w.includes(nvMo)||/^\d{4}-\d{2}$/.test(nvMo))) return nvMo; return w.length?w[w.length-1]:nvThisMonth(); }
+
+/* ---------- 주차 데이터 → 월 데이터 이관 (한 번만) ---------- */
+function nvMigrate(){
+  let changed=false;
+  const SUM=['cost','imp','clk','talk','call','act','rev'], SNAP=['pl','bl','rv'];
+  stores.forEach(s=>{
+    if(!Array.isArray(s.nv)||!s.nv.length) return;
+    if(!s.nv.some(r=>r&&r.wk&&!r.ym)) return;
+    const by={};
+    s.nv.slice().sort((a,b)=>String(a.wk||a.ym)<String(b.wk||b.ym)?-1:1).forEach(r=>{
+      const ym = r.ym || String(r.wk||'').slice(0,7); if(!/^\d{4}-\d{2}$/.test(ym)) return;
+      const t = by[ym] || (by[ym]={ym:ym});
+      SUM.forEach(k=>{ const v=nvN(r[k]); if(v!=null) t[k]=(t[k]||0)+v; });
+      SNAP.forEach(k=>{ const v=nvN(r[k]); if(v!=null) t[k]=v; });   /* 마지막 주 값 = 그 달 현황 */
+    });
+    s.nv=Object.keys(by).sort().map(k=>by[k]); changed=true;
+  });
+  if(changed) save();
+  return changed;
 }
-function nvWeeks(){ return [...new Set(stores.flatMap(s=>(s.nv||[]).map(r=>r.wk)))].filter(Boolean).sort(); }
-let nvWk=null, nvMode='view', nvFilter='', nvSort={k:'cost',d:-1};
-function nvCurWk(){ const w=nvWeeks(); if(nvWk&&(w.includes(nvWk)||nvWk===nvMonday()))return nvWk; return w.length?w[w.length-1]:nvMonday(); }
 
 /* ---------- 데이터 ---------- */
-function nvRow(s,wk){ return (s.nv||[]).find(r=>r.wk===wk)||null; }
-function nvEnsure(s,wk){ if(!s.nv)s.nv=[]; let r=nvRow(s,wk); if(!r){ r={wk:wk}; s.nv.push(r); s.nv.sort((a,b)=>a.wk<b.wk?-1:1);} return r; }
+function nvRow(s,ym){ return (s.nv||[]).find(r=>r.ym===ym)||null; }
+function nvEnsure(s,ym){ if(!s.nv)s.nv=[]; let r=nvRow(s,ym); if(!r){ r={ym:ym}; s.nv.push(r); s.nv.sort((a,b)=>a.ym<b.ym?-1:1);} return r; }
 function nvN(v){ if(v===''||v===null||v===undefined)return null; const n=Number(String(v).replace(/[^0-9.\-]/g,'')); return isNaN(n)?null:n; }
 function nvCalc(r,prev){
   const g=k=>nvN(r?r[k]:null);
@@ -2104,12 +2123,12 @@ function nvCalc(r,prev){
 function nvJudge(c){
   if(!c.has || !c.cost) return {k:'none',t:'⚪ 미집행/데이터부족',a:'광고 미집행 — 플레이스 정보·사진·리뷰 관리부터 점검하세요.'};
   if(c.cost>=NVSTD.minCost && c.inq>=NVSTD.upInq && c.cvr!=null && c.cvr>=NVSTD.upCvr && (c.cpa==null||c.cpa<=NVSTD.cpaCap))
-    return {k:'up',t:'🟢 광고비 증액 추천',a:'예산 10~20% 증액 테스트 → 다음 주 문의·개통 증가 확인. 잘 나온 키워드 비중 확대.'};
+    return {k:'up',t:'🟢 광고비 증액 추천',a:'다음 달 예산 10~20% 증액 → 문의·개통 증가 확인. 잘 나온 키워드 비중 확대.'};
   if(c.inq>=NVSTD.minInq && c.cpi!=null && c.cpi<=NVSTD.cpiCap && (c.cvr==null||c.cvr<NVSTD.cvr))
     return {k:'mid',t:'🟡 문의는 양호·개통 개선',a:'문의는 들어오는데 개통이 안 됨 → 응대 스크립트·부재중 콜백·방문 유도 멘트 코칭.'};
   if(c.inq<NVSTD.minInq || (c.cpi!=null&&c.cpi>NVSTD.cpiCap) || (c.cpa!=null&&c.cpa>NVSTD.cpaCap))
     return {k:'bad',t:'🔴 광고비 비효율',a:'키워드·소재 정리 후 예산 축소. 플레이스 순위·리뷰·사진부터 올리고 재집행.'};
-  return {k:'keep',t:'🔵 유지/관찰',a:'현 수준 유지 · 다음 주 문의·개통 추이 관찰.'};
+  return {k:'keep',t:'🔵 유지/관찰',a:'현 수준 유지 · 다음 달 문의·개통 추이 관찰.'};
 }
 function nvList(){ return viewStores().filter(s=>!isClosed(s)).sort((a,b)=>(a.name||'').localeCompare(b.name||'','ko')); }
 
@@ -2121,16 +2140,16 @@ function nvDelta(v,goodUp){ if(v==null||v===0) return '<span class="nv-fl">―</
   return `<span class="${good?'nv-up':'nv-dn'}">${v>0?'▲':'▼'}${Math.abs(v).toLocaleString()}</span>`; }
 
 /* ---------- 렌더 ---------- */
-function nvFillWeeks(){
-  const sel=document.getElementById('nv-week'); if(!sel)return;
-  let w=nvWeeks(); const cur=nvCurWk(); if(!w.includes(cur)) w=w.concat([cur]).sort();
-  nvWk=cur;
+function nvFillMonths(){
+  const sel=document.getElementById('nv-month'); if(!sel)return;
+  let w=nvMonths(); const cur=nvCurMo(); if(!w.includes(cur)) w=w.concat([cur]).sort();
+  nvMo=cur;
   sel.innerHTML=w.slice().reverse().map(x=>`<option value="${x}" ${x===cur?'selected':''}>${nvLabel(x)}</option>`).join('');
 }
 function nvRenderKPI(){
-  const wk=nvCurWk(), pw=nvShift(wk,-1), arr=nvList();
+  const ym=nvCurMo(), pm=nvShift(ym,-1), arr=nvList();
   let T={cost:0,imp:0,clk:0,inq:0,act:0,rev:0,run:0};
-  arr.forEach(s=>{ const c=nvCalc(nvRow(s,wk),nvRow(s,pw));
+  arr.forEach(s=>{ const c=nvCalc(nvRow(s,ym),nvRow(s,pm));
     T.cost+=c.cost;T.imp+=c.imp;T.clk+=c.clk;T.inq+=c.inq;T.act+=c.act;T.rev+=c.rev; if(c.cost>0)T.run++; });
   const ctr=T.imp?T.clk/T.imp:null, cpc=T.clk?T.cost/T.clk:null, cpi=T.inq?T.cost/T.inq:null,
         cvr=T.inq?T.act/T.inq:null, cpa=T.act?T.cost/T.act:null, roas=T.cost?T.rev/T.cost:null;
@@ -2150,9 +2169,9 @@ function nvRenderKPI(){
     `<div class="nv-kpi ${k[3]?'hl':''}"><div class="k">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${k[2]}</div></div>`).join('');
 }
 function nvRenderJudge(){
-  const wk=nvCurWk(), pw=nvShift(wk,-1);
+  const ym=nvCurMo(), pm=nvShift(ym,-1);
   const cnt={up:0,mid:0,bad:0,keep:0,none:0};
-  nvList().forEach(s=>{ cnt[nvJudge(nvCalc(nvRow(s,wk),nvRow(s,pw))).k]++; });
+  nvList().forEach(s=>{ cnt[nvJudge(nvCalc(nvRow(s,ym),nvRow(s,pm))).k]++; });
   const C=[['up','🟢 광고비 증액'],['mid','🟡 개통 개선'],['bad','🔴 비효율'],['keep','🔵 유지·관찰'],['none','⚪ 미집행']];
   document.getElementById('nv-judge').innerHTML=C.map(c=>
     `<div class="nv-jc ${c[0]} ${nvFilter===c[0]?'on':''}" data-jf="${c[0]}"><div class="n">${cnt[c[0]]}</div><div class="t">${c[1]}</div></div>`).join('');
@@ -2168,10 +2187,10 @@ const NV_COLS=[
 function nvRenderTable(){
   const box=document.getElementById('nv-tbox');
   if(nvMode==='edit'){ nvRenderEdit(); return; }
-  const wk=nvCurWk(), pw=nvShift(wk,-1);
-  let rows=nvList().map(s=>{ const c=nvCalc(nvRow(s,wk),nvRow(s,pw)); return {s,c,j:nvJudge(c)}; });
+  const ym=nvCurMo(), pm=nvShift(ym,-1);
+  let rows=nvList().map(s=>{ const c=nvCalc(nvRow(s,ym),nvRow(s,pm)); return {s,c,j:nvJudge(c)}; });
   if(nvFilter) rows=rows.filter(r=>r.j.k===nvFilter);
-  if(!rows.length){ box.outerHTML='<div class="nv-tbox" id="nv-tbox"><div class="nv-empty">해당 조건의 매장이 없어요. <b>✏ 입력</b>에서 이번 주 값을 넣어보세요.</div></div>'; return; }
+  if(!rows.length){ box.innerHTML='<div class="nv-empty">해당 조건의 매장이 없어요. <b>✏ 입력</b>에서 이번 달 값을 넣어보세요.</div>'; return; }
   const k=nvSort.k,d=nvSort.d;
   rows.sort((a,b)=>{
     if(k==='name') return (a.s.name||'').localeCompare(b.s.name||'','ko')*(d<0?-1:1);
@@ -2215,10 +2234,10 @@ function nvRenderTable(){
 const NV_IN=[['pl','플레이스순위'],['bl','블로그수'],['rv','리뷰수'],['cost','광고 소진금액'],['imp','노출'],
              ['clk','클릭'],['talk','톡톡문의'],['call','전화문의'],['act','개통건수'],['rev','네이버수익']];
 function nvRenderEdit(){
-  const wk=nvCurWk(), arr=nvList();
+  const ym=nvCurMo(), arr=nvList();
   const head='<tr><th data-sk="name">매장</th>'+NV_IN.map(c=>`<th>${c[1]}</th>`).join('')+'<th>운영(플·파·소)</th></tr>';
   const body=arr.map(s=>{
-    const r=nvRow(s,wk)||{}; const o=s.nvops||{}; const sv=svOf(s);
+    const r=nvRow(s,ym)||{}; const o=s.nvops||{}; const sv=svOf(s);
     return `<tr><td class="nm">${esc(s.name)}${sv?`<span class="svchip2" style="background:${svColor(sv)}">${esc(sv)}</span>`:''}<small>${esc(s.line||'-')} · ${esc(s.gubun||'')}</small></td>`
       + NV_IN.map(c=>`<td><input class="nvi ${r[c[0]]!=null&&r[c[0]]!==''?'filled':''}" type="number" inputmode="numeric" data-id="${s.id}" data-f="${c[0]}" value="${r[c[0]]==null?'':r[c[0]]}"></td>`).join('')
       + `<td><div class="nv-ops">
@@ -2231,9 +2250,9 @@ function nvRenderEdit(){
   box.querySelectorAll('input.nvi').forEach(inp=>{
     inp.addEventListener('change',()=>{
       const s=stores.find(x=>x.id===inp.dataset.id); if(!s)return;
-      const r=nvEnsure(s,wk); const v=inp.value.trim();
+      const r=nvEnsure(s,ym); const v=inp.value.trim();
       if(v==='') delete r[inp.dataset.f]; else r[inp.dataset.f]=Number(v);
-      if(!Object.keys(r).some(k=>k!=='wk')) s.nv=s.nv.filter(x=>x!==r);
+      if(!Object.keys(r).some(k=>k!=='ym')) s.nv=s.nv.filter(x=>x!==r);
       inp.classList.toggle('filled',v!=='');
       save(); nvRenderKPI(); nvRenderJudge(); nvRenderTrend();
     });
@@ -2248,29 +2267,29 @@ function nvRenderEdit(){
 }
 function nvRenderTrend(){
   const el=document.getElementById('nv-trend'); if(!el)return;
-  const cur=nvCurWk(); const W=[]; for(let i=7;i>=0;i--) W.push(nvShift(cur,-i));
+  const cur=nvCurMo(); const W=[]; for(let i=11;i>=0;i--) W.push(nvShift(cur,-i));
   const arr=nvList();
-  const D=W.map(wk=>{ let cost=0,inq=0,act=0;
-    arr.forEach(s=>{ const c=nvCalc(nvRow(s,wk)); cost+=c.cost; inq+=c.inq; act+=c.act; });
-    return {wk,cost,inq,act}; });
+  const D=W.map(ym=>{ let cost=0,inq=0,act=0;
+    arr.forEach(s=>{ const c=nvCalc(nvRow(s,ym)); cost+=c.cost; inq+=c.inq; act+=c.act; });
+    return {ym,cost,inq,act}; });
   const any=D.some(d=>d.cost||d.inq||d.act);
-  if(!any){ el.innerHTML='<h4>📈 최근 8주 추이</h4><div class="muted" style="font-size:12px">아직 데이터가 없어요. 주차별로 값을 넣으면 광고비·문의·개통 흐름이 여기에 쌓여요.</div>'; return; }
+  if(!any){ el.innerHTML='<h4>📈 최근 12개월 추이</h4><div class="muted" style="font-size:12px">아직 데이터가 없어요. 월별로 값을 넣으면 광고비·문의·개통 흐름이 여기에 쌓여요.</div>'; return; }
   const mc=Math.max(1,...D.map(d=>d.cost)), mi=Math.max(1,...D.map(d=>d.inq)), ma=Math.max(1,...D.map(d=>d.act));
-  el.innerHTML='<h4>📈 최근 8주 추이 <span class="muted" style="font-weight:500;font-size:11.5px">— 광고비(보라) · 문의(초록) · 개통(주황)</span></h4>'
+  el.innerHTML='<h4>📈 최근 12개월 추이 <span class="muted" style="font-weight:500;font-size:11.5px">— 광고비(보라) · 문의(초록) · 개통(주황)</span></h4>'
    +'<div class="nv-tr">'+D.map(d=>`<div class="nv-trc">
       <div class="nv-trb">
         <i style="height:${d.cost/mc*100}%;background:#6d3ecb" title="광고비 ${d.cost.toLocaleString()}원"></i>
         <i style="height:${d.inq/mi*100}%;background:#2e9e6b" title="문의 ${d.inq}건"></i>
         <i style="height:${d.act/ma*100}%;background:#e08a2b" title="개통 ${d.act}건"></i>
-      </div><div class="nv-trl">${d.wk.slice(5).replace('-','/')}</div></div>`).join('')+'</div>'
-   +`<div class="muted" style="font-size:11.5px;margin-top:8px">이번 주 광고비 <b>${D[7].cost.toLocaleString()}원</b> · 문의 <b>${D[7].inq}건</b> · 개통 <b>${D[7].act}건</b></div>`;
+      </div><div class="nv-trl">${(+d.ym.split('-')[1])+'월'}</div></div>`).join('')+'</div>'
+   +`<div class="muted" style="font-size:11.5px;margin-top:8px">${nvLabel(cur)} 광고비 <b>${D[11].cost.toLocaleString()}원</b> · 문의 <b>${D[11].inq}건</b> · 개통 <b>${D[11].act}건</b></div>`;
 }
 function nvRenderStd(){
   const el=document.getElementById('nv-std');
-  const F=[['minCost','최소 광고 소진금액(원)',1],['minInq','최소 문의수(건)',1],['upInq','증액추천 문의수(건)',1],
+  const F=[['minCost','월 최소 광고 소진금액(원)',1],['minInq','월 최소 문의수(건)',1],['upInq','증액추천 월 문의수(건)',1],
            ['cpiCap','1문의당 비용 상한(원)',1],['cvr','문의→개통률 기준(%)',100],['upCvr','증액추천 개통률(%)',100],
            ['cpaCap','1개통당 비용 상한(원)',1],['ctrRef','CTR 참고 기준(%)',100]];
-  el.innerHTML='<h4>⚙ 네이버 광고 진단 기준</h4><div class="sub">여기 숫자를 바꾸면 아래 자동판정이 즉시 바뀝니다. 모든 기기에 함께 저장돼요.</div>'
+  el.innerHTML='<h4>⚙ 네이버 광고 진단 기준 <span class="muted" style="font-weight:500;font-size:11.5px">(월 기준)</span></h4><div class="sub">여기 숫자를 바꾸면 아래 자동판정이 즉시 바뀝니다. 모든 기기에 함께 저장돼요.</div>'
    +'<div class="nv-stdgrid">'+F.map(f=>`<div><label>${f[1]}</label><input type="number" step="any" data-std="${f[0]}" data-mul="${f[2]}" value="${NVSTD[f[0]]*f[2]}"></div>`).join('')+'</div>'
    +'<div style="margin-top:12px;display:flex;gap:8px"><button class="btn sm" id="nv-std-save">저장</button><button class="btn ghost sm" id="nv-std-reset">기본값으로</button></div>';
   el.querySelector('#nv-std-save').onclick=()=>{
@@ -2279,7 +2298,7 @@ function nvRenderStd(){
   };
   el.querySelector('#nv-std-reset').onclick=()=>{ NVSTD=Object.assign({},NV_DEF); nvStdSave(); nvRenderStd(); nvRenderAll(); };
 }
-function nvRenderAll(){ nvFillWeeks(); nvRenderKPI(); nvRenderJudge();
+function nvRenderAll(){ nvFillMonths(); nvRenderKPI(); nvRenderJudge();
   const ae=document.activeElement;
   if(!(ae&&ae.classList&&ae.classList.contains('nvi'))) nvRenderTable();  /* 입력 중이면 표는 건드리지 않음 */
   nvRenderTrend(); }
@@ -2298,13 +2317,13 @@ function nvAliases(h){
 function nvDownload(name,blob){ const u=URL.createObjectURL(blob); const a=document.createElement('a');
   a.href=u; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(u),1500); }
 function nvTemplate(){
-  const wk=nvCurWk(), arr=nvList();
-  const rows=[NV_HEAD].concat(arr.map(s=>{ const r=nvRow(s,wk)||{};
+  const ym=nvCurMo(), arr=nvList();
+  const rows=[NV_HEAD].concat(arr.map(s=>{ const r=nvRow(s,ym)||{};
     return [s.name].concat(NV_IN.map(c=>r[c[0]]==null?'':r[c[0]])); }));
   if(window.XLSX){ const ws=XLSX.utils.aoa_to_sheet(rows); const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,'네이버광고'); XLSX.writeFile(wb,`네이버광고_${wk}.xlsx`); return; }
+    XLSX.utils.book_append_sheet(wb,ws,'네이버광고'); XLSX.writeFile(wb,`네이버광고_${ym}.xlsx`); return; }
   const csv='﻿'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  nvDownload(`네이버광고_${wk}.csv`,new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  nvDownload(`네이버광고_${ym}.csv`,new Blob([csv],{type:'text/csv;charset=utf-8'}));
 }
 function nvApplyRows(rows){
   if(!rows.length){alert('내용이 없어요');return}
@@ -2314,19 +2333,19 @@ function nvApplyRows(rows){
   let nameCol=head.findIndex(h=>/매장|지점/.test(h)); if(nameCol<0)nameCol=0;
   const cols={}; head.forEach((h,i)=>{ if(i===nameCol)return; const k=nvAliases(h); if(k&&cols[k]==null) cols[k]=i; });
   if(!Object.keys(cols).length){ alert('알아볼 수 있는 항목이 없어요.\n양식 받기로 받은 파일 형식을 그대로 써 주세요.'); return; }
-  const wk=nvCurWk(); const norm=x=>String(x||'').replace(/\s/g,'');
+  const ym=nvCurMo(); const norm=x=>String(x||'').replace(/\s/g,'');
   let ok=0, miss=[];
   rows.slice(hi+1).forEach(r=>{
     const nm=norm(r[nameCol]); if(!nm)return;
     const s=stores.find(x=>norm(x.name)===nm) || stores.find(x=>norm(x.name).indexOf(nm)>=0||nm.indexOf(norm(x.name))>=0);
     if(!s){ miss.push(r[nameCol]); return; }
-    const row=nvEnsure(s,wk); let touched=false;
+    const row=nvEnsure(s,ym); let touched=false;
     for(const k in cols){ const v=String(r[cols[k]]==null?'':r[cols[k]]).trim();
       if(v===''){continue} const n=nvN(v); if(n==null)continue; row[k]=n; touched=true; }
     if(touched) ok++;
   });
   save(); nvRenderAll();
-  alert(`${nvLabel(wk)}\n\n반영: ${ok}개 매장`+(miss.length?`\n매칭 실패(${miss.length}): ${miss.slice(0,8).join(', ')}${miss.length>8?' 외':''}`:''));
+  alert(`${nvLabel(ym)}\n\n반영: ${ok}개 매장`+(miss.length?`\n매칭 실패(${miss.length}): ${miss.slice(0,8).join(', ')}${miss.length>8?' 외':''}`:''));
 }
 function nvReadFile(f){
   const ext=(f.name.split('.').pop()||'').toLowerCase();
@@ -2344,17 +2363,18 @@ function nvReadFile(f){
   }
 }
 function nvExport(){
-  const wk=nvCurWk(), pw=nvShift(wk,-1);
+  const ym=nvCurMo(), pm=nvShift(ym,-1);
   const H=['매장명','담당','구분','플레이스순위','순위증감','리뷰수','리뷰증감','광고비','노출','클릭','CTR','CPC','톡톡','전화','문의','문의당비용','개통','개통률','개통당비용','네이버수익','ROAS','자동판정','우선조치'];
-  const rows=[H].concat(nvList().map(s=>{ const c=nvCalc(nvRow(s,wk),nvRow(s,pw)), j=nvJudge(c);
-    return [s.name,svOf(s)||'',s.gubun||'',c.pl??'',c.dpl??'',c.rv??'',c.drv??'',c.cost,c.imp,c.clk,
+  const rows=[H].concat(nvList().map(s=>{ const c=nvCalc(nvRow(s,ym),nvRow(s,pm)), j=nvJudge(c);
+    return [s.name,svOf(s)||'',s.gubun||'',c.pl==null?'':c.pl,c.dpl==null?'':c.dpl,c.rv==null?'':c.rv,c.drv==null?'':c.drv,
+      c.cost,c.imp,c.clk,
       c.ctr==null?'':(c.ctr*100).toFixed(2)+'%',c.cpc==null?'':Math.round(c.cpc),c.talk,c.call,c.inq,
       c.cpi==null?'':Math.round(c.cpi),c.act,c.cvr==null?'':(c.cvr*100).toFixed(1)+'%',
       c.cpa==null?'':Math.round(c.cpa),c.rev,c.roas==null?'':c.roas.toFixed(2),j.t,j.a]; }));
   if(window.XLSX){ const ws=XLSX.utils.aoa_to_sheet(rows); const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,'네이버광고진단'); XLSX.writeFile(wb,`네이버광고진단_${wk}.xlsx`); return; }
+    XLSX.utils.book_append_sheet(wb,ws,'네이버광고진단'); XLSX.writeFile(wb,`네이버광고진단_${ym}.xlsx`); return; }
   const csv='﻿'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  nvDownload(`네이버광고진단_${wk}.csv`,new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  nvDownload(`네이버광고진단_${ym}.csv`,new Blob([csv],{type:'text/csv;charset=utf-8'}));
 }
 
 /* ---------- 이벤트 ---------- */
@@ -2362,26 +2382,26 @@ function nvExport(){
   const $=id=>document.getElementById(id);
   document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
     const mb=document.querySelector('.monthbar');
-    if(t.dataset.tab==='naver'){ if(mb){ mb.style.display=''; mb.classList.add('nv-hidem'); } nvRenderAll(); }
+    if(t.dataset.tab==='naver'){ if(mb){ mb.style.display=''; mb.classList.add('nv-hidem'); } nvMigrate(); nvRenderAll(); }
     else if(mb) mb.classList.remove('nv-hidem');
   }));
   document.querySelectorAll('.gvsw button, .svsw button').forEach(b=>b.addEventListener('click',()=>{
     if($('panel-naver') && $('panel-naver').classList.contains('active')) nvRenderAll(); }));
-  $('nv-week').addEventListener('change',e=>{ nvWk=e.target.value; nvRenderAll(); });
-  $('nv-addweek').onclick=()=>{
-    const d=prompt('새 주차를 만들 날짜를 입력하세요 (YYYY-MM-DD). 그 주 월요일로 자동 정리됩니다.', nvYmd(new Date()));
-    if(!d)return; const wk=nvMonday(d); if(isNaN(new Date(wk+'T12:00:00'))){alert('날짜 형식을 확인해 주세요');return}
-    nvWk=wk; nvMode='edit';
+  $('nv-month').addEventListener('change',e=>{ nvMo=e.target.value; nvRenderAll(); });
+  $('nv-addmonth').onclick=()=>{
+    const d=prompt('추가할 달을 입력하세요 (예: 2026-09)', nvThisMonth());
+    if(!d)return; const ym=nvNorm(d); if(!ym){alert('YYYY-MM 형식으로 입력해 주세요');return}
+    nvMo=ym; nvMode='edit';
     document.querySelectorAll('[data-nvv]').forEach(b=>b.classList.toggle('active',b.dataset.nvv==='edit'));
     nvRenderAll();
   };
   $('nv-copyprev').onclick=()=>{
-    const wk=nvCurWk(), pw=nvShift(wk,-1); let n=0;
-    nvList().forEach(s=>{ const p=nvRow(s,pw); if(!p)return; const r=nvEnsure(s,wk);
+    const ym=nvCurMo(), pm=nvShift(ym,-1); let n=0;
+    nvList().forEach(s=>{ const p=nvRow(s,pm); if(!p)return; const r=nvEnsure(s,ym);
       ['pl','bl','rv'].forEach(k=>{ if((r[k]==null||r[k]==='') && p[k]!=null) { r[k]=p[k]; } });
       if(Object.keys(r).length>1) n++; });
     save(); nvRenderAll();
-    alert(n?`전주(${nvLabel(pw)})의 플레이스순위·블로그수·리뷰수를 ${n}개 매장에 채웠어요.\n달라진 값만 고쳐 주세요.`:'전주 데이터가 없어요.');
+    alert(n?`전월(${nvLabel(pm)})의 플레이스순위·블로그수·리뷰수를 ${n}개 매장에 채웠어요.\n달라진 값만 고쳐 주세요.`:'전월 데이터가 없어요.');
   };
   document.querySelectorAll('[data-nvv]').forEach(b=>b.onclick=()=>{
     nvMode=b.dataset.nvv; document.querySelectorAll('[data-nvv]').forEach(x=>x.classList.toggle('active',x===b));
@@ -2397,12 +2417,12 @@ function nvExport(){
 /* refresh 훅 — 클라우드 로드 후 자동 갱신 */
 const __nvRefresh=refresh;
 refresh=function(){ __nvRefresh();
+  nvMigrate();
   const p=document.getElementById('panel-naver');
   if(p && p.classList.contains('active')) nvRenderAll(); };
 setTimeout(()=>{ nvStdLoad().then(()=>{
   const p=document.getElementById('panel-naver');
   if(p && p.classList.contains('active')) nvRenderAll(); }); }, 2500);
-
 </script>
 </body>
 </html>
