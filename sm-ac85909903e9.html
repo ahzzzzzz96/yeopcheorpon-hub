@@ -400,6 +400,20 @@
   .nv-stdgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
   .nv-stdgrid label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:3px}
   .nv-stdgrid input{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:9px;font-size:13px;font-family:inherit;text-align:right}
+  /* 광고비 vs 수익 비교 차트 */
+  .nv-bars{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .nv-bars h4{margin:0 0 4px;font-size:14px;color:var(--purple-d)}
+  .nv-svgwrap{overflow-x:auto;padding-bottom:2px}
+  .nv-lg{display:flex;gap:16px;align-items:center;font-size:11.5px;color:var(--muted);font-weight:700;margin:6px 0 8px;flex-wrap:wrap}
+  .nv-lg b{color:var(--ink)}
+  .nv-sw{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+  i.nv-bc{background:#6d3ecb} i.nv-br{background:#e08a2b}
+  rect.nv-bc{fill:#6d3ecb} rect.nv-br{fill:#e08a2b}
+  .nv-b rect{transition:opacity .12s} .nv-b:hover rect{opacity:.75}
+  text.nv-ax{font-size:9.5px;fill:#9a8fb5}
+  text.nv-vl{font-size:9.5px;fill:#6b6383;font-weight:700}
+  text.nv-xl{font-size:10px;fill:#2b2340;font-weight:700}
+  text.nv-xl2{font-size:9px;fill:#a79ec0}
   .nv-trend{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow);overflow:auto}
   .nv-trend h4{margin:0 0 10px;font-size:14px;color:var(--purple-d)}
   .nv-tr{display:flex;align-items:flex-end;gap:10px;min-width:520px;height:130px;padding-bottom:4px}
@@ -665,6 +679,7 @@
     <div class="nv-kpis" id="nv-kpis"></div>
     <div class="nv-judge" id="nv-judge"></div>
     <div class="nv-tbox" id="nv-tbox"></div>
+    <div class="nv-bars" id="nv-bars"></div>
     <div class="nv-trend" id="nv-trend"></div>
     <div class="nv-legend">
       · 표는 <b>💰 광고비·수익 → 📞 문의→개통 → 👀 노출·클릭 → 📍 플레이스</b> 순서입니다. <b>👀 노출·클릭</b> 버튼으로 그 묶음을 접었다 펼 수 있어요.<br>
@@ -2291,7 +2306,7 @@ function nvRenderEdit(){
       if(v==='') delete r[inp.dataset.f]; else r[inp.dataset.f]=Number(v);
       if(!Object.keys(r).some(k=>k!=='ym')) s.nv=s.nv.filter(x=>x!==r);
       inp.classList.toggle('filled',v!=='');
-      save(); nvRenderKPI(); nvRenderJudge(); nvRenderTrend();
+      save(); nvRenderKPI(); nvRenderJudge(); nvRenderBars(); nvRenderTrend();
     });
     inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault();
       const all=[...box.querySelectorAll('input.nvi')]; const i=all.indexOf(inp);
@@ -2302,6 +2317,53 @@ function nvRenderEdit(){
     s.nvops=s.nvops||{}; s.nvops[b.dataset.o]=!s.nvops[b.dataset.o];
     b.classList.toggle('on',!!s.nvops[b.dataset.o]); save(); });
 }
+function nvWon(v){ return (v||0).toLocaleString()+'원'; }
+function nvShort(v){ v=v||0; if(v===0) return '';
+  if(v>=10000) return Math.round(v/10000).toLocaleString()+'만';
+  if(v>=1000)  return Math.round(v/1000)+'천';
+  return String(Math.round(v)); }
+function nvAxis(v){ if(v===0) return '0';
+  return (v>=10000? Math.round(v/10000).toLocaleString()+'만' : Math.round(v/1000)+'천'); }
+function nvNiceMax(m){ if(m<=0) return 1;
+  const p=Math.pow(10,Math.floor(Math.log10(m))); const r=m/p;
+  const s=r<=1?1:r<=1.5?1.5:r<=2?2:r<=2.5?2.5:r<=3?3:r<=4?4:r<=5?5:r<=6?6:r<=8?8:10;
+  return s*p; }
+function nvRenderBars(){
+  const el=document.getElementById('nv-bars'); if(!el)return;
+  const ym=nvCurMo();
+  const D=nvList().map(s=>{ const c=nvCalc(nvRow(s,ym)); return {n:s.name,sv:svOf(s),cost:c.cost,rev:c.rev}; })
+                  .filter(d=>d.cost>0||d.rev>0)
+                  .sort((a,b)=> b.cost-a.cost || b.rev-a.rev);
+  const head=`<h4>💰 매장별 네이버광고비 vs 네이버수익 <span class="muted" style="font-weight:500;font-size:11.5px">— ${nvLabel(ym)} · 광고비 대비 수익이 얼마나 나왔는지 한눈에 (막대 위 숫자는 만원·천원 단위, 마우스를 올리면 정확한 금액)</span></h4>`;
+  if(!D.length){ el.innerHTML=head+'<div class="muted" style="font-size:12px">이 달에 광고비·수익이 입력된 매장이 없어요.</div>'; return; }
+  const TC=D.reduce((a,d)=>a+d.cost,0), TR=D.reduce((a,d)=>a+d.rev,0);
+  const GW=Math.max(58,Math.min(104,Math.floor(1030/D.length))), BW=Math.floor(GW*0.36);
+  const PL=54, PR=14, PT=40, PB=52, PH=224;
+  const W=PL+PR+GW*D.length, H=PT+PH+PB;
+  const mx=nvNiceMax(Math.max(...D.map(d=>Math.max(d.cost,d.rev))));
+  const y=v=>PT+PH-(v/mx)*PH;
+  const ticks=[0,.25,.5,.75,1].map(t=>t*mx);
+  const grid=ticks.map(t=>`<line x1="${PL}" x2="${W-PR}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" stroke="#ece7f6" stroke-width="1"${t?' stroke-dasharray="3 4"':''}/>
+     <text x="${PL-8}" y="${(y(t)+3.5).toFixed(1)}" text-anchor="end" class="nv-ax">${nvAxis(t)}</text>`).join('');
+  const bars=D.map((d,i)=>{
+    const gx=PL+i*GW, cx=gx+GW/2;
+    const x1=cx-BW-1, x2=cx+1;   /* 2px 간격 */
+    const b=(x,v,cls,lab)=>{ const hh=Math.max(v>0?2:0,(v/mx)*PH); if(!v) return '';
+      return `<g class="nv-b"><rect x="${x}" y="${(PT+PH-hh).toFixed(1)}" width="${BW}" height="${hh.toFixed(1)}" rx="3" class="${cls}"><title>${esc(d.n)} · ${lab} ${nvWon(v)}</title></rect></g>`; };
+    const lb=(x,v)=> v>0?`<text x="${(x+BW/2).toFixed(1)}" y="${(y(v)-6).toFixed(1)}" text-anchor="middle" class="nv-vl">${nvShort(v)}</text>`:'';
+    const nm=d.n.length>6? d.n.slice(0,6)+'…' : d.n;
+    return `<g>${b(x1,d.cost,'nv-bc','광고비')}${b(x2,d.rev,'nv-br','수익')}${lb(x1,d.cost)}${lb(x2,d.rev)}
+      <text x="${cx}" y="${PT+PH+16}" text-anchor="middle" class="nv-xl"><title>${esc(d.n)}</title>${esc(nm)}</text>
+      <text x="${cx}" y="${PT+PH+29}" text-anchor="middle" class="nv-xl2">${d.cost?('×'+(d.rev/d.cost).toFixed(1)):'-'}</text></g>`;
+  }).join('');
+  el.innerHTML=head
+   +`<div class="nv-lg"><span><i class="nv-sw nv-bc"></i>네이버광고비</span><span><i class="nv-sw nv-br"></i>네이버수익</span>
+     <span class="muted" style="margin-left:auto">합계 광고비 <b>${nvWon(TC)}</b> · 수익 <b>${nvWon(TR)}</b> · ROAS <b>${TC?(TR/TC).toFixed(2)+'배':'-'}</b></span></div>`
+   +`<div class="nv-svgwrap"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="매장별 네이버 광고비와 네이버 수익 비교">
+      ${grid}<line x1="${PL}" x2="${W-PR}" y1="${PT+PH}" y2="${PT+PH}" stroke="#d9d2ec" stroke-width="1.5"/>${bars}
+      <text x="${PL}" y="${H-6}" class="nv-ax">매장명 아래 ×숫자 = ROAS(수익÷광고비)</text></svg></div>`;
+}
+
 function nvRenderTrend(){
   const el=document.getElementById('nv-trend'); if(!el)return;
   const cur=nvCurMo(); const W=[]; for(let i=11;i>=0;i--) W.push(nvShift(cur,-i));
@@ -2338,7 +2400,7 @@ function nvRenderStd(){
 function nvRenderAll(){ nvFillMonths(); nvRenderKPI(); nvRenderJudge();
   const ae=document.activeElement;
   if(!(ae&&ae.classList&&ae.classList.contains('nvi'))) nvRenderTable();  /* 입력 중이면 표는 건드리지 않음 */
-  nvRenderTrend(); }
+  nvRenderBars(); nvRenderTrend(); }
 
 /* ---------- 엑셀 / CSV ---------- */
 const NV_HEAD=['매장명'].concat(NV_IN.map(c=>c[1]));
