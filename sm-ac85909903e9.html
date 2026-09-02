@@ -2062,7 +2062,7 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
              s.nvops = {pl:운영, pw:파워링크, sb:소상공인}
    저장경로 : 기존 save() → localStorage + 클라우드(동일 payload) 자동 동기화
    ========================================================================== */
-const NV_DEF={v:2,minCost:200000,minInq:20,upInq:40,cpiCap:20000,cvr:0.25,upCvr:0.35,cpaCap:100000,ctrRef:0.01};
+const NV_DEF={v:3,minCost:100000,minInq:50,upInq:50,cpiCap:2000,cvr:0.10,upCvr:0.15,cpaCap:100000,ctrRef:0.01};
 const NV_STDKEY='yeopcheorpon_nvstd';
 let NVSTD=Object.assign({},NV_DEF);
 try{const _o=JSON.parse(localStorage.getItem(NV_STDKEY)); if(_o&&_o.v===NV_DEF.v) NVSTD=Object.assign({},NV_DEF,_o);}catch(e){}
