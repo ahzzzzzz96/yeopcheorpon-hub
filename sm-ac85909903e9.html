@@ -358,15 +358,23 @@
   .nv-jc .t{font-size:12px;font-weight:800;margin-top:3px}
   .nv-jc.up .n{color:#2e9e6b} .nv-jc.mid .n{color:#d9a327} .nv-jc.bad .n{color:#d64f6a} .nv-jc.keep .n{color:#3b82c4} .nv-jc.none .n{color:#9a8fb5}
   .nv-tbox{background:#fff;border:1.5px solid var(--line);border-radius:14px;overflow:auto;margin-bottom:14px;box-shadow:var(--shadow)}
-  table.nv-t{border-collapse:collapse;width:100%;font-size:12.5px;white-space:nowrap;min-width:1150px}
+  table.nv-t{border-collapse:collapse;width:100%;font-size:12.5px;white-space:nowrap;min-width:1000px}
   table.nv-t th{background:#f4f0fb;color:var(--purple-d);font-weight:800;font-size:11.5px;padding:9px 8px;
        border-bottom:2px solid var(--line);position:sticky;top:0;z-index:2;cursor:pointer;text-align:right}
   table.nv-t th:first-child,table.nv-t td:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:1;
-       border-right:1.5px solid var(--line);min-width:132px}
+       border-right:1.5px solid var(--line);min-width:122px}
   table.nv-t th:first-child{background:#f4f0fb;z-index:3}
-  table.nv-t td{padding:7px 8px;border-bottom:1px solid #f0ecf8;text-align:right;font-variant-numeric:tabular-nums}
-  table.nv-t tbody tr:hover td{background:#faf8fe}
-  table.nv-t tbody tr:hover td:first-child{background:#faf8fe}
+  table.nv-t td{padding:6px 7px;border-bottom:1px solid #f0ecf8;text-align:right;font-variant-numeric:tabular-nums}
+  table.nv-t.grouped thead tr.g th{height:26px;font-size:11px;letter-spacing:.2px;background:#e6dcf8;color:var(--purple-d);
+       top:0;z-index:4;text-align:center;padding:5px 8px;cursor:default}
+  table.nv-t.grouped thead tr.h th{top:26px}
+  table.nv-t td.gs,table.nv-t th.gs{border-left:2px solid #ded4f4}
+  table.nv-t td.num-b{font-weight:800;color:var(--ink)}
+  table.nv-t tbody tr:nth-child(even) td{background:#fbfaff}
+  table.nv-t tbody tr:nth-child(even) td:first-child{background:#fbfaff}
+  table.nv-t tbody tr:hover td{background:#f3ecfd}
+  .btn.ghost.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+  table.nv-t tbody tr:hover td:first-child{background:#f3ecfd}
   table.nv-t td.nm{font-weight:800}
   table.nv-t td.nm small{display:block;font-weight:600;color:var(--muted);font-size:10.5px}
   table.nv-t .svchip2{display:inline-block;font-size:10px;color:#fff;padding:1px 6px;border-radius:20px;font-weight:800;margin-left:4px;vertical-align:1px}
@@ -375,7 +383,7 @@
   .nv-tag.up{background:#e3f6ec;color:#1d7a4f} .nv-tag.mid{background:#fdf3dc;color:#9a7108}
   .nv-tag.bad{background:#fdeaee;color:#b32943} .nv-tag.keep{background:#e7f0ff;color:#2657b8}
   .nv-tag.none{background:#f0edf6;color:#8b83a0}
-  table.nv-t td.act{text-align:left;white-space:normal;min-width:230px;font-size:11.5px;color:var(--muted);line-height:1.45}
+  table.nv-t td.act{text-align:left;white-space:normal;min-width:186px;max-width:230px;font-size:11px;color:var(--muted);line-height:1.4}
   table.nv-t tfoot td{background:#f7f4fc;font-weight:900;border-top:2px solid var(--line);position:sticky;bottom:0}
   table.nv-t tfoot td:first-child{background:#f7f4fc}
   table.nv-t input.nvi{width:82px;padding:5px 6px;border:1.5px solid var(--line);border-radius:7px;font-size:12.5px;
@@ -644,6 +652,7 @@
       <button class="btn ghost sm" id="nv-copyprev" title="전월 플레이스순위·블로그수·리뷰수를 이번 달로 복사">↩ 전월값 채우기</button>
       <span class="nv-sep"></span>
       <div class="viewtog"><button class="vt active" data-nvv="view">📊 진단</button><button class="vt" data-nvv="edit">✏ 입력</button></div>
+      <button class="btn ghost sm" id="nv-wide" title="노출·클릭·CTR·CPC 열 보이기/숨기기">👀 노출·클릭</button>
       <div class="spacer"></div>
       <button class="btn ghost sm" id="nv-tpl">📄 양식 받기</button>
       <button class="btn ghost sm" id="nv-up">📥 엑셀 올리기</button>
@@ -658,8 +667,9 @@
     <div class="nv-tbox" id="nv-tbox"></div>
     <div class="nv-trend" id="nv-trend"></div>
     <div class="nv-legend">
-      · <b>CTR</b> = 클릭 ÷ 노출　· <b>CPC</b> = 광고비 ÷ 클릭　· <b>문의</b> = 톡톡 + 전화<br>
-      · <b>문의당 비용</b> = 광고비 ÷ 문의　· <b>개통률</b> = 개통 ÷ 문의　· <b>개통당 비용</b> = 광고비 ÷ 개통　· <b>ROAS</b> = 네이버수익 ÷ 광고비<br>
+      · 표는 <b>💰 광고비·수익 → 📞 문의→개통 → 👀 노출·클릭 → 📍 플레이스</b> 순서입니다. <b>👀 노출·클릭</b> 버튼으로 그 묶음을 접었다 펼 수 있어요.<br>
+      · <b>ROAS</b> = 네이버수익 ÷ 광고비 (1 미만이면 빨강)　· <b>문의</b> = 톡톡 + 전화　· <b>문의당 비용</b> = 광고비 ÷ 문의<br>
+      · <b>개통률</b> = 개통 ÷ 문의　· <b>개통당 비용</b> = 광고비 ÷ 개통　· <b>CTR</b> = 클릭 ÷ 노출　· <b>CPC</b> = 광고비 ÷ 클릭<br>
       · <b>순위·리뷰 증감</b>은 <b>전월 입력값과 자동 비교</b>됩니다. (플레이스 순위는 숫자가 작아질수록 좋아진 것 → ▲로 표시)<br>
       · <b>자동판정</b>은 아래 규칙을 순서대로 적용합니다 — 기준값은 <b>⚙ 진단기준</b>에서 언제든 바꿀 수 있어요.<br>
       &nbsp;&nbsp;🟢 <b>증액 추천</b>: 월 광고비 ≥ 최소집행액 &amp; 월 문의 ≥ 증액기준 &amp; 개통률 ≥ 증액개통률 &amp; 개통당비용 ≤ 상한<br>
@@ -2052,17 +2062,18 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
              s.nvops = {pl:운영, pw:파워링크, sb:소상공인}
    저장경로 : 기존 save() → localStorage + 클라우드(동일 payload) 자동 동기화
    ========================================================================== */
-const NV_DEF={minCost:50000,minInq:5,upInq:10,cpiCap:20000,cvr:0.25,upCvr:0.35,cpaCap:100000,ctrRef:0.01};
+const NV_DEF={v:2,minCost:200000,minInq:20,upInq:40,cpiCap:20000,cvr:0.25,upCvr:0.35,cpaCap:100000,ctrRef:0.01};
 const NV_STDKEY='yeopcheorpon_nvstd';
 let NVSTD=Object.assign({},NV_DEF);
-try{const _o=JSON.parse(localStorage.getItem(NV_STDKEY)); if(_o) NVSTD=Object.assign({},NV_DEF,_o);}catch(e){}
+try{const _o=JSON.parse(localStorage.getItem(NV_STDKEY)); if(_o&&_o.v===NV_DEF.v) NVSTD=Object.assign({},NV_DEF,_o);}catch(e){}
 function nvStdSave(){
+  NVSTD.v=NV_DEF.v;
   try{localStorage.setItem(NV_STDKEY,JSON.stringify(NVSTD));}catch(e){}
   if(cloudOK){ cloudCall('set',{key:'nvstd',value:JSON.stringify(NVSTD)}).catch(()=>{}); }
 }
 async function nvStdLoad(){
   try{ const r=await cloudCall('get',{key:'nvstd'});
-    if(r&&r.value){ NVSTD=Object.assign({},NV_DEF,JSON.parse(r.value)); localStorage.setItem(NV_STDKEY,JSON.stringify(NVSTD)); }
+    if(r&&r.value){ const o=JSON.parse(r.value); if(o&&o.v===NV_DEF.v){ NVSTD=Object.assign({},NV_DEF,o); localStorage.setItem(NV_STDKEY,JSON.stringify(NVSTD)); } }
   }catch(e){}
 }
 
@@ -2178,12 +2189,38 @@ function nvRenderJudge(){
   document.querySelectorAll('#nv-judge .nv-jc').forEach(el=>el.onclick=()=>{
     nvFilter = nvFilter===el.dataset.jf ? '' : el.dataset.jf; nvRenderJudge(); nvRenderTable(); });
 }
-const NV_COLS=[
-  ['name','매장'],['pl','플레이스<br>순위'],['dpl','순위<br>증감'],['rv','리뷰수'],['drv','리뷰<br>증감'],
-  ['cost','광고비'],['imp','노출'],['clk','클릭'],['ctr','CTR'],['cpc','CPC'],
-  ['inq','문의<br>(톡톡/전화)'],['cpi','문의당<br>비용'],['act','개통'],['cvr','개통률'],['cpa','개통당<br>비용'],
-  ['rev','네이버<br>수익'],['roas','ROAS'],['judge','자동판정'],['act2','우선 조치']
+/* 열 구성 — 돈(광고비·수익) 먼저, 그다음 문의→개통, 노출·클릭, 플레이스 순 */
+const NV_G=[
+  {t:'',            cols:[['name','매장']]},
+  {t:'💰 광고비 · 수익', cols:[['cost','광고비'],['rev','네이버수익'],['roas','ROAS']]},
+  {t:'📞 문의 → 개통',  cols:[['inq','문의<br>(톡톡/전화)'],['cpi','문의당<br>비용'],['act','개통'],['cvr','개통률'],['cpa','개통당<br>비용']]},
+  {t:'👀 노출 · 클릭',  opt:1, cols:[['imp','노출'],['clk','클릭'],['ctr','CTR'],['cpc','CPC']]},
+  {t:'📍 플레이스',     cols:[['pl','플레이스<br>순위'],['rv','리뷰수']]},
+  {t:'',            cols:[['judge','자동판정'],['act2','우선 조치']]}
 ];
+let nvWide = localStorage.getItem('yeopcheorpon_nvwide')==='1';
+function nvGroups(){ return NV_G.filter(g=>!g.opt||nvWide); }
+function nvCells(c,j,s){
+  const sv=svOf(s);
+  return {
+    name:`<td class="nm gs">${esc(s.name)}${sv?`<span class="svchip2" style="background:${svColor(sv)}">${esc(sv)}</span>`:''}<small>${esc(s.line||'-')} · ${esc(s.gubun||'')}</small></td>`,
+    cost:`<td class="gs num-b">${c.cost?c.cost.toLocaleString():'<span class="nv-fl">-</span>'}</td>`,
+    rev :`<td>${nvF(c.rev||null)}</td>`,
+    roas:`<td${c.roas!=null?(c.roas>=1?' class="nv-up"':' class="nv-dn"'):''}>${c.roas==null?'<span class="nv-fl">-</span>':c.roas.toFixed(2)}</td>`,
+    inq :`<td class="gs">${c.inq?c.inq+'<small style="color:var(--muted)"> ('+c.talk+'/'+c.call+')</small>':'<span class="nv-fl">-</span>'}</td>`,
+    cpi :`<td${c.cpi!=null&&c.cpi>NVSTD.cpiCap?' class="nv-dn"':''}>${nvF(c.cpi)}</td>`,
+    act :`<td class="num-b">${c.act||'<span class="nv-fl">-</span>'}</td>`,
+    cvr :`<td${c.cvr!=null?(c.cvr>=NVSTD.cvr?' class="nv-up"':' class="nv-dn"'):''}>${nvP(c.cvr)}</td>`,
+    cpa :`<td${c.cpa!=null&&c.cpa>NVSTD.cpaCap?' class="nv-dn"':''}>${nvF(c.cpa)}</td>`,
+    imp :`<td class="gs">${nvF(c.imp||null)}</td>`,
+    clk :`<td>${nvF(c.clk||null)}</td>`,
+    ctr :`<td${c.ctr!=null&&c.ctr<NVSTD.ctrRef?' class="nv-dn"':''}>${nvP(c.ctr,2)}</td>`,
+    cpc :`<td>${nvF(c.cpc)}</td>`,
+    pl  :`<td class="gs">${c.pl==null?'<span class="nv-fl">-</span>':c.pl+'위'} ${nvDelta(c.dpl,true)}</td>`,
+    rv  :`<td>${nvF(c.rv)} ${nvDelta(c.drv,true)}</td>`,
+    judge:'', act2:''
+  };
+}
 function nvRenderTable(){
   const box=document.getElementById('nv-tbox');
   if(nvMode==='edit'){ nvRenderEdit(); return; }
@@ -2201,30 +2238,30 @@ function nvRenderTable(){
   });
   let T={cost:0,imp:0,clk:0,inq:0,act:0,rev:0};
   rows.forEach(r=>{T.cost+=r.c.cost;T.imp+=r.c.imp;T.clk+=r.c.clk;T.inq+=r.c.inq;T.act+=r.c.act;T.rev+=r.c.rev;});
-  const head='<tr>'+NV_COLS.map(c=>`<th data-sk="${c[0]}">${c[1]}${nvSort.k===c[0]?(d<0?' ▼':' ▲'):''}</th>`).join('')+'</tr>';
+  const G=nvGroups();
+  const gRow='<tr class="g">'+G.map(g=>`<th class="gs" colspan="${g.cols.length}">${g.t}</th>`).join('')+'</tr>';
+  const hRow='<tr class="h">'+G.map(g=>g.cols.map((c,ix)=>
+      `<th data-sk="${c[0]}" class="${ix===0?'gs':''}">${c[1]}${nvSort.k===c[0]?(d<0?' ▼':' ▲'):''}</th>`).join('')).join('')+'</tr>';
   const body=rows.map(({s,c,j})=>{
-    const sv=svOf(s);
-    return `<tr data-id="${s.id}"><td class="nm">${esc(s.name)}${sv?`<span class="svchip2" style="background:${svColor(sv)}">${esc(sv)}</span>`:''}<small>${esc(s.line||'-')} · ${esc(s.gubun||'')}</small></td>
-    <td>${c.pl==null?'<span class="nv-fl">-</span>':c.pl+'위'}</td><td>${nvDelta(c.dpl,true)}</td>
-    <td>${nvF(c.rv)}</td><td>${nvDelta(c.drv,true)}</td>
-    <td><b>${c.cost?c.cost.toLocaleString():'<span class="nv-fl">-</span>'}</b></td>
-    <td>${nvF(c.imp||null)}</td><td>${nvF(c.clk||null)}</td>
-    <td${c.ctr!=null&&c.ctr<NVSTD.ctrRef?' class="nv-dn"':''}>${nvP(c.ctr,2)}</td><td>${nvF(c.cpc)}</td>
-    <td>${c.inq?c.inq+'<small style="color:var(--muted)"> ('+c.talk+'/'+c.call+')</small>':'<span class="nv-fl">-</span>'}</td>
-    <td${c.cpi!=null&&c.cpi>NVSTD.cpiCap?' class="nv-dn"':''}>${nvF(c.cpi)}</td>
-    <td><b>${c.act||'<span class="nv-fl">-</span>'}</b></td>
-    <td${c.cvr!=null?(c.cvr>=NVSTD.cvr?' class="nv-up"':' class="nv-dn"'):''}>${nvP(c.cvr)}</td>
-    <td${c.cpa!=null&&c.cpa>NVSTD.cpaCap?' class="nv-dn"':''}>${nvF(c.cpa)}</td>
-    <td>${nvF(c.rev||null)}</td><td>${c.roas==null?'<span class="nv-fl">-</span>':c.roas.toFixed(2)}</td>
-    <td><span class="nv-tag ${j.k}">${j.t}</span></td><td class="act">${j.a}</td></tr>`;
+    const cell=nvCells(c,j,s);
+    cell.judge=`<td class="gs"><span class="nv-tag ${j.k}">${j.t}</span></td>`;
+    cell.act2 =`<td class="act">${j.a}</td>`;
+    return `<tr data-id="${s.id}">`+G.map(g=>g.cols.map(x=>cell[x[0]]).join('')).join('')+'</tr>';
   }).join('');
   const ctr=T.imp?T.clk/T.imp:null,cpi=T.inq?T.cost/T.inq:null,cvr=T.inq?T.act/T.inq:null,
         cpa=T.act?T.cost/T.act:null,cpc=T.clk?T.cost/T.clk:null,roas=T.cost?T.rev/T.cost:null;
-  const foot=`<tr><td>합계 · ${rows.length}개 매장</td><td></td><td></td><td></td><td></td>
-    <td>${T.cost.toLocaleString()}</td><td>${T.imp.toLocaleString()}</td><td>${T.clk.toLocaleString()}</td>
-    <td>${nvP(ctr,2)}</td><td>${nvF(cpc)}</td><td>${T.inq}</td><td>${nvF(cpi)}</td><td>${T.act}</td>
-    <td>${nvP(cvr)}</td><td>${nvF(cpa)}</td><td>${T.rev.toLocaleString()}</td><td>${roas==null?'-':roas.toFixed(2)}</td><td></td><td></td></tr>`;
-  box.innerHTML=`<table class="nv-t"><thead>${head}</thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table>`;
+  const F={
+    name:`<td class="gs">합계 · ${rows.length}개 매장</td>`,
+    cost:`<td class="gs">${T.cost.toLocaleString()}</td>`, rev:`<td>${T.rev.toLocaleString()}</td>`,
+    roas:`<td>${roas==null?'-':roas.toFixed(2)}</td>`,
+    inq:`<td class="gs">${T.inq}</td>`, cpi:`<td>${nvF(cpi)}</td>`, act:`<td>${T.act}</td>`,
+    cvr:`<td>${nvP(cvr)}</td>`, cpa:`<td>${nvF(cpa)}</td>`,
+    imp:`<td class="gs">${T.imp.toLocaleString()}</td>`, clk:`<td>${T.clk.toLocaleString()}</td>`,
+    ctr:`<td>${nvP(ctr,2)}</td>`, cpc:`<td>${nvF(cpc)}</td>`,
+    pl:'<td class="gs"></td>', rv:'<td></td>', judge:'<td class="gs"></td>', act2:'<td></td>'
+  };
+  const foot='<tr>'+G.map(g=>g.cols.map(x=>F[x[0]]).join('')).join('')+'</tr>';
+  box.innerHTML=`<table class="nv-t grouped"><thead>${gRow}${hRow}</thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table>`;
   box.querySelectorAll('th[data-sk]').forEach(th=>th.onclick=()=>{
     const key=th.dataset.sk; if(key==='act2')return;
     if(nvSort.k===key) nvSort.d*=-1; else nvSort={k:key,d:key==='name'?1:-1};
@@ -2406,6 +2443,11 @@ function nvExport(){
   document.querySelectorAll('[data-nvv]').forEach(b=>b.onclick=()=>{
     nvMode=b.dataset.nvv; document.querySelectorAll('[data-nvv]').forEach(x=>x.classList.toggle('active',x===b));
     nvRenderTable(); });
+  const wb=$('nv-wide');
+  function nvWideSync(){ wb.classList.toggle('on',nvWide); }
+  wb.onclick=()=>{ nvWide=!nvWide; try{localStorage.setItem('yeopcheorpon_nvwide',nvWide?'1':'0');}catch(e){}
+    nvWideSync(); nvRenderTable(); };
+  nvWideSync();
   $('nv-tpl').onclick=nvTemplate;
   $('nv-exp').onclick=nvExport;
   $('nv-up').onclick=()=>$('nv-file').click();
