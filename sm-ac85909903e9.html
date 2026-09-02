@@ -334,6 +334,77 @@
     body{background:#fff}
     .rsec,.stat{box-shadow:none;break-inside:avoid}
   }
+  /* ===== 📣 네이버 광고 대시보드 ===== */
+  .nv-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#fff;border:1.5px solid var(--line);
+       border-radius:14px;padding:10px 12px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .nv-bar .nv-lb{font-size:12.5px;font-weight:800;color:var(--purple-d)}
+  .nv-bar select{padding:8px 10px;border:1.5px solid var(--line);border-radius:9px;font-size:13px;font-family:inherit;background:#fff;color:var(--ink);font-weight:700}
+  .nv-sep{width:1px;height:22px;background:var(--line)}
+  .nv-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-bottom:14px}
+  @media(max-width:1000px){.nv-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media(max-width:620px){.nv-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .monthbar.nv-hidem>span:first-child,.monthbar.nv-hidem #sel-month,.monthbar.nv-hidem #mb-hint{display:none}
+  .nv-kpi{background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:11px 12px}
+  .nv-kpi .k{font-size:11.5px;color:var(--muted);font-weight:700}
+  .nv-kpi .v{font-size:18.5px;font-weight:900;letter-spacing:-.7px;margin-top:3px;color:var(--purple-d);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nv-kpi .s{font-size:11px;color:var(--muted);margin-top:2px}
+  .nv-kpi.hl{background:linear-gradient(135deg,var(--purple),var(--purple-d));border-color:var(--purple-d)}
+  .nv-kpi.hl .k,.nv-kpi.hl .s{color:#ffffffcc} .nv-kpi.hl .v{color:#fff}
+  .nv-judge{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:14px}
+  .nv-jc{background:#fff;border:2px solid var(--line);border-radius:13px;padding:12px;cursor:pointer;transition:.15s;text-align:center}
+  .nv-jc:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .nv-jc.on{border-color:var(--purple);background:var(--lav2)}
+  .nv-jc .n{font-size:25px;font-weight:900;line-height:1.1}
+  .nv-jc .t{font-size:12px;font-weight:800;margin-top:3px}
+  .nv-jc.up .n{color:#2e9e6b} .nv-jc.mid .n{color:#d9a327} .nv-jc.bad .n{color:#d64f6a} .nv-jc.keep .n{color:#3b82c4} .nv-jc.none .n{color:#9a8fb5}
+  .nv-tbox{background:#fff;border:1.5px solid var(--line);border-radius:14px;overflow:auto;margin-bottom:14px;box-shadow:var(--shadow)}
+  table.nv-t{border-collapse:collapse;width:100%;font-size:12.5px;white-space:nowrap;min-width:1150px}
+  table.nv-t th{background:#f4f0fb;color:var(--purple-d);font-weight:800;font-size:11.5px;padding:9px 8px;
+       border-bottom:2px solid var(--line);position:sticky;top:0;z-index:2;cursor:pointer;text-align:right}
+  table.nv-t th:first-child,table.nv-t td:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:1;
+       border-right:1.5px solid var(--line);min-width:132px}
+  table.nv-t th:first-child{background:#f4f0fb;z-index:3}
+  table.nv-t td{padding:7px 8px;border-bottom:1px solid #f0ecf8;text-align:right;font-variant-numeric:tabular-nums}
+  table.nv-t tbody tr:hover td{background:#faf8fe}
+  table.nv-t tbody tr:hover td:first-child{background:#faf8fe}
+  table.nv-t td.nm{font-weight:800}
+  table.nv-t td.nm small{display:block;font-weight:600;color:var(--muted);font-size:10.5px}
+  table.nv-t .svchip2{display:inline-block;font-size:10px;color:#fff;padding:1px 6px;border-radius:20px;font-weight:800;margin-left:4px;vertical-align:1px}
+  .nv-up{color:#2e9e6b;font-weight:800} .nv-dn{color:#d64f6a;font-weight:800} .nv-fl{color:#b3aac6}
+  .nv-tag{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap}
+  .nv-tag.up{background:#e3f6ec;color:#1d7a4f} .nv-tag.mid{background:#fdf3dc;color:#9a7108}
+  .nv-tag.bad{background:#fdeaee;color:#b32943} .nv-tag.keep{background:#e7f0ff;color:#2657b8}
+  .nv-tag.none{background:#f0edf6;color:#8b83a0}
+  table.nv-t td.act{text-align:left;white-space:normal;min-width:230px;font-size:11.5px;color:var(--muted);line-height:1.45}
+  table.nv-t tfoot td{background:#f7f4fc;font-weight:900;border-top:2px solid var(--line);position:sticky;bottom:0}
+  table.nv-t tfoot td:first-child{background:#f7f4fc}
+  table.nv-t input.nvi{width:82px;padding:5px 6px;border:1.5px solid var(--line);border-radius:7px;font-size:12.5px;
+       text-align:right;font-family:inherit;background:#fff;color:var(--ink)}
+  table.nv-t input.nvi:focus{outline:none;border-color:var(--purple);background:#fbf9ff}
+  table.nv-t input.nvi.filled{border-color:#d9d0f0;background:#fbfaff}
+  .nv-ops{display:flex;gap:4px;justify-content:flex-end}
+  .nv-op{border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:7px;padding:4px 7px;
+       font-size:11px;font-weight:800;cursor:pointer;font-family:inherit}
+  .nv-op.on{background:var(--purple);border-color:var(--purple);color:#fff}
+  .nv-std{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .nv-std h4{margin:0 0 4px;font-size:14px;color:var(--purple-d)}
+  .nv-std .sub{font-size:11.5px;color:var(--muted);margin-bottom:10px}
+  .nv-stdgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+  .nv-stdgrid label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:3px}
+  .nv-stdgrid input{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:9px;font-size:13px;font-family:inherit;text-align:right}
+  .nv-trend{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow);overflow:auto}
+  .nv-trend h4{margin:0 0 10px;font-size:14px;color:var(--purple-d)}
+  .nv-tr{display:flex;align-items:flex-end;gap:10px;min-width:520px;height:130px;padding-bottom:4px}
+  .nv-trc{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+  .nv-trb{width:100%;max-width:44px;display:flex;gap:2px;align-items:flex-end;height:100%}
+  .nv-trb i{flex:1;border-radius:4px 4px 0 0;min-height:2px;display:block}
+  .nv-trl{font-size:10.5px;color:var(--muted);font-weight:700;white-space:nowrap}
+  .nv-legend{background:#fff;border:1.5px dashed var(--line);border-radius:14px;padding:13px 16px;font-size:11.5px;
+       color:var(--muted);line-height:1.75}
+  .nv-legend b{color:var(--purple-d)}
+  .nv-empty{text-align:center;padding:44px 20px;color:var(--muted);background:#fff;border:1.5px dashed var(--line);border-radius:16px;margin-bottom:14px}
+  .nv-empty b{color:var(--purple)}
+  @media(max-width:640px){ .nv-kpi .v{font-size:16px} }
 </style>
 <style>
 #agg-wrap{--agg-hd:#FFFF00;--agg-sub:#FCE4D6;--agg-tot:#1F3864;--agg-pp:#6d3ecb;--agg-pd:#4c2a8f;
@@ -433,6 +504,7 @@
     <div class="tab" data-tab="report">📊 보고 요약</div>
     <div class="tab" data-tab="rank">🏅 순위</div>
     <div class="tab" data-tab="agg">📈 집계표</div>
+    <div class="tab" data-tab="naver">📣 네이버광고</div>
     <div class="tab" data-tab="help">⚙️ 데이터 · 사용법</div>
   </div>
   <div class="monthbar">
@@ -563,6 +635,41 @@
 
   </section>
 
+  <!-- ===== 네이버 광고 ===== -->
+  <section id="panel-naver" class="panel">
+    <div class="nv-bar">
+      <span class="nv-lb">📅 주차</span>
+      <select id="nv-week"></select>
+      <button class="btn ghost sm" id="nv-addweek">+ 새 주차</button>
+      <button class="btn ghost sm" id="nv-copyprev" title="전주 플레이스순위·블로그수·리뷰수를 이번 주로 복사">↩ 전주값 채우기</button>
+      <span class="nv-sep"></span>
+      <div class="viewtog"><button class="vt active" data-nvv="view">📊 진단</button><button class="vt" data-nvv="edit">✏ 입력</button></div>
+      <div class="spacer"></div>
+      <button class="btn ghost sm" id="nv-tpl">📄 양식 받기</button>
+      <button class="btn ghost sm" id="nv-up">📥 엑셀 올리기</button>
+      <button class="btn ghost sm" id="nv-exp">📤 내보내기</button>
+      <button class="btn ghost sm" id="nv-stdbtn">⚙ 진단기준</button>
+      <button class="btn ghost sm" onclick="window.print()">🖨 인쇄</button>
+      <input type="file" id="nv-file" accept=".csv,.xlsx,.xls" style="display:none">
+    </div>
+    <div class="nv-std" id="nv-std" style="display:none"></div>
+    <div class="nv-kpis" id="nv-kpis"></div>
+    <div class="nv-judge" id="nv-judge"></div>
+    <div class="nv-tbox" id="nv-tbox"></div>
+    <div class="nv-trend" id="nv-trend"></div>
+    <div class="nv-legend">
+      · <b>CTR</b> = 클릭 ÷ 노출　· <b>CPC</b> = 광고비 ÷ 클릭　· <b>문의</b> = 톡톡 + 전화<br>
+      · <b>문의당 비용</b> = 광고비 ÷ 문의　· <b>개통률</b> = 개통 ÷ 문의　· <b>개통당 비용</b> = 광고비 ÷ 개통　· <b>ROAS</b> = 네이버수익 ÷ 광고비<br>
+      · <b>순위·리뷰 증감</b>은 <b>전 주차 입력값과 자동 비교</b>됩니다. (플레이스 순위는 숫자가 작아질수록 좋아진 것 → ▲로 표시)<br>
+      · <b>자동판정</b>은 아래 규칙을 순서대로 적용합니다 — 기준값은 <b>⚙ 진단기준</b>에서 언제든 바꿀 수 있어요.<br>
+      &nbsp;&nbsp;🟢 <b>증액 추천</b>: 광고비 ≥ 최소집행액 &amp; 문의 ≥ 증액기준 &amp; 개통률 ≥ 증액개통률 &amp; 개통당비용 ≤ 상한<br>
+      &nbsp;&nbsp;🟡 <b>문의는 양호·개통 개선</b>: 문의 ≥ 최소문의 &amp; 문의당비용 ≤ 상한 인데 개통률이 기준 미달 → 응대·상담 문제<br>
+      &nbsp;&nbsp;🔴 <b>비효율</b>: 문의가 최소 미달이거나, 문의당비용·개통당비용이 상한 초과 → 예산·키워드 정리<br>
+      &nbsp;&nbsp;🔵 <b>유지/관찰</b> · ⚪ <b>미집행</b>: 광고비 0 또는 미입력<br>
+      · 입력한 값은 <b>클라우드에 자동 저장</b>되어 다른 PC·폰에서도 같이 보여요. 담당·직영/가맹 필터는 상단 바를 따릅니다.
+    </div>
+  </section>
+
   <!-- ===== HELP ===== -->
   <section id="panel-help" class="panel">
     <div class="help">
@@ -601,6 +708,18 @@
       <input type="file" id="file-csv" accept=".csv" style="display:none">
       <input type="file" id="file-json" accept=".json" style="display:none">
 
+      <h3>📣 네이버 광고 대시보드 쓰는 법</h3>
+      상단 <b>📣 네이버광고</b> 탭이 매주 광고 성과를 진단해 줍니다. 매장·담당(백지현·김진석·임병호)·직영/가맹 필터를 그대로 씁니다.
+      <ol>
+        <li><b>+ 새 주차</b>를 눌러 이번 주(월요일 기준)를 만듭니다.</li>
+        <li><b>↩ 전주값 채우기</b>로 플레이스순위·블로그수·리뷰수를 지난주 값으로 미리 채운 뒤, 바뀐 숫자만 고칩니다.</li>
+        <li><b>✏ 입력</b>에서 매장별로 광고비·노출·클릭·톡톡/전화문의·개통·네이버수익을 칩니다. (Enter = 아래 칸으로 이동, 자동 저장)</li>
+        <li>많을 땐 <b>📄 양식 받기</b>로 매장명이 들어간 엑셀을 받아 채운 뒤 <b>📥 엑셀 올리기</b>로 한 번에 반영하세요.</li>
+        <li><b>📊 진단</b>에서 자동판정(🟢증액 / 🟡개통개선 / 🔴비효율 / 🔵유지 / ⚪미집행)과 우선조치를 확인합니다. 판정 카드를 누르면 그 그룹만 걸러집니다.</li>
+      </ol>
+      <div class="note">💡 <b>이 대시보드로 코칭하는 법</b> — 🟡가 뜬 매장은 <b>광고 문제가 아니라 응대 문제</b>입니다(문의는 오는데 개통이 안 됨). 통화 녹취·부재중 콜백률부터 보세요.
+      🔴는 예산을 줄이고 플레이스 순위·리뷰부터 올린 뒤 재집행, 🟢는 다음 주 예산 10~20% 증액 테스트가 기본 액션입니다.</div>
+
       <h3>매장 등급 기준 (제안)</h3>
       <ul>
         <li><b>A</b> — 목표 안정 달성·성장. 유지하고 우수사례를 다른 매장에 전파.</li>
@@ -638,6 +757,7 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* ============ STATE ============ */
 const KEY='yeopcheorpon_stores_v1';
@@ -1925,6 +2045,364 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
     if(_tries > 60) clearInterval(_watch);
   }, 700);
 })();
+
+/* ==========================================================================
+   📣 네이버 광고 진단 대시보드 (add-on)
+   저장구조 : s.nv    = [{wk:'YYYY-MM-DD'(그 주 월요일), pl,bl,rv,cost,imp,clk,talk,call,act,rev}]
+             s.nvops = {pl:운영, pw:파워링크, sb:소상공인}
+   저장경로 : 기존 save() → localStorage + 클라우드(동일 payload) 자동 동기화
+   ========================================================================== */
+const NV_DEF={minCost:50000,minInq:5,upInq:10,cpiCap:20000,cvr:0.25,upCvr:0.35,cpaCap:100000,ctrRef:0.01};
+const NV_STDKEY='yeopcheorpon_nvstd';
+let NVSTD=Object.assign({},NV_DEF);
+try{const _o=JSON.parse(localStorage.getItem(NV_STDKEY)); if(_o) NVSTD=Object.assign({},NV_DEF,_o);}catch(e){}
+function nvStdSave(){
+  try{localStorage.setItem(NV_STDKEY,JSON.stringify(NVSTD));}catch(e){}
+  if(cloudOK){ cloudCall('set',{key:'nvstd',value:JSON.stringify(NVSTD)}).catch(()=>{}); }
+}
+async function nvStdLoad(){
+  try{ const r=await cloudCall('get',{key:'nvstd'});
+    if(r&&r.value){ NVSTD=Object.assign({},NV_DEF,JSON.parse(r.value)); localStorage.setItem(NV_STDKEY,JSON.stringify(NVSTD)); }
+  }catch(e){}
+}
+
+/* ---------- 주차 ---------- */
+function nvYmd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function nvMonday(base){ const d=base?new Date(base):new Date(); const w=(d.getDay()+6)%7; d.setDate(d.getDate()-w); d.setHours(12,0,0,0); return nvYmd(d); }
+function nvShift(wk,n){ const d=new Date(wk+'T12:00:00'); d.setDate(d.getDate()+n*7); return nvYmd(d); }
+function nvLabel(wk){ const d=new Date(wk+'T12:00:00'); const e=new Date(d); e.setDate(e.getDate()+6);
+  const mm=n=>String(n.getMonth()+1)+'/'+String(n.getDate());
+  return wk.slice(0,4)+'.'+mm(d)+'~'+mm(e)+' 주';
+}
+function nvWeeks(){ return [...new Set(stores.flatMap(s=>(s.nv||[]).map(r=>r.wk)))].filter(Boolean).sort(); }
+let nvWk=null, nvMode='view', nvFilter='', nvSort={k:'cost',d:-1};
+function nvCurWk(){ const w=nvWeeks(); if(nvWk&&(w.includes(nvWk)||nvWk===nvMonday()))return nvWk; return w.length?w[w.length-1]:nvMonday(); }
+
+/* ---------- 데이터 ---------- */
+function nvRow(s,wk){ return (s.nv||[]).find(r=>r.wk===wk)||null; }
+function nvEnsure(s,wk){ if(!s.nv)s.nv=[]; let r=nvRow(s,wk); if(!r){ r={wk:wk}; s.nv.push(r); s.nv.sort((a,b)=>a.wk<b.wk?-1:1);} return r; }
+function nvN(v){ if(v===''||v===null||v===undefined)return null; const n=Number(String(v).replace(/[^0-9.\-]/g,'')); return isNaN(n)?null:n; }
+function nvCalc(r,prev){
+  const g=k=>nvN(r?r[k]:null);
+  const cost=g('cost')||0, imp=g('imp')||0, clk=g('clk')||0;
+  const talk=g('talk')||0, call=g('call')||0, act=g('act')||0, rev=g('rev')||0;
+  const inq=talk+call;
+  return {
+    cost, imp, clk, talk, call, inq, act, rev,
+    pl:g('pl'), bl:g('bl'), rv:g('rv'),
+    dpl:(prev&&nvN(prev.pl)!=null&&g('pl')!=null)?(nvN(prev.pl)-g('pl')):null,   /* +면 순위 상승(숫자 감소) */
+    drv:(prev&&nvN(prev.rv)!=null&&g('rv')!=null)?(g('rv')-nvN(prev.rv)):null,
+    ctr: imp? clk/imp : null,
+    cpc: clk? cost/clk : null,
+    cpi: inq? cost/inq : null,
+    cvr: inq? act/inq : null,
+    cpa: act? cost/act : null,
+    roas: cost? rev/cost : null,
+    has: !!(r && ['pl','bl','rv','cost','imp','clk','talk','call','act','rev'].some(k=>nvN(r[k])!=null))
+  };
+}
+function nvJudge(c){
+  if(!c.has || !c.cost) return {k:'none',t:'⚪ 미집행/데이터부족',a:'광고 미집행 — 플레이스 정보·사진·리뷰 관리부터 점검하세요.'};
+  if(c.cost>=NVSTD.minCost && c.inq>=NVSTD.upInq && c.cvr!=null && c.cvr>=NVSTD.upCvr && (c.cpa==null||c.cpa<=NVSTD.cpaCap))
+    return {k:'up',t:'🟢 광고비 증액 추천',a:'예산 10~20% 증액 테스트 → 다음 주 문의·개통 증가 확인. 잘 나온 키워드 비중 확대.'};
+  if(c.inq>=NVSTD.minInq && c.cpi!=null && c.cpi<=NVSTD.cpiCap && (c.cvr==null||c.cvr<NVSTD.cvr))
+    return {k:'mid',t:'🟡 문의는 양호·개통 개선',a:'문의는 들어오는데 개통이 안 됨 → 응대 스크립트·부재중 콜백·방문 유도 멘트 코칭.'};
+  if(c.inq<NVSTD.minInq || (c.cpi!=null&&c.cpi>NVSTD.cpiCap) || (c.cpa!=null&&c.cpa>NVSTD.cpaCap))
+    return {k:'bad',t:'🔴 광고비 비효율',a:'키워드·소재 정리 후 예산 축소. 플레이스 순위·리뷰·사진부터 올리고 재집행.'};
+  return {k:'keep',t:'🔵 유지/관찰',a:'현 수준 유지 · 다음 주 문의·개통 추이 관찰.'};
+}
+function nvList(){ return viewStores().filter(s=>!isClosed(s)).sort((a,b)=>(a.name||'').localeCompare(b.name||'','ko')); }
+
+/* ---------- 포맷 ---------- */
+function nvF(v,suf){ return v==null?'<span class="nv-fl">-</span>':(Math.round(v).toLocaleString()+(suf||'')); }
+function nvP(v,dg){ return v==null?'<span class="nv-fl">-</span>':((v*100).toFixed(dg==null?1:dg)+'%'); }
+function nvDelta(v,goodUp){ if(v==null||v===0) return '<span class="nv-fl">―</span>';
+  const good = goodUp? v>0 : v<0;
+  return `<span class="${good?'nv-up':'nv-dn'}">${v>0?'▲':'▼'}${Math.abs(v).toLocaleString()}</span>`; }
+
+/* ---------- 렌더 ---------- */
+function nvFillWeeks(){
+  const sel=document.getElementById('nv-week'); if(!sel)return;
+  let w=nvWeeks(); const cur=nvCurWk(); if(!w.includes(cur)) w=w.concat([cur]).sort();
+  nvWk=cur;
+  sel.innerHTML=w.slice().reverse().map(x=>`<option value="${x}" ${x===cur?'selected':''}>${nvLabel(x)}</option>`).join('');
+}
+function nvRenderKPI(){
+  const wk=nvCurWk(), pw=nvShift(wk,-1), arr=nvList();
+  let T={cost:0,imp:0,clk:0,inq:0,act:0,rev:0,run:0};
+  arr.forEach(s=>{ const c=nvCalc(nvRow(s,wk),nvRow(s,pw));
+    T.cost+=c.cost;T.imp+=c.imp;T.clk+=c.clk;T.inq+=c.inq;T.act+=c.act;T.rev+=c.rev; if(c.cost>0)T.run++; });
+  const ctr=T.imp?T.clk/T.imp:null, cpc=T.clk?T.cost/T.clk:null, cpi=T.inq?T.cost/T.inq:null,
+        cvr=T.inq?T.act/T.inq:null, cpa=T.act?T.cost/T.act:null, roas=T.cost?T.rev/T.cost:null;
+  const K=[
+    ['총 광고비',T.cost.toLocaleString()+'원',`집행 매장 ${T.run}/${arr.length}`,1],
+    ['총 노출',T.imp.toLocaleString(),'네이버 광고 노출수',0],
+    ['총 클릭',T.clk.toLocaleString(),'CTR '+(ctr==null?'-':(ctr*100).toFixed(2)+'%'),0],
+    ['평균 CPC',cpc==null?'-':Math.round(cpc).toLocaleString()+'원','1클릭당 비용',0],
+    ['총 문의',T.inq.toLocaleString()+'건','톡톡+전화',0],
+    ['문의당 비용',cpi==null?'-':Math.round(cpi).toLocaleString()+'원','기준 '+NVSTD.cpiCap.toLocaleString()+'원 이하',0],
+    ['총 개통',T.act.toLocaleString()+'건','네이버 유입 개통',0],
+    ['문의→개통률',cvr==null?'-':(cvr*100).toFixed(1)+'%','기준 '+Math.round(NVSTD.cvr*100)+'% 이상',1],
+    ['개통당 비용',cpa==null?'-':Math.round(cpa).toLocaleString()+'원','기준 '+NVSTD.cpaCap.toLocaleString()+'원 이하',0],
+    ['네이버 수익',T.rev.toLocaleString()+'원','ROAS '+(roas==null?'-':roas.toFixed(2)+'배'),1]
+  ];
+  document.getElementById('nv-kpis').innerHTML=K.map(k=>
+    `<div class="nv-kpi ${k[3]?'hl':''}"><div class="k">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${k[2]}</div></div>`).join('');
+}
+function nvRenderJudge(){
+  const wk=nvCurWk(), pw=nvShift(wk,-1);
+  const cnt={up:0,mid:0,bad:0,keep:0,none:0};
+  nvList().forEach(s=>{ cnt[nvJudge(nvCalc(nvRow(s,wk),nvRow(s,pw))).k]++; });
+  const C=[['up','🟢 광고비 증액'],['mid','🟡 개통 개선'],['bad','🔴 비효율'],['keep','🔵 유지·관찰'],['none','⚪ 미집행']];
+  document.getElementById('nv-judge').innerHTML=C.map(c=>
+    `<div class="nv-jc ${c[0]} ${nvFilter===c[0]?'on':''}" data-jf="${c[0]}"><div class="n">${cnt[c[0]]}</div><div class="t">${c[1]}</div></div>`).join('');
+  document.querySelectorAll('#nv-judge .nv-jc').forEach(el=>el.onclick=()=>{
+    nvFilter = nvFilter===el.dataset.jf ? '' : el.dataset.jf; nvRenderJudge(); nvRenderTable(); });
+}
+const NV_COLS=[
+  ['name','매장'],['pl','플레이스<br>순위'],['dpl','순위<br>증감'],['rv','리뷰수'],['drv','리뷰<br>증감'],
+  ['cost','광고비'],['imp','노출'],['clk','클릭'],['ctr','CTR'],['cpc','CPC'],
+  ['inq','문의<br>(톡톡/전화)'],['cpi','문의당<br>비용'],['act','개통'],['cvr','개통률'],['cpa','개통당<br>비용'],
+  ['rev','네이버<br>수익'],['roas','ROAS'],['judge','자동판정'],['act2','우선 조치']
+];
+function nvRenderTable(){
+  const box=document.getElementById('nv-tbox');
+  if(nvMode==='edit'){ nvRenderEdit(); return; }
+  const wk=nvCurWk(), pw=nvShift(wk,-1);
+  let rows=nvList().map(s=>{ const c=nvCalc(nvRow(s,wk),nvRow(s,pw)); return {s,c,j:nvJudge(c)}; });
+  if(nvFilter) rows=rows.filter(r=>r.j.k===nvFilter);
+  if(!rows.length){ box.outerHTML='<div class="nv-tbox" id="nv-tbox"><div class="nv-empty">해당 조건의 매장이 없어요. <b>✏ 입력</b>에서 이번 주 값을 넣어보세요.</div></div>'; return; }
+  const k=nvSort.k,d=nvSort.d;
+  rows.sort((a,b)=>{
+    if(k==='name') return (a.s.name||'').localeCompare(b.s.name||'','ko')*(d<0?-1:1);
+    if(k==='judge') return (['up','mid','bad','keep','none'].indexOf(a.j.k)-['up','mid','bad','keep','none'].indexOf(b.j.k))*(d<0?-1:1);
+    const av=a.c[k], bv=b.c[k];
+    if(av==null&&bv==null)return 0; if(av==null)return 1; if(bv==null)return -1;
+    return (av-bv)*d;
+  });
+  let T={cost:0,imp:0,clk:0,inq:0,act:0,rev:0};
+  rows.forEach(r=>{T.cost+=r.c.cost;T.imp+=r.c.imp;T.clk+=r.c.clk;T.inq+=r.c.inq;T.act+=r.c.act;T.rev+=r.c.rev;});
+  const head='<tr>'+NV_COLS.map(c=>`<th data-sk="${c[0]}">${c[1]}${nvSort.k===c[0]?(d<0?' ▼':' ▲'):''}</th>`).join('')+'</tr>';
+  const body=rows.map(({s,c,j})=>{
+    const sv=svOf(s);
+    return `<tr data-id="${s.id}"><td class="nm">${esc(s.name)}${sv?`<span class="svchip2" style="background:${svColor(sv)}">${esc(sv)}</span>`:''}<small>${esc(s.line||'-')} · ${esc(s.gubun||'')}</small></td>
+    <td>${c.pl==null?'<span class="nv-fl">-</span>':c.pl+'위'}</td><td>${nvDelta(c.dpl,true)}</td>
+    <td>${nvF(c.rv)}</td><td>${nvDelta(c.drv,true)}</td>
+    <td><b>${c.cost?c.cost.toLocaleString():'<span class="nv-fl">-</span>'}</b></td>
+    <td>${nvF(c.imp||null)}</td><td>${nvF(c.clk||null)}</td>
+    <td${c.ctr!=null&&c.ctr<NVSTD.ctrRef?' class="nv-dn"':''}>${nvP(c.ctr,2)}</td><td>${nvF(c.cpc)}</td>
+    <td>${c.inq?c.inq+'<small style="color:var(--muted)"> ('+c.talk+'/'+c.call+')</small>':'<span class="nv-fl">-</span>'}</td>
+    <td${c.cpi!=null&&c.cpi>NVSTD.cpiCap?' class="nv-dn"':''}>${nvF(c.cpi)}</td>
+    <td><b>${c.act||'<span class="nv-fl">-</span>'}</b></td>
+    <td${c.cvr!=null?(c.cvr>=NVSTD.cvr?' class="nv-up"':' class="nv-dn"'):''}>${nvP(c.cvr)}</td>
+    <td${c.cpa!=null&&c.cpa>NVSTD.cpaCap?' class="nv-dn"':''}>${nvF(c.cpa)}</td>
+    <td>${nvF(c.rev||null)}</td><td>${c.roas==null?'<span class="nv-fl">-</span>':c.roas.toFixed(2)}</td>
+    <td><span class="nv-tag ${j.k}">${j.t}</span></td><td class="act">${j.a}</td></tr>`;
+  }).join('');
+  const ctr=T.imp?T.clk/T.imp:null,cpi=T.inq?T.cost/T.inq:null,cvr=T.inq?T.act/T.inq:null,
+        cpa=T.act?T.cost/T.act:null,cpc=T.clk?T.cost/T.clk:null,roas=T.cost?T.rev/T.cost:null;
+  const foot=`<tr><td>합계 · ${rows.length}개 매장</td><td></td><td></td><td></td><td></td>
+    <td>${T.cost.toLocaleString()}</td><td>${T.imp.toLocaleString()}</td><td>${T.clk.toLocaleString()}</td>
+    <td>${nvP(ctr,2)}</td><td>${nvF(cpc)}</td><td>${T.inq}</td><td>${nvF(cpi)}</td><td>${T.act}</td>
+    <td>${nvP(cvr)}</td><td>${nvF(cpa)}</td><td>${T.rev.toLocaleString()}</td><td>${roas==null?'-':roas.toFixed(2)}</td><td></td><td></td></tr>`;
+  box.innerHTML=`<table class="nv-t"><thead>${head}</thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table>`;
+  box.querySelectorAll('th[data-sk]').forEach(th=>th.onclick=()=>{
+    const key=th.dataset.sk; if(key==='act2')return;
+    if(nvSort.k===key) nvSort.d*=-1; else nvSort={k:key,d:key==='name'?1:-1};
+    nvRenderTable(); });
+  box.querySelectorAll('tbody tr').forEach(tr=>tr.ondblclick=()=>{ const s=stores.find(x=>x.id===tr.dataset.id); if(s) openModal(s.id); });
+}
+const NV_IN=[['pl','플레이스순위'],['bl','블로그수'],['rv','리뷰수'],['cost','광고 소진금액'],['imp','노출'],
+             ['clk','클릭'],['talk','톡톡문의'],['call','전화문의'],['act','개통건수'],['rev','네이버수익']];
+function nvRenderEdit(){
+  const wk=nvCurWk(), arr=nvList();
+  const head='<tr><th data-sk="name">매장</th>'+NV_IN.map(c=>`<th>${c[1]}</th>`).join('')+'<th>운영(플·파·소)</th></tr>';
+  const body=arr.map(s=>{
+    const r=nvRow(s,wk)||{}; const o=s.nvops||{}; const sv=svOf(s);
+    return `<tr><td class="nm">${esc(s.name)}${sv?`<span class="svchip2" style="background:${svColor(sv)}">${esc(sv)}</span>`:''}<small>${esc(s.line||'-')} · ${esc(s.gubun||'')}</small></td>`
+      + NV_IN.map(c=>`<td><input class="nvi ${r[c[0]]!=null&&r[c[0]]!==''?'filled':''}" type="number" inputmode="numeric" data-id="${s.id}" data-f="${c[0]}" value="${r[c[0]]==null?'':r[c[0]]}"></td>`).join('')
+      + `<td><div class="nv-ops">
+          <button class="nv-op ${o.pl?'on':''}" data-id="${s.id}" data-o="pl">플</button>
+          <button class="nv-op ${o.pw?'on':''}" data-id="${s.id}" data-o="pw">파</button>
+          <button class="nv-op ${o.sb?'on':''}" data-id="${s.id}" data-o="sb">소</button></div></td></tr>`;
+  }).join('');
+  const box=document.getElementById('nv-tbox');
+  box.innerHTML=`<table class="nv-t"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+  box.querySelectorAll('input.nvi').forEach(inp=>{
+    inp.addEventListener('change',()=>{
+      const s=stores.find(x=>x.id===inp.dataset.id); if(!s)return;
+      const r=nvEnsure(s,wk); const v=inp.value.trim();
+      if(v==='') delete r[inp.dataset.f]; else r[inp.dataset.f]=Number(v);
+      if(!Object.keys(r).some(k=>k!=='wk')) s.nv=s.nv.filter(x=>x!==r);
+      inp.classList.toggle('filled',v!=='');
+      save(); nvRenderKPI(); nvRenderJudge(); nvRenderTrend();
+    });
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault();
+      const all=[...box.querySelectorAll('input.nvi')]; const i=all.indexOf(inp);
+      const nx=all[i+NV_IN.length]; if(nx){nx.focus();nx.select();} } });
+  });
+  box.querySelectorAll('.nv-op').forEach(b=>b.onclick=()=>{
+    const s=stores.find(x=>x.id===b.dataset.id); if(!s)return;
+    s.nvops=s.nvops||{}; s.nvops[b.dataset.o]=!s.nvops[b.dataset.o];
+    b.classList.toggle('on',!!s.nvops[b.dataset.o]); save(); });
+}
+function nvRenderTrend(){
+  const el=document.getElementById('nv-trend'); if(!el)return;
+  const cur=nvCurWk(); const W=[]; for(let i=7;i>=0;i--) W.push(nvShift(cur,-i));
+  const arr=nvList();
+  const D=W.map(wk=>{ let cost=0,inq=0,act=0;
+    arr.forEach(s=>{ const c=nvCalc(nvRow(s,wk)); cost+=c.cost; inq+=c.inq; act+=c.act; });
+    return {wk,cost,inq,act}; });
+  const any=D.some(d=>d.cost||d.inq||d.act);
+  if(!any){ el.innerHTML='<h4>📈 최근 8주 추이</h4><div class="muted" style="font-size:12px">아직 데이터가 없어요. 주차별로 값을 넣으면 광고비·문의·개통 흐름이 여기에 쌓여요.</div>'; return; }
+  const mc=Math.max(1,...D.map(d=>d.cost)), mi=Math.max(1,...D.map(d=>d.inq)), ma=Math.max(1,...D.map(d=>d.act));
+  el.innerHTML='<h4>📈 최근 8주 추이 <span class="muted" style="font-weight:500;font-size:11.5px">— 광고비(보라) · 문의(초록) · 개통(주황)</span></h4>'
+   +'<div class="nv-tr">'+D.map(d=>`<div class="nv-trc">
+      <div class="nv-trb">
+        <i style="height:${d.cost/mc*100}%;background:#6d3ecb" title="광고비 ${d.cost.toLocaleString()}원"></i>
+        <i style="height:${d.inq/mi*100}%;background:#2e9e6b" title="문의 ${d.inq}건"></i>
+        <i style="height:${d.act/ma*100}%;background:#e08a2b" title="개통 ${d.act}건"></i>
+      </div><div class="nv-trl">${d.wk.slice(5).replace('-','/')}</div></div>`).join('')+'</div>'
+   +`<div class="muted" style="font-size:11.5px;margin-top:8px">이번 주 광고비 <b>${D[7].cost.toLocaleString()}원</b> · 문의 <b>${D[7].inq}건</b> · 개통 <b>${D[7].act}건</b></div>`;
+}
+function nvRenderStd(){
+  const el=document.getElementById('nv-std');
+  const F=[['minCost','최소 광고 소진금액(원)',1],['minInq','최소 문의수(건)',1],['upInq','증액추천 문의수(건)',1],
+           ['cpiCap','1문의당 비용 상한(원)',1],['cvr','문의→개통률 기준(%)',100],['upCvr','증액추천 개통률(%)',100],
+           ['cpaCap','1개통당 비용 상한(원)',1],['ctrRef','CTR 참고 기준(%)',100]];
+  el.innerHTML='<h4>⚙ 네이버 광고 진단 기준</h4><div class="sub">여기 숫자를 바꾸면 아래 자동판정이 즉시 바뀝니다. 모든 기기에 함께 저장돼요.</div>'
+   +'<div class="nv-stdgrid">'+F.map(f=>`<div><label>${f[1]}</label><input type="number" step="any" data-std="${f[0]}" data-mul="${f[2]}" value="${NVSTD[f[0]]*f[2]}"></div>`).join('')+'</div>'
+   +'<div style="margin-top:12px;display:flex;gap:8px"><button class="btn sm" id="nv-std-save">저장</button><button class="btn ghost sm" id="nv-std-reset">기본값으로</button></div>';
+  el.querySelector('#nv-std-save').onclick=()=>{
+    el.querySelectorAll('input[data-std]').forEach(i=>{ const m=Number(i.dataset.mul)||1; const v=Number(i.value); if(!isNaN(v)) NVSTD[i.dataset.std]=v/m; });
+    nvStdSave(); nvRenderAll(); alert('진단 기준을 저장했어요.');
+  };
+  el.querySelector('#nv-std-reset').onclick=()=>{ NVSTD=Object.assign({},NV_DEF); nvStdSave(); nvRenderStd(); nvRenderAll(); };
+}
+function nvRenderAll(){ nvFillWeeks(); nvRenderKPI(); nvRenderJudge();
+  const ae=document.activeElement;
+  if(!(ae&&ae.classList&&ae.classList.contains('nvi'))) nvRenderTable();  /* 입력 중이면 표는 건드리지 않음 */
+  nvRenderTrend(); }
+
+/* ---------- 엑셀 / CSV ---------- */
+const NV_HEAD=['매장명'].concat(NV_IN.map(c=>c[1]));
+function nvAliases(h){
+  h=String(h).replace(/\s/g,'');
+  const map={pl:['플레이스순위','순위','플레이스'],bl:['블로그수','블로그'],rv:['리뷰수','리뷰'],
+    cost:['광고소진금액','광고비','소진금액','네이버광고소진금액'],imp:['노출','광고노출','노출수'],
+    clk:['클릭','광고클릭','클릭수'],talk:['톡톡문의','톡톡'],call:['전화문의','네이버전화문의','전화'],
+    act:['개통건수','개통','네이버개통건수'],rev:['네이버수익','수익']};
+  for(const k in map){ if(map[k].some(a=>h===a||h.indexOf(a)>=0)) return k; }
+  return null;
+}
+function nvDownload(name,blob){ const u=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=u; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(u),1500); }
+function nvTemplate(){
+  const wk=nvCurWk(), arr=nvList();
+  const rows=[NV_HEAD].concat(arr.map(s=>{ const r=nvRow(s,wk)||{};
+    return [s.name].concat(NV_IN.map(c=>r[c[0]]==null?'':r[c[0]])); }));
+  if(window.XLSX){ const ws=XLSX.utils.aoa_to_sheet(rows); const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'네이버광고'); XLSX.writeFile(wb,`네이버광고_${wk}.xlsx`); return; }
+  const csv='﻿'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  nvDownload(`네이버광고_${wk}.csv`,new Blob([csv],{type:'text/csv;charset=utf-8'}));
+}
+function nvApplyRows(rows){
+  if(!rows.length){alert('내용이 없어요');return}
+  let hi=rows.findIndex(r=>r.some(c=>/매장|지점/.test(String(c))));
+  if(hi<0) hi=0;
+  const head=rows[hi].map(x=>String(x).trim());
+  let nameCol=head.findIndex(h=>/매장|지점/.test(h)); if(nameCol<0)nameCol=0;
+  const cols={}; head.forEach((h,i)=>{ if(i===nameCol)return; const k=nvAliases(h); if(k&&cols[k]==null) cols[k]=i; });
+  if(!Object.keys(cols).length){ alert('알아볼 수 있는 항목이 없어요.\n양식 받기로 받은 파일 형식을 그대로 써 주세요.'); return; }
+  const wk=nvCurWk(); const norm=x=>String(x||'').replace(/\s/g,'');
+  let ok=0, miss=[];
+  rows.slice(hi+1).forEach(r=>{
+    const nm=norm(r[nameCol]); if(!nm)return;
+    const s=stores.find(x=>norm(x.name)===nm) || stores.find(x=>norm(x.name).indexOf(nm)>=0||nm.indexOf(norm(x.name))>=0);
+    if(!s){ miss.push(r[nameCol]); return; }
+    const row=nvEnsure(s,wk); let touched=false;
+    for(const k in cols){ const v=String(r[cols[k]]==null?'':r[cols[k]]).trim();
+      if(v===''){continue} const n=nvN(v); if(n==null)continue; row[k]=n; touched=true; }
+    if(touched) ok++;
+  });
+  save(); nvRenderAll();
+  alert(`${nvLabel(wk)}\n\n반영: ${ok}개 매장`+(miss.length?`\n매칭 실패(${miss.length}): ${miss.slice(0,8).join(', ')}${miss.length>8?' 외':''}`:''));
+}
+function nvReadFile(f){
+  const ext=(f.name.split('.').pop()||'').toLowerCase();
+  if(ext==='xlsx'||ext==='xls'){
+    if(!window.XLSX){ alert('엑셀 변환 모듈을 불러오지 못했어요. 인터넷 연결을 확인하거나, 엑셀에서 CSV로 저장해 올려주세요.'); return; }
+    const fr=new FileReader();
+    fr.onload=e=>{ const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      nvApplyRows(XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:''})); };
+    fr.readAsArrayBuffer(f);
+  }else{
+    const fr=new FileReader();
+    fr.onload=e=>nvApplyRows(parseCSV(e.target.result));
+    fr.readAsText(f,'utf-8');
+  }
+}
+function nvExport(){
+  const wk=nvCurWk(), pw=nvShift(wk,-1);
+  const H=['매장명','담당','구분','플레이스순위','순위증감','리뷰수','리뷰증감','광고비','노출','클릭','CTR','CPC','톡톡','전화','문의','문의당비용','개통','개통률','개통당비용','네이버수익','ROAS','자동판정','우선조치'];
+  const rows=[H].concat(nvList().map(s=>{ const c=nvCalc(nvRow(s,wk),nvRow(s,pw)), j=nvJudge(c);
+    return [s.name,svOf(s)||'',s.gubun||'',c.pl??'',c.dpl??'',c.rv??'',c.drv??'',c.cost,c.imp,c.clk,
+      c.ctr==null?'':(c.ctr*100).toFixed(2)+'%',c.cpc==null?'':Math.round(c.cpc),c.talk,c.call,c.inq,
+      c.cpi==null?'':Math.round(c.cpi),c.act,c.cvr==null?'':(c.cvr*100).toFixed(1)+'%',
+      c.cpa==null?'':Math.round(c.cpa),c.rev,c.roas==null?'':c.roas.toFixed(2),j.t,j.a]; }));
+  if(window.XLSX){ const ws=XLSX.utils.aoa_to_sheet(rows); const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'네이버광고진단'); XLSX.writeFile(wb,`네이버광고진단_${wk}.xlsx`); return; }
+  const csv='﻿'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  nvDownload(`네이버광고진단_${wk}.csv`,new Blob([csv],{type:'text/csv;charset=utf-8'}));
+}
+
+/* ---------- 이벤트 ---------- */
+(function nvInit(){
+  const $=id=>document.getElementById(id);
+  document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+    const mb=document.querySelector('.monthbar');
+    if(t.dataset.tab==='naver'){ if(mb){ mb.style.display=''; mb.classList.add('nv-hidem'); } nvRenderAll(); }
+    else if(mb) mb.classList.remove('nv-hidem');
+  }));
+  document.querySelectorAll('.gvsw button, .svsw button').forEach(b=>b.addEventListener('click',()=>{
+    if($('panel-naver') && $('panel-naver').classList.contains('active')) nvRenderAll(); }));
+  $('nv-week').addEventListener('change',e=>{ nvWk=e.target.value; nvRenderAll(); });
+  $('nv-addweek').onclick=()=>{
+    const d=prompt('새 주차를 만들 날짜를 입력하세요 (YYYY-MM-DD). 그 주 월요일로 자동 정리됩니다.', nvYmd(new Date()));
+    if(!d)return; const wk=nvMonday(d); if(isNaN(new Date(wk+'T12:00:00'))){alert('날짜 형식을 확인해 주세요');return}
+    nvWk=wk; nvMode='edit';
+    document.querySelectorAll('[data-nvv]').forEach(b=>b.classList.toggle('active',b.dataset.nvv==='edit'));
+    nvRenderAll();
+  };
+  $('nv-copyprev').onclick=()=>{
+    const wk=nvCurWk(), pw=nvShift(wk,-1); let n=0;
+    nvList().forEach(s=>{ const p=nvRow(s,pw); if(!p)return; const r=nvEnsure(s,wk);
+      ['pl','bl','rv'].forEach(k=>{ if((r[k]==null||r[k]==='') && p[k]!=null) { r[k]=p[k]; } });
+      if(Object.keys(r).length>1) n++; });
+    save(); nvRenderAll();
+    alert(n?`전주(${nvLabel(pw)})의 플레이스순위·블로그수·리뷰수를 ${n}개 매장에 채웠어요.\n달라진 값만 고쳐 주세요.`:'전주 데이터가 없어요.');
+  };
+  document.querySelectorAll('[data-nvv]').forEach(b=>b.onclick=()=>{
+    nvMode=b.dataset.nvv; document.querySelectorAll('[data-nvv]').forEach(x=>x.classList.toggle('active',x===b));
+    nvRenderTable(); });
+  $('nv-tpl').onclick=nvTemplate;
+  $('nv-exp').onclick=nvExport;
+  $('nv-up').onclick=()=>$('nv-file').click();
+  $('nv-file').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) nvReadFile(f); e.target.value=''; });
+  $('nv-stdbtn').onclick=()=>{ const el=$('nv-std'); const show=el.style.display==='none';
+    el.style.display=show?'':'none'; if(show) nvRenderStd(); };
+})();
+
+/* refresh 훅 — 클라우드 로드 후 자동 갱신 */
+const __nvRefresh=refresh;
+refresh=function(){ __nvRefresh();
+  const p=document.getElementById('panel-naver');
+  if(p && p.classList.contains('active')) nvRenderAll(); };
+setTimeout(()=>{ nvStdLoad().then(()=>{
+  const p=document.getElementById('panel-naver');
+  if(p && p.classList.contains('active')) nvRenderAll(); }); }, 2500);
+
 </script>
 </body>
 </html>
