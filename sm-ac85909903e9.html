@@ -687,7 +687,7 @@ function save(){ localStorage.setItem(KEY,JSON.stringify(stores)); scheduleCloud
 
 /* ============ HELPERS ============ */
 let selMonth=null;
-const CHAN=[{k:'ms',l:'무선'},{k:'ws',l:'유선'},{k:'us',l:'유심'},{k:'al',l:'알뜰'},{k:'rt',l:'렌탈'}];
+const CHAN=[{k:'ms',l:'무선'},{k:'mn',l:'MNP'},{k:'ws',l:'유선'},{k:'us',l:'유심'},{k:'al',l:'알뜰'},{k:'rt',l:'렌탈'}];
 /* ---- 슈퍼바이저(SV) 배정: 라인(상부점+하부점) 단위 + 개별 예외 + 매장별 수동지정(s.sv) 우선 ---- */
 const SV_LIST=['백지현','김진석','임병호'];
 const SV_LINES={
@@ -1117,7 +1117,7 @@ function renderPerfTrend(s){
   const M=(s.perf||[]).map(p=>p.ym).filter(Boolean).sort();
   if(M.length<2){ el.innerHTML=''; return; }
   const sales=[{name:'매출',color:'#6d3ecb',dot:true,data:M.map(ym=>{const p=pAt(s,ym);return p?Number(p.sales)||0:null;})}];
-  const chans=[{k:'ws',l:'유선',c:'#2e9e6b'},{k:'us',l:'유심',c:'#e08a2b'},{k:'al',l:'알뜰',c:'#3b82c4'},{k:'rt',l:'렌탈',c:'#d64f6a'}];
+  const chans=[{k:'mn',l:'MNP',c:'#8b5cf6'},{k:'ws',l:'유선',c:'#2e9e6b'},{k:'us',l:'유심',c:'#e08a2b'},{k:'al',l:'알뜰',c:'#3b82c4'},{k:'rt',l:'렌탈',c:'#d64f6a'}];
   const cs=chans.map(c=>({name:c.l,color:c.c,dot:true,data:M.map(ym=>{const p=pAt(s,ym);return p?Number(p[c.k])||0:null;})}));
   el.innerHTML='<div style="font-size:12px;font-weight:800;color:var(--purple-d);margin:8px 0 3px">📈 매출 추이</div>'
     + lineChartSVG(M,sales,{h:150,fmt:v=>v>=10000?(v/10000).toFixed(1)+'억':Math.round(v)+'만'})
@@ -1201,7 +1201,7 @@ function renderChanTrend(){
   const el=document.getElementById('chan-trend'); if(!el)return;
   const ym=curMonth();
   const months=allMonths();
-  const chans=[{k:'ms',l:'무선',c:'#6d3ecb'},{k:'ws',l:'유선',c:'#2e9e6b'},{k:'us',l:'유심',c:'#e08a2b'},{k:'al',l:'알뜰',c:'#3b82c4'},{k:'rt',l:'렌탈',c:'#d64f6a'}];
+  const chans=[{k:'ms',l:'무선',c:'#6d3ecb'},{k:'mn',l:'MNP',c:'#8b5cf6'},{k:'ws',l:'유선',c:'#2e9e6b'},{k:'us',l:'유심',c:'#e08a2b'},{k:'al',l:'알뜰',c:'#3b82c4'},{k:'rt',l:'렌탈',c:'#d64f6a'}];
   const legend='<div class="legend" style="margin:2px 0 10px">'+chans.map(c=>`<span><i class="dot" style="background:${c.c}"></i>${c.l}</span>`).join('')+'</div>';
   // 월별 채널 판매량 추이 (직영/가맹 각각 · 활성매장 합계) — 월별 매출 추이와 같은 라인 스타일
   function trend(gubun){
@@ -1395,7 +1395,7 @@ function renderReport(){
 
 /* ============ RANK ============ */
 let rankMetric='sales';
-const RANK_METRICS=[{k:'sales',l:'💰 매출',ch:false},{k:'act',l:'📱 총개통',ch:false},{k:'mg',l:'💵 평균마진',ch:false},{k:'ms',l:'무선',ch:true},{k:'ws',l:'유선',ch:true},{k:'us',l:'유심',ch:true},{k:'al',l:'알뜰',ch:true},{k:'rt',l:'렌탈',ch:true}];
+const RANK_METRICS=[{k:'sales',l:'💰 매출',ch:false},{k:'act',l:'📱 총개통',ch:false},{k:'mg',l:'💵 평균마진',ch:false},{k:'ms',l:'무선',ch:true},{k:'ws',l:'유선',ch:true},{k:'us',l:'유심',ch:true},{k:'mn',l:'MNP',ch:true},{k:'al',l:'알뜰',ch:true},{k:'rt',l:'렌탈',ch:true}];
 function renderRank(){
   const ym=curMonth();
   document.getElementById('rank-date').textContent=(ym?('기준월 '+ym):'실적 없음')+' · '+(gubunView==='all'?'전체':gubunView)+' 담당'+(svView!=='all'?(' · 👤'+svView+' SV'):'');
@@ -1476,7 +1476,7 @@ function importSales(text, fname){
   const ns=x=>String(x).replace(/\s/g,'');
   const eq=h=>head.findIndex(x=>ns(x)===h);
   const inc=(...k)=>head.findIndex(x=>k.some(y=>ns(x).includes(y)));
-  const ci={name:inc('지점명','매장명'),act:inc('총개통'),ms:eq('무선'),wr:eq('웨어러블'),us:inc('MNP'),ws:eq('유선'),al:eq('알뜰'),rt:eq('렌탈'),mg:inc('평균마진','마진')};
+  const ci={name:inc('지점명','매장명'),act:inc('총개통'),ms:eq('무선'),wr:eq('웨어러블'),us:eq('유심'),mn:inc('MNP'),ws:eq('유선'),al:eq('알뜰'),rt:eq('렌탈'),mg:inc('평균마진','마진')};
   const cHu=head.findIndex(x=>ns(x).includes('세후')), cJn=head.findIndex(x=>ns(x).includes('세전')), cTot=head.findIndex(x=>ns(x).includes('총매출'));
   if(ci.name<0||(cHu<0&&cJn<0&&cTot<0)){alert('CSV에서 지점명/총매출 열을 찾지 못했어요.');return;}
   const num=v=>Number(String(v||'').replace(/[^0-9.-]/g,''))||0;
@@ -1494,7 +1494,7 @@ function importSales(text, fname){
     const r=rows[i]; const raw=(r[ci.name]||'').trim(); if(!raw||/지점명/.test(raw))continue;
     const st=matchStore(idx,raw); if(!st){unmatched.push(raw);continue;}
     const e={ym,sales:Math.round(rev(r)/10000),act:num(ci.act>=0?r[ci.act]:0)};
-    ['ms','wr','us','ws','al','rt','mg'].forEach(k=>{ if(ci[k]>=0){const v=num(r[ci[k]]); if(v)e[k]=v;} });
+    ['ms','wr','us','mn','ws','al','rt','mg'].forEach(k=>{ if(ci[k]>=0){const v=num(r[ci[k]]); if(v)e[k]=v;} });
     st.perf=(st.perf||[]).filter(p=>p.ym!==ym); st.perf.push(e); st.perf.sort((a,b)=>a.ym.localeCompare(b.ym));
     matched++;
   }
@@ -1600,7 +1600,7 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
   //    매번 새로 만듭니다. 매출 CSV 를 올리면 집계표에 바로 반영됩니다.
   var D_BASE = D;
   var RN = ['대구/경북','수도권','기타지역'];
-  var CH = [{i:4,t:'무선'},{i:5,t:'유심'},{i:6,t:'웨어러블'},{i:7,t:'유선'},{i:8,t:'알뜰'},{i:9,t:'렌탈'}];
+  var CH = [{i:4,t:'무선'},{i:5,t:'유심'},{i:6,t:'웨어러블'},{i:7,t:'유선'},{i:8,t:'알뜰'},{i:9,t:'렌탈'},{i:12,t:'MNP'}];
   var st = {m:0, g:'0', r:'', sv:'', q:'', unit:'won', sk:11, sd:-1, zon:true, only0:false};
   var SUBK = [6, 8, 9];                    // 웨어러블 · 알뜰 · 렌탈 (열 인덱스)
   var SUBN = { 6:'웨어러블', 8:'알뜰', 9:'렌탈' };
@@ -1681,18 +1681,18 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
       (s.perf||[]).forEach(function(p){
         var k = mKey(p && p.ym); if(k===null) return;
         var n  = function(v){ return Number(v)||0 };
-        var ms=n(p.ms), us=n(p.us), wr=n(p.wr), ws=n(p.ws), al=n(p.al), rt=n(p.rt);
+        var ms=n(p.ms), us=n(p.us), wr=n(p.wr), ws=n(p.ws), al=n(p.al), rt=n(p.rt), mn=n(p.mn);
         var tot = n(p.act) || (ms+us+wr+ws+al+rt);
         var won = Math.round(n(p.sales) * 10000);           // sales: 만원 단위
         if(!won && n(p.mg) && tot) won = Math.round(n(p.mg) * tot);  // 보조: 건당매출 × 개통
-        out.push([k, g, rg, nm, ms, us, wr, ws, al, rt, tot, won]);
+        out.push([k, g, rg, nm, ms, us, wr, ws, al, rt, tot, won, mn]);
       });
     });
     return out;
   }
   // 클라우드 데이터가 아직 없을 때 쓰는 백업(2026-01~06)
   function baseRows(){
-    return D_BASE.map(function(r){ var c=r.slice(); c[0] = 2026*12 + (r[0]-1); return c; });
+    return D_BASE.map(function(r){ var c=r.slice(); c[0] = 2026*12 + (r[0]-1); if(c.length<13) c[12]=0; return c; });
   }
 
   var months = [], D_months = months, _userPickedMonth = false;
@@ -1737,7 +1737,7 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
     });
   }
   function sum(list){
-    var o={tot:0,sales:0,c:[0,0,0,0,0,0]};
+    var o={tot:0,sales:0,c:[0,0,0,0,0,0,0]};
     list.forEach(function(r){ CH.forEach(function(c,i){o.c[i]+=r[c.i]}); o.tot+=r[10]; o.sales+=r[11]; });
     return o;
   }
