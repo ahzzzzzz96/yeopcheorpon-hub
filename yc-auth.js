@@ -168,6 +168,8 @@
       '#ycbar button{border:none;border-radius:999px;background:#efeaf9;color:#57399b;font:inherit;' +
       'font-size:11px;padding:4px 10px;cursor:pointer;margin:0;width:auto}' +
       '#ycbar button:hover{background:#ddd2f5}' +
+      '#ycbar button.key{background:#7c5cc4;color:#fff}' +
+      '#ycbar button.key:hover{background:#57399b}' +
       /* 비밀번호 변경 창 */
       '#ycpwm{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;' +
       'padding:20px;background:rgba(30,20,50,.55);' +
@@ -262,10 +264,22 @@
     var bar = document.createElement('div');
     bar.id = 'ycbar';
     var who = (info && (info.name || info.email)) || '';
-    bar.innerHTML = '<span>' + String(who).replace(/[<>&]/g, '') + '</span>' +
-      '<button id="ycb-pw">비밀번호 변경</button>' +
-      '<button id="ycb-out">로그아웃</button>';
+    var isAdmin = !!(info && info.role === 'admin');
+    var onAdmin = /admin\.html$/i.test(location.pathname);
+
+    var html = '<span>' + String(who).replace(/[<>&]/g, '') + '</span>';
+    // 계정 관리는 관리자에게만 보인다 (viewer 에게는 버튼 자체가 생기지 않는다)
+    if (isAdmin && !onAdmin) html += '<button class="key" id="ycb-adm">계정 관리</button>';
+    if (onAdmin)             html += '<button id="ycb-home">← 허브로</button>';
+    html += '<button id="ycb-pw">비밀번호 변경</button>' +
+            '<button id="ycb-out">로그아웃</button>';
+    bar.innerHTML = html;
     document.body.appendChild(bar);
+
+    var a = bar.querySelector('#ycb-adm');
+    if (a) a.onclick = function () { location.href = 'admin.html'; };
+    var hm = bar.querySelector('#ycb-home');
+    if (hm) hm.onclick = function () { location.href = 'index.html'; };
     bar.querySelector('#ycb-pw').onclick = function () { passwordUI(info); };
     bar.querySelector('#ycb-out').onclick = function () { logout(); };
   }
