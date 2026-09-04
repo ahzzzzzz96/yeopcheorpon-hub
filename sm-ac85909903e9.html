@@ -868,6 +868,26 @@ async function load(){
 }
 function save(){ localStorage.setItem(KEY,JSON.stringify(stores)); scheduleCloud(); }
 
+/* ── 1회성 데이터 보정 ──────────────────────────────────────────────
+   매출취합자료의 '중고유심(MNP)' 열이 예전 코드에서 MNP 로 잘못 읽혀 들어간 건을
+   원래 자리인 '유심' 으로 되돌립니다. (유심 값이 비어 있고 MNP 만 있는 실적 + 수기입력이 아닌 것)
+   집계표의 [✍ MNP 입력] 으로 직접 적은 값(mnM 표시)은 절대 건드리지 않습니다. */
+const MIG_USIM_KEY='yc_mig_usim_v1';
+function migrateUsim(){
+  let done=false; try{ done = localStorage.getItem(MIG_USIM_KEY)==='1'; }catch(e){}
+  if(done) return 0;
+  let n=0;
+  stores.forEach(s=>(s.perf||[]).forEach(p=>{
+    if(p.mnM) return;                                     // 수기 입력한 MNP 는 제외
+    if(p.mn!=null && p.mn!=='' && (p.us==null || p.us==='')){
+      p.us = Number(p.mn)||0; delete p.mn; n++;
+    }
+  }));
+  try{ localStorage.setItem(MIG_USIM_KEY,'1'); }catch(e){}
+  if(n) save();
+  return n;
+}
+
 /* ============ HELPERS ============ */
 let selMonth=null;
 /* 총개통 구성비용 채널(MNP는 무선의 하위 항목이라 여기서 제외 — 아래에서 무선대비로 따로 표시) */
@@ -1690,7 +1710,7 @@ function importSales(text, fname){
     const e={ym,sales:Math.round(rev(r)/10000),act:num(ci.act>=0?r[ci.act]:0)};
     ['ms','wr','us','mn','ws','al','rt','mg'].forEach(k=>{ if(ci[k]>=0){const v=num(r[ci[k]]); if(v)e[k]=v;} });
     const _old=(st.perf||[]).find(p=>p.ym===ym);            // 수기 입력한 MNP(번호이동)는 덮어쓰지 않고 보존
-    if(_old && _old.mn!=null && _old.mn!=='') e.mn=_old.mn;
+    if(_old && _old.mn!=null && _old.mn!==''){ e.mn=_old.mn; if(_old.mnM) e.mnM=_old.mnM; }
     st.perf=(st.perf||[]).filter(p=>p.ym!==ym); st.perf.push(e); st.perf.sort((a,b)=>a.ym.localeCompare(b.ym));
     matched++;
   }
@@ -1762,7 +1782,7 @@ function loadDemo(){
 
 /* ============ INIT ============ */
 function refresh(){ fillMonths(); fillRegionFilter(); renderStores(); if(document.getElementById('panel-report').classList.contains('active')) renderReport(); if(document.getElementById('panel-rank').classList.contains('active')) renderRank(); if(window.aggSync) window.aggSync(); }
-async function boot(){ setStatus('sync'); refresh(); await load(); refresh(); }
+async function boot(){ setStatus('sync'); refresh(); await load(); migrateUsim(); refresh(); }
 
 /* ---- 접속 잠금 (비밀번호 확인 전에는 데이터를 불러오지 않음) ---- */
 const GATE={key:'yc_gate_v1', h:2088324431};
@@ -2170,8 +2190,8 @@ function gHash(s){ let h=5381; s=String(s); for(let i=0;i<s.length;i++){ h=((h<<
         var pf=null, arr=s0.perf||[];
         for(var j=0;j<arr.length;j++){ if(arr[j].ym===ym){ pf=arr[j]; break; } }
         if(!pf) return;
-        if(inp.value===''){ delete pf.mn; }
-        else { pf.mn = Math.max(0, Math.round(Number(inp.value)||0)); hit++; }
+        if(inp.value===''){ delete pf.mn; delete pf.mnM; }
+        else { pf.mn = Math.max(0, Math.round(Number(inp.value)||0)); pf.mnM = 1; hit++; }
       });
       try{ save(); }catch(e){}
       try{ if(typeof refresh==='function') refresh(); }catch(e){}
