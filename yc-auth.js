@@ -115,7 +115,7 @@
 
   /* ---- 비밀번호 변경 ---- */
   async function changePassword(newPw) {
-    if (!newPw || String(newPw).length < 10) throw new Error('비밀번호는 10자 이상으로 정해 주세요.');
+    if (!newPw || String(newPw).length < 8) throw new Error('새 비밀번호는 8자 이상이어야 합니다.');
     var t = await token();
     var r = await fetch(SB_URL + '/auth/v1/user', {
       method: 'PUT',
@@ -159,7 +159,34 @@
       '#ycgate .err{color:#d64f6a;font-size:12.5px;font-weight:700;margin-top:10px;min-height:17px}' +
       '#ycgate .lnk{background:none;color:#8b7fa8;font-size:12px;font-weight:700;margin-top:6px;padding:6px}' +
       '#ycgate .lnk:hover{background:none;color:#57399b;text-decoration:underline}' +
-      'body.ycgated{overflow:hidden}';
+      'body.ycgated{overflow:hidden}' +
+      /* 로그인 후 오른쪽 위 막대 */
+      '#ycbar{position:fixed;right:10px;top:10px;z-index:99998;display:flex;gap:6px;align-items:center;' +
+      'background:rgba(255,255,255,.94);border:1px solid #e6e0f2;border-radius:999px;padding:5px 6px 5px 12px;' +
+      'font-size:11.5px;font-weight:700;color:#57399b;box-shadow:0 2px 10px rgba(0,0,0,.08);' +
+      'font-family:system-ui,-apple-system,\'Malgun Gothic\',sans-serif}' +
+      '#ycbar button{border:none;border-radius:999px;background:#efeaf9;color:#57399b;font:inherit;' +
+      'font-size:11px;padding:4px 10px;cursor:pointer;margin:0;width:auto}' +
+      '#ycbar button:hover{background:#ddd2f5}' +
+      /* 비밀번호 변경 창 */
+      '#ycpwm{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;' +
+      'padding:20px;background:rgba(30,20,50,.55);' +
+      'font-family:system-ui,-apple-system,\'Malgun Gothic\',sans-serif}' +
+      '#ycpwm .b{background:#fff;border-radius:18px;padding:26px 24px;max-width:340px;width:100%;' +
+      'box-shadow:0 12px 40px rgba(0,0,0,.3);box-sizing:border-box}' +
+      '#ycpwm h2{font-size:16px;font-weight:900;color:#57399b;margin:0 0 4px;text-align:center}' +
+      '#ycpwm p{font-size:12px;color:#8b7fa8;margin:0 0 14px;text-align:center;line-height:1.6}' +
+      '#ycpwm input{width:100%;padding:12px 13px;margin-top:8px;border:2px solid #e6e0f2;border-radius:10px;' +
+      'font-size:14px;font-family:inherit;color:#2c2340;box-sizing:border-box}' +
+      '#ycpwm input:focus{outline:none;border-color:#7c5cc4}' +
+      '#ycpwm .row{display:flex;gap:8px;margin-top:14px}' +
+      '#ycpwm .row button{flex:1;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:800;' +
+      'font-family:inherit;cursor:pointer}' +
+      '#ycpwm .ok{background:#7c5cc4;color:#fff}' +
+      '#ycpwm .ok:hover{background:#57399b}' +
+      '#ycpwm .ok:disabled{opacity:.6;cursor:default}' +
+      '#ycpwm .no{background:#f0edf7;color:#6b5f85}' +
+      '#ycpwm .msg{font-size:12.5px;font-weight:700;margin-top:10px;min-height:17px;text-align:center}';
     document.head.appendChild(css);
 
     var g = document.createElement('div');
@@ -173,7 +200,6 @@
       '<input type="password" id="ycg-pw" placeholder="비밀번호" autocomplete="current-password">' +
       '<button id="ycg-go">로그인</button>' +
       '<div class="err" id="ycg-err"></div>' +
-      '<button class="lnk" id="ycg-ch">비밀번호 변경</button>' +
       '</div>';
 
     function mount() {
@@ -185,6 +211,7 @@
     function open(info) {
       try { g.remove(); } catch (e) {}
       document.body.classList.remove('ycgated');
+      showBar(info || me);
       onReady(info || me);
     }
 
@@ -193,7 +220,6 @@
       var pw = g.querySelector('#ycg-pw');
       var go = g.querySelector('#ycg-go');
       var err = g.querySelector('#ycg-err');
-      var ch = g.querySelector('#ycg-ch');
 
       async function submit() {
         err.textContent = '';
@@ -217,22 +243,6 @@
         });
       });
 
-      ch.onclick = async function () {
-        err.textContent = '';
-        if (!em.value || !pw.value) { err.textContent = '먼저 이메일과 현재 비밀번호를 넣어 주세요.'; return; }
-        var np = prompt('새 비밀번호 (10자 이상)');
-        if (!np) return;
-        try {
-          await login(em.value, pw.value);
-          await changePassword(np);
-          err.style.color = '#2e9e6b';
-          err.textContent = '변경했습니다. 새 비밀번호로 로그인해 주세요.';
-          dropSess(); pw.value = '';
-        } catch (e) {
-          err.style.color = '#d64f6a';
-          err.textContent = e.message || '변경에 실패했습니다.';
-        }
-      };
 
       setTimeout(function () { (em.value ? pw : em).focus(); }, 120);
     }
@@ -246,6 +256,80 @@
     }
   }
 
+  /* ---- 로그인 후 오른쪽 위 막대 (이름 · 비밀번호 변경 · 로그아웃) ---- */
+  function showBar(info) {
+    if (document.getElementById('ycbar')) return;
+    var bar = document.createElement('div');
+    bar.id = 'ycbar';
+    var who = (info && (info.name || info.email)) || '';
+    bar.innerHTML = '<span>' + String(who).replace(/[<>&]/g, '') + '</span>' +
+      '<button id="ycb-pw">비밀번호 변경</button>' +
+      '<button id="ycb-out">로그아웃</button>';
+    document.body.appendChild(bar);
+    bar.querySelector('#ycb-pw').onclick = function () { passwordUI(info); };
+    bar.querySelector('#ycb-out').onclick = function () { logout(); };
+  }
+
+  /* ---- 비밀번호 변경 창 ---- */
+  function passwordUI(info) {
+    if (document.getElementById('ycpwm')) return;
+    var email = (info && info.email) || (me && me.email) || '';
+
+    var m = document.createElement('div');
+    m.id = 'ycpwm';
+    m.innerHTML =
+      '<div class="b">' +
+      '<h2>비밀번호 변경</h2>' +
+      '<p>' + String(email).replace(/[<>&]/g, '') + '</p>' +
+      '<input type="password" id="ycp-cur" placeholder="현재 비밀번호" autocomplete="current-password">' +
+      '<input type="password" id="ycp-new" placeholder="새 비밀번호 (8자 이상)" autocomplete="new-password">' +
+      '<input type="password" id="ycp-re"  placeholder="새 비밀번호 다시 입력" autocomplete="new-password">' +
+      '<div class="msg" id="ycp-msg"></div>' +
+      '<div class="row"><button class="no" id="ycp-no">취소</button>' +
+      '<button class="ok" id="ycp-ok">변경하기</button></div>' +
+      '</div>';
+    document.body.appendChild(m);
+
+    var cur = m.querySelector('#ycp-cur'), nw = m.querySelector('#ycp-new'),
+        re = m.querySelector('#ycp-re'), msg = m.querySelector('#ycp-msg'),
+        ok = m.querySelector('#ycp-ok');
+
+    function close() { try { m.remove(); } catch (e) {} }
+    m.querySelector('#ycp-no').onclick = close;
+    m.onclick = function (e) { if (e.target === m) close(); };
+
+    async function submit() {
+      msg.style.color = '#d64f6a';
+      if (!cur.value) { msg.textContent = '현재 비밀번호를 입력해 주세요.'; cur.focus(); return; }
+      if (nw.value.length < 8) { msg.textContent = '새 비밀번호는 8자 이상이어야 합니다.'; nw.focus(); return; }
+      if (nw.value !== re.value) { msg.textContent = '새 비밀번호가 서로 다릅니다.'; re.focus(); return; }
+      if (nw.value === cur.value) { msg.textContent = '지금 쓰는 비밀번호와 같습니다.'; nw.focus(); return; }
+
+      ok.disabled = true; ok.textContent = '바꾸는 중…';
+      msg.style.color = '#8b7fa8'; msg.textContent = '';
+      try {
+        await login(email, cur.value);       // 현재 비밀번호가 맞는지 확인
+        await changePassword(nw.value);      // 새 비밀번호로 교체
+        msg.style.color = '#2e9e6b';
+        msg.textContent = '변경했습니다.';
+        setTimeout(close, 1200);
+      } catch (e) {
+        msg.style.color = '#d64f6a';
+        msg.textContent = (e && e.message) ? e.message : '변경하지 못했습니다.';
+      } finally {
+        ok.disabled = false; ok.textContent = '변경하기';
+      }
+    }
+
+    ok.onclick = submit;
+    [cur, nw, re].forEach(function (el) {
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); submit(); }
+      });
+    });
+    setTimeout(function () { cur.focus(); }, 100);
+  }
+
   global.YC = {
     login: login,
     logout: logout,
@@ -254,6 +338,7 @@
     whoami: whoami,
     changePassword: changePassword,
     guard: guard,
+    passwordUI: passwordUI,
     get me() { return me; }
   };
 })(window);
