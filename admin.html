@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>계정 관리 · 옆커폰 허브</title>
+<script src="yc-auth.js"></script>
+<style>
+  :root{--purple:#7c5cc4;--purple-d:#57399b;--ink:#2c2340;--muted:#8b7fa8;
+        --line:#e6e0f2;--bg:#faf9fd;--ok:#2e9e6b;--bad:#d64f6a;--warn:#d99a1e}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:system-ui,-apple-system,'Malgun Gothic','맑은 고딕',sans-serif;font-size:14px}
+  .wrap{max-width:920px;margin:0 auto;padding:64px 16px 60px}
+  h1{font-size:21px;font-weight:900;color:var(--purple-d);margin:0 0 4px}
+  .sub{font-size:12.5px;color:var(--muted);margin-bottom:22px;line-height:1.7}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;margin-bottom:16px}
+  .card h2{font-size:15px;font-weight:900;margin:0 0 12px;color:var(--purple-d);display:flex;align-items:center;gap:7px}
+  .card h2 .n{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:700}
+
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:9px 8px;text-align:left;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+  th{font-size:11.5px;color:var(--muted);font-weight:800;white-space:nowrap}
+  td.nm{font-weight:800}
+  .em{color:var(--muted);font-size:11.5px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:800}
+  .on{background:#e6f7ee;color:var(--ok)}
+  .off{background:#fdeaee;color:var(--bad)}
+  .adm{background:#f3ecfd;color:var(--purple-d)}
+  .vw{background:#f0f1f4;color:#6b7280}
+  .act{display:flex;gap:5px;justify-content:flex-end}
+
+  button{border:none;border-radius:8px;font:inherit;font-weight:800;cursor:pointer;padding:7px 11px;font-size:12px}
+  .b1{background:var(--purple);color:#fff}    .b1:hover{background:var(--purple-d)}
+  .b2{background:#f0edf7;color:#6b5f85}       .b2:hover{background:#e2dcf0}
+  .bw{background:#fdf1dd;color:#9a6b06}       .bw:hover{background:#f8e6c4}
+  button:disabled{opacity:.55;cursor:default}
+
+  .form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .form input,.form select{padding:10px 11px;border:2px solid var(--line);border-radius:9px;
+       font:inherit;font-size:13px;color:var(--ink)}
+  .form input:focus,.form select:focus{outline:none;border-color:var(--purple)}
+  .form input.nm{width:110px} .form input.em{width:210px;color:var(--ink);font-size:13px}
+
+  .msg{font-size:12.5px;font-weight:700;margin-top:11px;min-height:18px}
+  .note{background:#fffaf0;border:1px solid #f0dfc0;border-radius:10px;padding:12px 14px;
+        font-size:12.5px;line-height:1.75;color:#7a5f22;margin-top:12px}
+  .note b{color:#5c4610}
+  .pwbox{background:#f3ecfd;border:1px solid #ddd0f5;border-radius:10px;padding:13px 15px;margin-top:12px}
+  .pwbox .t{font-size:12px;color:var(--purple-d);font-weight:800;margin-bottom:7px}
+  .pwbox code{display:block;background:#fff;border:1px solid var(--line);border-radius:7px;
+        padding:9px 11px;font-size:14px;font-weight:800;letter-spacing:.4px;word-break:break-all}
+  .pwbox .w{font-size:11.5px;color:var(--muted);margin-top:7px;line-height:1.6}
+  .empty{color:var(--muted);font-size:12.5px;padding:16px 0;text-align:center}
+  .logs{max-height:330px;overflow:auto}
+  .logs td{font-size:12px;padding:6px 8px}
+  .logs .t{color:var(--muted);white-space:nowrap;font-size:11.5px}
+  @media(max-width:640px){
+    .wrap{padding-top:58px}
+    th.hide,td.hide{display:none}
+    .form input.em{width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>계정 관리</h1>
+  <div class="sub">지사 동료 계정을 추가하고, 퇴사하면 차단합니다.</div>
+
+  <div class="card">
+    <h2>👥 구성원 <span class="n" id="cnt"></span></h2>
+    <div id="tbl"><div class="empty">불러오는 중…</div></div>
+  </div>
+
+  <div class="card">
+    <h2>➕ 직원 추가</h2>
+    <div class="form">
+      <input class="nm" id="f-name" placeholder="이름">
+      <input class="em" id="f-email" type="email" placeholder="이메일" inputmode="email">
+      <select id="f-role">
+        <option value="viewer">viewer (삭제 불가)</option>
+        <option value="admin">admin (삭제 가능)</option>
+      </select>
+      <button class="b1" id="f-go">추가하기</button>
+    </div>
+    <div class="msg" id="f-msg"></div>
+    <div id="f-pw"></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 접근 기록 <span class="n">최근 200건</span></h2>
+    <div class="logs" id="logs"><div class="empty">불러오는 중…</div></div>
+  </div>
+
+  <div class="note">
+    <b>퇴사자가 생기면</b> — 그 줄의 <b>차단</b>을 누르세요. 다음 클릭부터 바로 막힙니다.<br>
+    계정을 아예 지우는 버튼은 일부러 넣지 않았습니다. 지우면 그 사람이 무엇을 봤는지 기록까지
+    사라지고 되돌릴 수 없어서, <b>차단</b>으로 문만 잠그는 편이 안전합니다.<br>
+    몇 달 뒤 완전히 없애고 싶으시면 Supabase → Authentication → Users 에서 지우시면 됩니다.
+  </div>
+</div>
+
+<script>
+const FN = 'https://skhbcizzqgmlnwiwlaxt.supabase.co/functions/v1/admin';
+const KEY = 'sb_publishable_ZJxHaQ8PwdiY8ZWYqXCReg_E5RqrV62';
+
+async function api(body){
+  const t = await YC.token();
+  const r = await fetch(FN, {method:'POST',
+    headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+t},
+    body: JSON.stringify(body)});
+  const d = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error || ('오류 '+r.status));
+  return d;
+}
+
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function when(s){
+  if(!s) return '—';
+  const d=new Date(s), n=new Date(), diff=(n-d)/1000;
+  if(diff<60) return '방금';
+  if(diff<3600) return Math.floor(diff/60)+'분 전';
+  if(diff<86400) return Math.floor(diff/3600)+'시간 전';
+  if(diff<86400*7) return Math.floor(diff/86400)+'일 전';
+  return (d.getMonth()+1)+'/'+d.getDate();
+}
+
+let MEMBERS = [];
+
+async function loadMembers(){
+  try{
+    const d = await api({action:'list'});
+    MEMBERS = d.members || [];
+    document.getElementById('cnt').textContent =
+      MEMBERS.length + '명 · 활성 ' + MEMBERS.filter(m=>m.active).length + '명';
+    render();
+  }catch(e){
+    document.getElementById('tbl').innerHTML =
+      '<div class="empty">'+esc(e.message)+'</div>';
+  }
+}
+
+function render(){
+  if(!MEMBERS.length){ document.getElementById('tbl').innerHTML='<div class="empty">아직 없습니다.</div>'; return; }
+  const rows = MEMBERS.map(m=>`<tr>
+    <td class="nm">${esc(m.name||'')}<div class="em">${esc(m.email)}</div></td>
+    <td><span class="pill ${m.role==='admin'?'adm':'vw'}">${esc(m.role)}</span></td>
+    <td><span class="pill ${m.active?'on':'off'}">${m.active?'활성':'차단됨'}</span></td>
+    <td class="hide">${m.linked?when(m.lastSeen):'<span class="em">첫 로그인 전</span>'}</td>
+    <td><div class="act">
+      <button class="${m.active?'bw':'b1'}" data-a="toggle" data-e="${esc(m.email)}" data-v="${m.active?'0':'1'}">${m.active?'차단':'해제'}</button>
+      <button class="b2" data-a="reset" data-e="${esc(m.email)}">비번 초기화</button>
+    </div></td></tr>`).join('');
+  document.getElementById('tbl').innerHTML =
+    `<table><thead><tr><th>이름 / 이메일</th><th>권한</th><th>상태</th>
+     <th class="hide">마지막 접속</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+document.getElementById('tbl').addEventListener('click', async e=>{
+  const b = e.target.closest('button[data-a]'); if(!b) return;
+  const email = b.dataset.e, act = b.dataset.a;
+  b.disabled = true;
+  try{
+    if(act==='toggle'){
+      const on = b.dataset.v==='1';
+      if(!on && !confirm(email+' 계정을 차단할까요?\n\n다음 클릭부터 바로 막힙니다. 나중에 해제할 수 있습니다.')) { b.disabled=false; return; }
+      await api({action:'set_active', email, active:on});
+      await loadMembers();
+    }
+    if(act==='reset'){
+      if(!confirm(email+' 의 비밀번호를 새로 만들까요?\n\n지금 쓰던 비밀번호는 못 쓰게 됩니다.')) { b.disabled=false; return; }
+      const d = await api({action:'reset_pw', email});
+      showPw(d.email, d.tempPassword, '비밀번호를 새로 만들었습니다');
+    }
+  }catch(err){ alert(err.message); }
+  b.disabled = false;
+});
+
+function showPw(email, pw, title){
+  document.getElementById('f-pw').innerHTML =
+    `<div class="pwbox"><div class="t">${esc(title)} — ${esc(email)}</div>
+     <code>${esc(pw)}</code>
+     <div class="w">이 화면을 벗어나면 다시 볼 수 없습니다. 지금 본인에게 전달해 주세요.<br>
+     본인이 로그인한 뒤 오른쪽 위 「비밀번호 변경」으로 바꾸도록 안내해 주세요.</div></div>`;
+}
+
+document.getElementById('f-go').onclick = async ()=>{
+  const nm = document.getElementById('f-name').value.trim();
+  const em = document.getElementById('f-email').value.trim();
+  const rl = document.getElementById('f-role').value;
+  const msg = document.getElementById('f-msg');
+  const btn = document.getElementById('f-go');
+  msg.style.color = 'var(--bad)';
+  if(!nm){ msg.textContent='이름을 입력해 주세요.'; return; }
+  if(!em){ msg.textContent='이메일을 입력해 주세요.'; return; }
+  btn.disabled = true; btn.textContent = '만드는 중…'; msg.textContent = '';
+  try{
+    const d = await api({action:'add', email:em, name:nm, role:rl});
+    msg.style.color = 'var(--ok)';
+    msg.textContent = nm + ' 님 계정을 만들었습니다.';
+    showPw(d.email, d.tempPassword, '임시 비밀번호');
+    document.getElementById('f-name').value='';
+    document.getElementById('f-email').value='';
+    await loadMembers();
+  }catch(e){ msg.style.color='var(--bad)'; msg.textContent = e.message; }
+  btn.disabled = false; btn.textContent = '추가하기';
+};
+
+async function loadLogs(){
+  try{
+    const d = await api({action:'logs'});
+    const L = d.logs || [];
+    if(!L.length){ document.getElementById('logs').innerHTML='<div class="empty">아직 없습니다.</div>'; return; }
+    document.getElementById('logs').innerHTML =
+      '<table><tbody>' + L.map(r=>`<tr>
+        <td class="t">${when(r.at)}</td>
+        <td>${esc(r.email||'')}</td>
+        <td class="t">${esc(r.action||'')}${r.key?' · '+esc(r.key):''}</td>
+        <td>${r.ok?'':'<span class="pill off">거절</span>'}</td></tr>`).join('') + '</tbody></table>';
+  }catch(e){ document.getElementById('logs').innerHTML='<div class="empty">'+esc(e.message)+'</div>'; }
+}
+
+YC.guard(async function(me){
+  if(!me || me.role !== 'admin'){
+    document.querySelector('.wrap').innerHTML =
+      '<h1>계정 관리</h1><div class="card"><div class="empty">'+
+      '이 화면은 관리자만 열 수 있습니다.</div></div>';
+    return;
+  }
+  await loadMembers();
+  await loadLogs();
+}, {title:'계정 관리'});
+</script>
+</body>
+</html>
