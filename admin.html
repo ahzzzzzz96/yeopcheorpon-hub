@@ -29,6 +29,7 @@
   .off{background:#fdeaee;color:var(--bad)}
   .adm{background:#f3ecfd;color:var(--purple-d)}
   .vw{background:#f0f1f4;color:#6b7280}
+  .prot{background:#fff4e0;color:#9a6b06}
   .act{display:flex;gap:5px;justify-content:flex-end}
 
   button{border:none;border-radius:8px;font:inherit;font-weight:800;cursor:pointer;padding:7px 11px;font-size:12px}
@@ -80,7 +81,7 @@
       <input class="em" id="f-email" type="email" placeholder="이메일" inputmode="email">
       <select id="f-role">
         <option value="viewer">viewer (삭제 불가)</option>
-        <option value="admin">admin (삭제 가능)</option>
+        <option value="admin" id="f-role-admin">admin (계정 관리 가능)</option>
       </select>
       <button class="b1" id="f-go">추가하기</button>
     </div>
@@ -95,9 +96,10 @@
 
   <div class="note">
     <b>퇴사자가 생기면</b> — 그 줄의 <b>차단</b>을 누르세요. 다음 클릭부터 바로 막힙니다.<br>
+    <b>🛡 보호</b> 표시가 붙은 계정은 다른 관리자가 차단·강등·비밀번호 초기화를 할 수 없습니다.
+    관리자가 실수로 잠기는 일을 막기 위한 장치입니다.<br>
     계정을 아예 지우는 버튼은 일부러 넣지 않았습니다. 지우면 그 사람이 무엇을 봤는지 기록까지
-    사라지고 되돌릴 수 없어서, <b>차단</b>으로 문만 잠그는 편이 안전합니다.<br>
-    몇 달 뒤 완전히 없애고 싶으시면 Supabase → Authentication → Users 에서 지우시면 됩니다.
+    사라지고 되돌릴 수 없어서, <b>차단</b>으로 문만 잠그는 편이 안전합니다.
   </div>
 </div>
 
@@ -127,13 +129,17 @@ function when(s){
 }
 
 let MEMBERS = [];
+let OWNER = false;   // 내가 소유자인지
 
 async function loadMembers(){
   try{
     const d = await api({action:'list'});
     MEMBERS = d.members || [];
+    OWNER = !!(d.me && d.me.owner);
     document.getElementById('cnt').textContent =
       MEMBERS.length + '명 · 활성 ' + MEMBERS.filter(m=>m.active).length + '명';
+    const ra = document.getElementById('f-role-admin');
+    if(ra && !OWNER) ra.remove();   // 소유자만 관리자를 만들 수 있다
     render();
   }catch(e){
     document.getElementById('tbl').innerHTML =
@@ -143,15 +149,21 @@ async function loadMembers(){
 
 function render(){
   if(!MEMBERS.length){ document.getElementById('tbl').innerHTML='<div class="empty">아직 없습니다.</div>'; return; }
-  const rows = MEMBERS.map(m=>`<tr>
+  const rows = MEMBERS.map(m=>{
+    // 보호 계정은 아무도 건드릴 수 없다. 관리자 비번 초기화는 소유자만.
+    const canBlock = !m.protected;
+    const canReset = m.linked && !m.protected && (m.role !== 'admin' || OWNER);
+    let btns = '';
+    if(canBlock) btns += `<button class="${m.active?'bw':'b1'}" data-a="toggle" data-e="${esc(m.email)}" data-v="${m.active?'0':'1'}">${m.active?'차단':'해제'}</button>`;
+    if(canReset) btns += `<button class="b2" data-a="reset" data-e="${esc(m.email)}">비번 초기화</button>`;
+    if(!btns) btns = '<span class="em">변경 불가</span>';
+    return `<tr>
     <td class="nm">${esc(m.name||'')}<div class="em">${esc(m.email)}</div></td>
-    <td><span class="pill ${m.role==='admin'?'adm':'vw'}">${esc(m.role)}</span></td>
+    <td><span class="pill ${m.role==='admin'?'adm':'vw'}">${esc(m.role)}</span>${m.protected?' <span class="pill prot">🛡 보호</span>':''}</td>
     <td><span class="pill ${m.active?'on':'off'}">${m.active?'활성':'차단됨'}</span></td>
     <td class="hide">${m.linked?when(m.lastSeen):'<span class="em">첫 로그인 전</span>'}</td>
-    <td><div class="act">
-      <button class="${m.active?'bw':'b1'}" data-a="toggle" data-e="${esc(m.email)}" data-v="${m.active?'0':'1'}">${m.active?'차단':'해제'}</button>
-      <button class="b2" data-a="reset" data-e="${esc(m.email)}">비번 초기화</button>
-    </div></td></tr>`).join('');
+    <td><div class="act">${btns}</div></td></tr>`;
+  }).join('');
   document.getElementById('tbl').innerHTML =
     `<table><thead><tr><th>이름 / 이메일</th><th>권한</th><th>상태</th>
      <th class="hide">마지막 접속</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
