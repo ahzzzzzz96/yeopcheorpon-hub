@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<script src="yc-auth.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>오늘 한 일 정리 · 옆커폰 대구지사</title>
@@ -128,7 +130,7 @@
 <script>
 const SB_URL = "https://skhbcizzqgmlnwiwlaxt.supabase.co";
 const SB_KEY = "sb_publishable_ZJxHaQ8PwdiY8ZWYqXCReg_E5RqrV62";
-const H = {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
+async function H(){ return {"apikey":SB_KEY,"Authorization":"Bearer "+(await YC.token()),"Content-Type":"application/json"}; }
 
 let B = null;
 
@@ -166,13 +168,12 @@ function toast(msg){
 }
 
 async function fetchSnapshot(){
-  const r = await fetch(`${SB_URL}/rest/v1/kv?namespace=eq.briefing&key=eq.sv_today&select=value`,{headers:H});
-  const j = await r.json();
-  if(!j || !j.length) return null;
-  return JSON.parse(j[0].value);
+  const res = await YC.call("get", {key:"sv_today"}, "briefing");   // 엣지 함수를 거친다
+  if(!res || !res.value) return null;
+  return JSON.parse(res.value);
 }
 async function rebuild(){
-  const r = await fetch(`${SB_URL}/rest/v1/rpc/sv_build_brief`,{method:"POST",headers:H,body:"{}"});
+  const r = await fetch(`${SB_URL}/rest/v1/rpc/sv_build_brief`,{method:"POST",headers:(await H()),body:"{}"});
   if(!r.ok) throw new Error(await r.text());
   return await r.json();
 }
@@ -435,8 +436,7 @@ document.getElementById("btnCopy").addEventListener("click", async ()=>{
   }
 });
 
-// 들어오자마자 오늘 기준으로 한 번 정리해서 보여준다
-make(false);
+YC.guard(function(me){ make(false); }, {title:"퇴근 전 정리"});
 </script>
 </body>
 </html>

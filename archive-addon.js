@@ -3,7 +3,7 @@
    sv.html 맨 아래(</body> 바로 위)에 아래 한 줄만 추가하면 됩니다.
        <script src=archive-addon.js></script>
    기존 코드는 전혀 수정하지 않습니다.
-   앞으로 자료 추가는 reports.json 파일만 고치면 됩니다.
+   자료 목록은 서버(reports/index)에 있습니다. 로그인해야 보입니다.
    ========================================================= */
 
 /* --- 자료실 전용 CSS 주입 --- */
@@ -54,8 +54,8 @@
       body.innerHTML = '<div class="arc-msg">자료 목록 불러오는 중…</div>';
       if (!state.loading) {
         state.loading = true;
-        fetch("reports.json?v=" + Date.now())
-          .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+        YC.call("get", {key:"index"}, "reports")   // 로그인해야 목록을 받는다
+          .then(function(res){ if(!res || !res.value) throw new Error("목록이 없습니다"); return JSON.parse(res.value); })
           .then(function(j){
             state.data = (j.items||[]).slice().sort(function(a,b){
               return String(b.date||b.month||"").localeCompare(String(a.date||a.month||"")); });
@@ -74,9 +74,9 @@
   }
 
   function errHtml(){
-    return '<div class="arc-msg">자료 목록(<code>reports.json</code>)을 불러오지 못했습니다.<br>' +
+    return '<div class="arc-msg">자료 목록을 불러오지 못했습니다.<br>' +
       '<span style="font-size:11.5px">' + esc(state.err) + '</span><br><br>' +
-      '저장소 최상위에 <code>reports.json</code> 파일이 있는지 확인해 주세요.</div>';
+      '로그인 상태를 확인해 주세요.</div>';
   }
 
   function shellHtml(inner){
